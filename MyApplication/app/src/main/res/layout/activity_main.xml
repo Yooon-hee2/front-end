@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity">
 
     <include
         layout="@layout/toolbar_with_hamburger">
@@ -32,17 +32,34 @@
             android:src="@drawable/ic_search"/>
     </RelativeLayout>
 
-    <androidx.appcompat.widget.SwitchCompat
+    <LinearLayout
+        android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_gravity="center_horizontal">
+        android:layout_height="55dp">
+        <TextView
+            android:paddingHorizontal="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="feed"></TextView>
 
-    </androidx.appcompat.widget.SwitchCompat>
+        <androidx.appcompat.widget.SwitchCompat
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal">
 
+        </androidx.appcompat.widget.SwitchCompat>
 
-
+        <TextView
+            android:paddingHorizontal="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="album"></TextView>
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_feed_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

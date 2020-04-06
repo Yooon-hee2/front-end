@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:paddingHorizontal="15dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/ly_item"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:paddingVertical="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="피드제목피드제목"
+            android:id="@+id/rv_item_feed_title"
+            android:textColor="@color/darkGrayD"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textSize="20dp"></TextView>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:id="@+id/rv_item_feed_thumbnail"/>
+
+            <ImageView
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:src="@drawable/ic_instagram"
+                android:id="@+id/rv_item_feed_src">
+            </ImageView>
+
+
+        </RelativeLayout>
+        <LinearLayout
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_marginVertical="10dp"
+                android:layout_gravity="center"
+                android:id="@+id/rv_item_feed_hashtag"
+                android:background="@drawable/shape_redbtn_8dp"
+                android:includeFontPadding = "false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:padding="10dp"
+                android:textColor="@color/red"
+                android:text="#중앙대"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_marginVertical="10dp"
+                android:layout_gravity="center"
+                android:id="@+id/rv_item_feed_hashtag1"
+                android:background="@drawable/shape_redbtn_8dp"
+                android:includeFontPadding = "false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:padding="10dp"
+                android:layout_marginLeft="7dp"
+                android:textColor="@color/red"
+                android:text="#맛집"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_bottom_line_gray">
+        </TextView>
+
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

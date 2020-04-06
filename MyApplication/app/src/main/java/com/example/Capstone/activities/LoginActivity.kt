@@ -1,12 +1,13 @@
-package com.example.Capstone
+package com.example.Capstone.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.Capstone.R
 
-class SignUpPasswordActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sign_up_password)
+        setContentView(R.layout.activity_login)
     }
 }
