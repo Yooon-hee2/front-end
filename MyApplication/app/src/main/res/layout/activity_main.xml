@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <include
+        layout="@layout/toolbar_with_hamburger">
+    </include>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp">
+        <EditText
+            android:paddingLeft="15dp"
+            android:background="@drawable/shape_et_normal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/search_hint"
+            android:hint="중앙대 맛집"/>
+
+        <ImageView
+            android:paddingRight="5dp"
+            android:layout_centerVertical="true"
+            android:layout_width="36dp"
+            android:layout_height="34dp"
+            android:layout_alignRight="@+id/search_hint"
+            android:id="@+id/btn_home"
+            android:src="@drawable/ic_search"/>
+    </RelativeLayout>
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal">
+
+    </androidx.appcompat.widget.SwitchCompat>
+
+
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>
