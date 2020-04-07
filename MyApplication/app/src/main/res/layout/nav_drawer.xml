@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_marginTop="35dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp">
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="34dp"
+                android:id="@+id/btn_drawer_home"
+                android:src="@drawable/ic_home"/>
+            <ImageView
+                android:layout_centerVertical="true"
+                android:layout_width="27dp"
+                android:layout_height="29dp"
+                android:src="@drawable/ic_cancel_large"
+                android:layout_alignParentRight="true"
+                android:id="@+id/btn_cancel"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="11dp"
+            android:gravity="center_vertical"
+            android:layout_height="91dp">
+            <ImageView
+                android:id="@+id/iv_drawer_profileimg"
+                android:src="@drawable/ic_account"
+                android:layout_width="55dp"
+                android:layout_height="55dp"/>
+            <LinearLayout
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="12dp"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:includeFontPadding="false"
+                    tools:text="유닝"
+                    android:id="@+id/tv_drawer_nickname"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:includeFontPadding="false"
+                    android:layout_marginTop="4dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/grayB"
+                    android:id="@+id/tv_drawer_email"
+                    tools:text="yoooning@cau.ac.kr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </LinearLayout>
+        <View
+            android:layout_gravity="center_horizontal"
+            android:background="@color/lightGrayB"
+            android:layout_width="400dp"
+            android:layout_height="2dp"/>
+
+        <LinearLayout
+            android:layout_marginTop="14dp"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:includeFontPadding="false"
+                android:text="저장소"
+                android:textSize="14sp"
+                android:textColor="@color/grayB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <LinearLayout
+                android:layout_marginTop="27dp"
+                android:paddingHorizontal="3dp"
+                android:orientation="horizontal"
+                android:paddingVertical="5dp"
+                android:weightSum="2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_personal_storage"
+                    android:id="@+id/btn_personal_storage"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"/>
+                <ImageView
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_share_storage"
+                    android:id="@+id/btn_share_storage"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:paddingHorizontal="3dp"
+                android:orientation="horizontal"
+                android:paddingVertical="5dp"
+                android:weightSum="2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:gravity="center"
+                    android:text="개인 저장소"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/text_personal_storage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+                <TextView
+                    android:gravity="center"
+                    android:text="공유 저장소"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/text_share_storage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/lightGrayB"
+            android:layout_width="400dp"
+            android:layout_height="2dp"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="14dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:text="메뉴"
+                android:textColor="@color/grayB"
+                android:textSize="14sp" />
+
+
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="6dp">
+
+                <TextView
+                android:includeFontPadding = "false"
+                android:paddingRight="12dp"
+                android:paddingVertical="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:textSize="16sp"
+                android:textColor="@color/darkGrayC"
+                android:text="폴더관리"
+                />
+                <TextView
+                    android:includeFontPadding = "false"
+                    android:paddingRight="12dp"
+                    android:paddingVertical="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/darkGrayC"
+                    android:text="알림관리"
+                    />
+                <TextView
+                    android:includeFontPadding = "false"
+                    android:paddingVertical="20dp"
+                    android:text="로그아웃"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="20dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/darkGrayC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="16dp"
+                    android:id="@+id/btn_logout"/>
+                <TextView
+                    android:includeFontPadding = "false"
+                    android:paddingVertical="20dp"
+                    android:text="탈퇴하기"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="20dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/darkGrayC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="16dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -10,8 +10,8 @@
             android:layout_width="36dp"
             android:layout_height="34dp"
             android:layout_centerVertical="true"
-            android:id="@+id/btn_home"
-            android:src="@drawable/ic_home"/>
+            android:id="@+id/btn_back"
+            android:src="@drawable/ic_back"/>
         <ImageView
             android:layout_width="33dp"
             android:layout_height="33dp"

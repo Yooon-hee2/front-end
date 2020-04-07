@@ -6,11 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.URLUtil
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.Capstone.R
+import com.example.Capstone.activities.InformationActivity
 import com.example.Capstone.model.Feed
+import org.jetbrains.anko.startActivity
 
 class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>) :
 
@@ -29,6 +32,9 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>) :
         if (list[position].src == "instagram"){
             holder.src.setImageResource(R.drawable.ic_instagram)
         }
+        else{
+            holder.src.setImageResource(R.drawable.ic_facebook)
+        }
 
 
         if (URLUtil.isValidUrl(list[position].thumbnail)) {
@@ -36,10 +42,9 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>) :
         }
 
 
-//        holder.container.setOnClickListener {
-//            ctx.startActivity<DonateParticipationStateActivity>(
-//            )
-//        }
+        holder.container.setOnClickListener {
+            ctx.startActivity<InformationActivity>()
+        }
 
     }
 
@@ -47,5 +52,6 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>) :
         var title = itemView.findViewById(R.id.rv_item_feed_title) as TextView
         var src = itemView.findViewById(R.id.rv_item_feed_src) as ImageView
         var thumbnail = itemView.findViewById(R.id.rv_item_feed_thumbnail) as ImageView
+        var container = itemView.findViewById(R.id.rv_item_feed_container) as RelativeLayout
     }
 }
