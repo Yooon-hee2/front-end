@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="34dp"
+            android:layout_centerVertical="true"
+            android:id="@+id/btn_back"
+            android:src="@drawable/ic_back"/>
+        <ImageView
+            android:layout_width="33dp"
+            android:layout_height="33dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:layout_centerVertical="true"
+            android:id="@+id/btn_trashbin"
+            android:src="@drawable/ic_plus"/>
+    </RelativeLayout>
+
+</androidx.appcompat.widget.Toolbar>

@@ -2,6 +2,9 @@ package com.example.Capstone.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import com.bumptech.glide.Glide
 import com.example.Capstone.R
 import kotlinx.android.synthetic.main.activity_information.*
@@ -20,6 +23,21 @@ class InformationActivity : AppCompatActivity() {
         btn_back.setOnClickListener {
             finish()
         }
+
+
+//        val myWebView: WebView = findViewById(R.id.test_webview)
+//
+//        class WebViewClientClass : WebViewClient() {
+//            //페이지 이동
+//            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+//                Log.d("check URL", url)
+//                view.loadUrl(url)
+//                return true
+//            }
+//        }
+//
+//        myWebView.webViewClient = WebViewClientClass()
+//        myWebView.loadUrl("https://sonyunara.com/?")
 
 
     }
