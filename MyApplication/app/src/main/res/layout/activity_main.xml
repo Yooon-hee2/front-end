@@ -33,31 +33,54 @@
             android:src="@drawable/ic_search"/>
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_gravity="center_horizontal"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="55dp">
-        <TextView
-            android:paddingHorizontal="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="feed"></TextView>
 
-        <androidx.appcompat.widget.SwitchCompat
+        <LinearLayout
+            android:layout_centerInParent="true"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal">
+            android:layout_height="match_parent">
 
-        </androidx.appcompat.widget.SwitchCompat>
+            <TextView
+                android:textColor="@color/grayA"
+                android:paddingHorizontal="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="feed"></TextView>
 
-        <TextView
-            android:paddingHorizontal="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="album"></TextView>
-    </LinearLayout>
+            <Switch
+                android:checked="false"
+                android:layout_marginHorizontal="10dp"
+                android:id="@+id/switch_album_or_feed"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:track="@drawable/switch_track_on"
+                android:thumb="@drawable/switch_thumb">
+            </Switch>
+
+            <TextView
+                android:paddingHorizontal="5dp"
+                android:textColor="@color/grayA"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="album"></TextView>
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_marginRight="20dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_width="30dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_down"/>
+    </RelativeLayout>
+
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_feed_container"

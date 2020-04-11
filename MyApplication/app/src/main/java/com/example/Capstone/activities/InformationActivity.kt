@@ -3,6 +3,7 @@ package com.example.Capstone.activities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.bumptech.glide.Glide
@@ -12,21 +13,39 @@ import kotlinx.android.synthetic.main.toolbar_with_trashbin.*
 
 class InformationActivity : AppCompatActivity() {
 
+    private val url = "https://wikidocs.net/16040"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_information)
 
-        Glide.with(this).load("http://blogfiles.naver.net/MjAyMDAxMTJfMjc3/MDAxNTc4ODMxNzA4MDA0.bMTZ6laF3F-YGvE7l5_B_" +
-                "LI8O0a6GhTL3B0h94KPzxcg.Oi46FpElgjlXTKAUpXe5ued8iSZ9pspER7eyZb6zeScg.JPEG.cherrysomu/01.jpg").into(info_img)
+//        val myWebView: WebView = findViewById(R.id.web_url)
 
+        //get web view settings instance
+        val settings = web_url.settings
 
-        btn_back.setOnClickListener {
-            finish()
+        //enable java script in web view
+        settings.javaScriptEnabled = true
+
+        //enable and setup web view cache
+        settings.setAppCacheEnabled(true)
+        settings.cacheMode = WebSettings.LOAD_NO_CACHE
+        settings.setAppCachePath(cacheDir.path)
+
+        //enable zoom
+        settings.setSupportZoom(true)
+        settings.builtInZoomControls = true
+        settings.displayZoomControls = true
+        settings.textZoom = 125
+
+        //enable disable images
+        settings.blockNetworkImage = false
+        settings.loadsImagesAutomatically = true
+
+        web_url.webViewClient = object:WebViewClient(){
+
         }
 
-
-//        val myWebView: WebView = findViewById(R.id.test_webview)
-//
 //        class WebViewClientClass : WebViewClient() {
 //            //페이지 이동
 //            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
@@ -36,9 +55,13 @@ class InformationActivity : AppCompatActivity() {
 //            }
 //        }
 //
+//
 //        myWebView.webViewClient = WebViewClientClass()
-//        myWebView.loadUrl("https://sonyunara.com/?")
+//        myWebView.loadUrl(url)
 
+        btn_back.setOnClickListener {
+            finish()
+        }
 
     }
 }

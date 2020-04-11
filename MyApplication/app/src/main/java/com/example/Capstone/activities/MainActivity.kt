@@ -8,6 +8,7 @@ import com.example.Capstone.adapter.FeedRecyclerViewAdapter
 import com.example.Capstone.model.Feed
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar_with_hamburger.*
+import org.jetbrains.anko.sdk27.coroutines.onCheckedChange
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,8 +31,12 @@ class MainActivity : AppCompatActivity() {
         rv_feed_container.layoutManager = LinearLayoutManager(this)
 
         btn_hambuger.setOnClickListener {
-
         }
+
+        switch_album_or_feed.setOnClickListener {
+            switch_album_or_feed.isChecked = !switch_album_or_feed.isChecked
+        }
+
     }
 
 }

@@ -19,16 +19,16 @@
 
 
             <ImageView
-                android:layout_width="75dp"
-                android:layout_height="75dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:padding = "10dp"
                 android:src="@drawable/ic_instagram"
                 android:id="@+id/rv_item_feed_src">
             </ImageView>
 g
             <TextView
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="25dp"
                 android:gravity="center_vertical"
                 android:layout_toRightOf="@+id/rv_item_feed_src"
                 android:layout_width="wrap_content"
@@ -39,19 +39,20 @@ g
                 android:textColor="@color/darkGrayD"
                 android:ellipsize="end"
                 android:lines="1"
-                android:textSize="20dp"></TextView>
+                android:textSize="15dp"></TextView>
         </RelativeLayout>
 
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
+
             <ImageView
-                android:scaleType="centerCrop"
-                android:background="@color/grayB"
+                android:id="@+id/rv_item_feed_thumbnail"
                 android:layout_width="match_parent"
-                android:layout_height="450dp"
-                android:id="@+id/rv_item_feed_thumbnail"/>
+                android:layout_height="350dp"
+                android:background="@color/grayB"
+                android:scaleType="centerCrop" />
 
         </RelativeLayout>
         <LinearLayout
@@ -67,7 +68,7 @@ g
                 android:includeFontPadding = "false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:padding="10dp"
                 android:textColor="@color/grayA"
                 android:text="#중앙대"
@@ -81,7 +82,7 @@ g
                 android:includeFontPadding = "false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:padding="10dp"
                 android:layout_marginLeft="7dp"
                 android:textColor="@color/grayA"

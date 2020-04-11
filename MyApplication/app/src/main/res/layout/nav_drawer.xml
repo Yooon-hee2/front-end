@@ -207,14 +207,17 @@
                         android:text="알림관리"
                         />
 
-                    <androidx.appcompat.widget.SwitchCompat
+                    <Switch
                         android:layout_alignParentRight="true"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginVertical="20dp"
+                        android:layout_marginHorizontal="10dp"
+                        android:id="@+id/switch_album_or_feed"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="20dp"
-                        android:layout_marginRight="10dp">
-
-                    </androidx.appcompat.widget.SwitchCompat>
+                        android:layout_centerVertical="true"
+                        android:track="@drawable/switch_track_off"
+                        android:thumb="@drawable/switch_thumb"></Switch>
 
 
                 </RelativeLayout>
