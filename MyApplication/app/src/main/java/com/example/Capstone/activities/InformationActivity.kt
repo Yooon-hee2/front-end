@@ -19,7 +19,7 @@ import org.jetbrains.anko.toast
 class InformationActivity : AppCompatActivity() {
 
     //problem : instagram만 click이 막아지지 않음
-    private val saved_url = "https://www.instagram.com/p/B99Oq1ahxM2/?utm_source=ig_web_copy_link"
+    private val saved_url = "https://developer.android.com/guide/topics/ui/controls/spinner?hl=ko"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,8 +75,8 @@ class InformationActivity : AppCompatActivity() {
             }
         }
 
-//        val youTubePlayerView: YouTubePlayerView = findViewById(R.id.youtube_player_view)
-//        lifecycle.addObserver(youTubePlayerView)
+        val youTubePlayerView: YouTubePlayerView = findViewById(R.id.youtube_player_view)
+        lifecycle.addObserver(youTubePlayerView)
 
         btn_back.setOnClickListener {
             finish()

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">memmem</string>
+    <string name="channel_name">memmem</string>
+    <string name="channel_description">"today's awesome recommendation"</string>
 </resources>

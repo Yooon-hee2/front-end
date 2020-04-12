@@ -1,9 +1,19 @@
 package com.example.Capstone.activities
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.Capstone.R
@@ -11,9 +21,7 @@ import com.example.Capstone.adapter.FeedRecyclerViewAdapter
 import com.example.Capstone.model.Feed
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_activity_main.*
-import kotlinx.android.synthetic.main.content_activity_main.switch_album_or_feed
 import kotlinx.android.synthetic.main.nav_drawer.*
-import kotlinx.android.synthetic.main.toolbar_with_hamburger.*
 
 class MainActivity : AppCompatActivity(){
 
@@ -35,7 +43,7 @@ class MainActivity : AppCompatActivity(){
         rv_feed_container.adapter = feedRecyclerViewAdapter
         rv_feed_container.layoutManager = LinearLayoutManager(this)
 
-        btn_hambuger.setOnClickListener {
+        btn_hamburger.setOnClickListener {
             if (!ly_drawer.isDrawerOpen(GravityCompat.END)) {
                 ly_drawer.openDrawer(GravityCompat.END)
             }
@@ -82,9 +90,47 @@ class MainActivity : AppCompatActivity(){
             }
         }
 
-        switch_album_or_feed.setOnClickListener {
-            switch_album_or_feed.isChecked = !switch_album_or_feed.isChecked
+        var spinnerList = arrayOf("맛집", "화장품", "꿀팁")
+
+        val spinner : Spinner = findViewById(R.id.spinner_menu)
+
+        val spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, spinnerList)
+        spinner.adapter = spinnerAdapter
+
+        myNotification()
+
+    }
+
+    private fun myNotification(){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create the NotificationChannel
+            val name = getString(R.string.channel_name)
+            val descriptionText = getString(R.string.channel_description)
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val mChannel = NotificationChannel("memmem", name, importance)
+            mChannel.description = descriptionText
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(mChannel)
         }
+
+
+        var builder = NotificationCompat.Builder(this, "memmem")
+            .setSmallIcon(R.drawable.ic_noti)
+            .setContentTitle("memmem notification")
+            .setContentText("Much longer text that cannot fit one line...")
+            .setStyle(NotificationCompat.BigTextStyle()
+                .bigText("오늘 저녁식사 메뉴를 정하지 못했다면 ?."))
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(1, builder.build())
+        }
+
 
     }
 
