@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
@@ -24,25 +24,25 @@
                 android:layout_height="112dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="88dp"
+                android:layout_marginTop="50dp"
                 android:src="@drawable/ic_account" />
 
             <ImageView
                 android:id="@+id/btn_profile_img_change"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="250dp"
-                android:layout_marginTop="166dp"
-                android:src="@drawable/ic_edit_photo"/>
+                android:layout_height="50dp"
+                android:layout_marginLeft="100dp"
+                android:layout_marginTop="120dp"
+                android:src="@drawable/ic_edit_photo" />
         </RelativeLayout>
         <TextView
             android:includeFontPadding = "false"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:gravity="center"
             android:id="@+id/curr_nickname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="25sp"
+            android:textSize="22sp"
             android:textColor="@color/darkGrayA"
             android:letterSpacing="0.06"
             android:text="윤아리 저장소"
@@ -56,7 +56,7 @@
             ></View>
 
         <LinearLayout
-            android:layout_marginTop="44dp"
+            android:layout_marginTop="20dp"
             android:orientation="vertical"
             android:layout_gravity="center_horizontal"
             android:layout_width="match_parent"
@@ -85,15 +85,15 @@
                     android:maxLength="20"
                     android:inputType="textEmailAddress"
                     android:hint="ex) 김윤희"
-                    android:textSize="19sp"
+                    android:textSize="18sp"
                     android:id="@+id/et_login_email"
                     android:textColor="@color/darkGrayD"
                     android:background="@drawable/shape_bottom_line_signup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
                 <ImageView
-                    android:layout_width="33dp"
-                    android:layout_height="33dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="5dp"
                     android:layout_centerVertical="true"
@@ -115,7 +115,7 @@
                     android:includeFontPadding = "false"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:padding="10dp"
                     android:textColor="@color/grayB"
                     android:text="금아현"
@@ -129,7 +129,7 @@
                     android:includeFontPadding = "false"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:padding="10dp"
                     android:layout_marginLeft="7dp"
                     android:textColor="@color/grayB"
@@ -143,7 +143,7 @@
             android:includeFontPadding = "false"
             android:layout_marginTop="60.5dp"
             android:background="@drawable/shape_btn_red"
-            android:layout_gravity="end"
+            android:layout_gravity="bottom"
             android:paddingVertical="20dp"
             android:text="완료"
             android:textSize="20sp"

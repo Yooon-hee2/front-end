@@ -4,8 +4,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_width="400dp"
-    android:layout_height="300dp"
+    android:layout_width="250dp"
+    android:layout_height="420dp"
     android:backgroundTint="@color/white"
     android:background="@drawable/radius"
     android:gravity="center_horizontal"
@@ -26,14 +26,15 @@
         android:maxLines="1"
         android:maxLength="10"
         android:hint="ex)의정부 맛집"
-        android:textSize="19sp"
+        android:textSize="15sp"
         android:id="@+id/et_login_email"
         android:textColor="@color/darkGrayD"
         android:background="@drawable/shape_bottom_line_gray"
-        android:layout_width="300dp"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"/>
 
     <TextView
+        android:id="@+id/btn_add_folder"
         android:includeFontPadding = "false"
         android:layout_marginTop="50dp"
         android:background="@drawable/shape_btn_red"
@@ -47,6 +48,7 @@
         android:layout_height="wrap_content"/>
 
     <TextView
+        android:id="@+id/btn_cancel"
         android:includeFontPadding = "false"
         android:layout_marginTop="10dp"
         android:background="@drawable/shape_btn_normal"

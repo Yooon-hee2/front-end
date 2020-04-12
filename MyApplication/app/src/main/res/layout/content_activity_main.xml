@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.MainActivity">
+
+    <include
+        layout="@layout/toolbar_with_hamburger">
+    </include>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp">
+        <EditText
+            android:focusable="false"
+            android:paddingLeft="15dp"
+            android:background="@drawable/shape_et_normal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/search_hint"
+            android:hint="중앙대 맛집"/>
+
+        <ImageView
+            android:paddingRight="5dp"
+            android:layout_centerVertical="true"
+            android:layout_width="36dp"
+            android:layout_height="34dp"
+            android:layout_alignRight="@+id/search_hint"
+            android:id="@+id/btn_home"
+            android:src="@drawable/ic_search"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp">
+
+        <LinearLayout
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:textColor="@color/grayA"
+                android:paddingHorizontal="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="feed"></TextView>
+
+            <Switch
+                android:checked="false"
+                android:layout_marginHorizontal="10dp"
+                android:id="@+id/switch_album_or_feed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:track="@drawable/switch_track_on"
+                android:thumb="@drawable/switch_thumb">
+            </Switch>
+
+            <TextView
+                android:paddingHorizontal="5dp"
+                android:textColor="@color/grayA"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="album"></TextView>
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_marginRight="20dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_width="30dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_down"/>
+    </RelativeLayout>
+
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_feed_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

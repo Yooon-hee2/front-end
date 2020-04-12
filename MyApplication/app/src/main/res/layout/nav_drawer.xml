@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content">
                 <TextView
                     android:includeFontPadding="false"
-                    tools:text="유닝"
+                    android:text="유닝"
                     android:id="@+id/tv_drawer_nickname"
                     android:textColor="@color/black"
                     android:textSize="20sp"
@@ -62,7 +62,7 @@
                     android:textSize="14sp"
                     android:textColor="@color/grayB"
                     android:id="@+id/tv_drawer_email"
-                    tools:text="yoooning@cau.ac.kr"
+                    android:text="yoooning@cau.ac.kr"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
@@ -100,13 +100,13 @@
                     android:src="@drawable/ic_personal_storage"
                     android:id="@+id/btn_personal_storage"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"/>
+                    android:layout_height="60dp"/>
                 <ImageView
                     android:layout_weight="1"
                     android:src="@drawable/ic_share_storage"
                     android:id="@+id/btn_share_storage"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"/>
+                    android:layout_height="60dp"/>
 
             </LinearLayout>
             <LinearLayout
@@ -169,24 +169,26 @@
                 android:paddingVertical="6dp">
 
                 <TextView
+                    android:id="@+id/btn_manage_folder"
                 android:includeFontPadding = "false"
                 android:paddingRight="12dp"
                 android:paddingVertical="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="20dp"
-                android:textSize="20sp"
+                android:paddingLeft="10dp"
+                android:textSize="15sp"
                 android:textColor="@color/darkGrayC"
                 android:text="폴더관리"
                 />
                 <TextView
+                    android:id="@+id/btn_manage_storage"
                     android:includeFontPadding = "false"
                     android:paddingRight="12dp"
                     android:paddingVertical="20dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
-                    android:textSize="20sp"
+                    android:paddingLeft="10dp"
+                    android:textSize="15sp"
                     android:textColor="@color/darkGrayC"
                     android:text="저장소 관리"
                     />
@@ -201,8 +203,8 @@
                         android:paddingVertical="20dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="20dp"
-                        android:textSize="20sp"
+                        android:paddingLeft="10dp"
+                        android:textSize="15sp"
                         android:textColor="@color/darkGrayC"
                         android:text="알림관리"
                         />
@@ -210,8 +212,6 @@
                     <Switch
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="10dp"
-                        android:layout_marginVertical="20dp"
-                        android:layout_marginHorizontal="10dp"
                         android:id="@+id/switch_album_or_feed"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -226,8 +226,8 @@
                     android:paddingVertical="20dp"
                     android:text="로그아웃"
                     android:gravity="center_vertical"
-                    android:paddingLeft="20dp"
-                    android:textSize="20sp"
+                    android:paddingLeft="10dp"
+                    android:textSize="15sp"
                     android:textColor="@color/darkGrayC"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -238,8 +238,8 @@
                     android:paddingVertical="20dp"
                     android:text="탈퇴하기"
                     android:gravity="center_vertical"
-                    android:paddingLeft="20dp"
-                    android:textSize="20sp"
+                    android:paddingLeft="10dp"
+                    android:textSize="15sp"
                     android:textColor="@color/darkGrayC"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

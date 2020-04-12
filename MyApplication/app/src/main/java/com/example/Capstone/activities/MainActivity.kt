@@ -1,16 +1,21 @@
 package com.example.Capstone.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Gravity
+import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.Capstone.R
 import com.example.Capstone.adapter.FeedRecyclerViewAdapter
 import com.example.Capstone.model.Feed
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_activity_main.*
+import kotlinx.android.synthetic.main.content_activity_main.switch_album_or_feed
+import kotlinx.android.synthetic.main.nav_drawer.*
 import kotlinx.android.synthetic.main.toolbar_with_hamburger.*
-import org.jetbrains.anko.sdk27.coroutines.onCheckedChange
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(){
 
     lateinit var feedRecyclerViewAdapter: FeedRecyclerViewAdapter
 
@@ -31,6 +36,50 @@ class MainActivity : AppCompatActivity() {
         rv_feed_container.layoutManager = LinearLayoutManager(this)
 
         btn_hambuger.setOnClickListener {
+            if (!ly_drawer.isDrawerOpen(GravityCompat.END)) {
+                ly_drawer.openDrawer(GravityCompat.END)
+            }
+//            if ((SharedPreferenceController.getUserImg(this))!!.isNotEmpty()) {
+//                Glide.with(this@MainActivity)
+//                    .load(SharedPreferenceController.getUserImg(this))
+//                    .apply(RequestOptions.circleCropTransform())?.into(iv_drawer_profileimg)
+//            } else {
+//                Glide.with(this@MainActivity)
+//                    .load(R.drawable.pofile)
+//                    .apply(RequestOptions.circleCropTransform())?.into(iv_drawer_profileimg)
+//            }
+        }
+
+        btn_personal_storage.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+            ly_drawer.closeDrawer(GravityCompat.END)
+            startActivity(intent)
+        }
+
+        btn_share_storage.setOnClickListener {
+            val intent = Intent(this, StorageActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+            ly_drawer.closeDrawer(GravityCompat.END)
+            startActivity(intent)
+        }
+
+        btn_manage_folder.setOnClickListener {
+            val intent = Intent(this, FolderManageActivity::class.java)
+            ly_drawer.closeDrawer(GravityCompat.END)
+            startActivity(intent)
+        }
+
+        btn_manage_storage.setOnClickListener {
+            val intent = Intent(this, StorageManageActivity::class.java)
+            ly_drawer.closeDrawer(GravityCompat.END)
+            startActivity(intent)
+        }
+
+        btn_cancel.setOnClickListener {
+            if (ly_drawer.isDrawerOpen(GravityCompat.END)) {
+                ly_drawer.closeDrawer(GravityCompat.END)
+            }
         }
 
         switch_album_or_feed.setOnClickListener {

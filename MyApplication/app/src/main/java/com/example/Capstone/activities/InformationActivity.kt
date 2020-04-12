@@ -1,25 +1,30 @@
 package com.example.Capstone.activities
 
-import androidx.appcompat.app.AppCompatActivity
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.view.KeyEvent
+import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import com.bumptech.glide.Glide
+import androidx.appcompat.app.AppCompatActivity
 import com.example.Capstone.R
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import kotlinx.android.synthetic.main.activity_information.*
 import kotlinx.android.synthetic.main.toolbar_with_trashbin.*
+import org.jetbrains.anko.toast
+
 
 class InformationActivity : AppCompatActivity() {
 
-    private val url = "https://wikidocs.net/16040"
+    //problem : instagram만 click이 막아지지 않음
+    private val saved_url = "https://www.instagram.com/p/B99Oq1ahxM2/?utm_source=ig_web_copy_link"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_information)
 
-//        val myWebView: WebView = findViewById(R.id.web_url)
 
         //get web view settings instance
         val settings = web_url.settings
@@ -34,30 +39,44 @@ class InformationActivity : AppCompatActivity() {
 
         //enable zoom
         settings.setSupportZoom(true)
-        settings.builtInZoomControls = true
-        settings.displayZoomControls = true
+        //settings.builtInZoomControls = true
+        //settings.displayZoomControls = true
         settings.textZoom = 125
 
         //enable disable images
         settings.blockNetworkImage = false
         settings.loadsImagesAutomatically = true
 
-        web_url.webViewClient = object:WebViewClient(){
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            settings.safeBrowsingEnabled = true //api 26
         }
 
-//        class WebViewClientClass : WebViewClient() {
-//            //페이지 이동
-//            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-//                Log.d("check URL", url)
-//                view.loadUrl(url)
-//                return true
-//            }
-//        }
-//
-//
-//        myWebView.webViewClient = WebViewClientClass()
-//        myWebView.loadUrl(url)
+        settings.useWideViewPort = true
+        settings.loadWithOverviewMode = true
+        settings.javaScriptCanOpenWindowsAutomatically = true
+        settings.mediaPlaybackRequiresUserGesture = false
+
+        web_url.loadUrl(saved_url)
+
+        web_url.webViewClient = object: WebViewClient(){
+            //blocking move to any other url
+            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                val uri = Uri.parse(view?.url)
+                if (uri.equals(saved_url)) {
+                    // This is my web site, so do not override; let my WebView load the page
+                    return false
+                }
+                toast("cannot move to another page")
+                return true
+            }
+
+            override fun shouldOverrideKeyEvent(view: WebView?, event: KeyEvent?): Boolean {
+                return true
+            }
+        }
+
+//        val youTubePlayerView: YouTubePlayerView = findViewById(R.id.youtube_player_view)
+//        lifecycle.addObserver(youTubePlayerView)
 
         btn_back.setOnClickListener {
             finish()

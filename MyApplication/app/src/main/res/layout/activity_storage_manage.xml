@@ -13,20 +13,20 @@
     </include>
 
         <TextView
+            android:paddingLeft="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:includeFontPadding="false"
             android:text="개인 저장소"
-            android:paddingHorizontal="8dp"
             android:textColor="@color/grayB"
-            android:textSize="18sp" />
+            android:textSize="15sp" />
 
 
         <LinearLayout
+            android:paddingLeft="20dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingVertical="10dp">
+            android:layout_height="wrap_content">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -38,8 +38,7 @@
                     android:paddingVertical="20dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:textColor="@color/darkGrayC"
                     android:id="@+id/txt_my_storage"
                     android:text="윤희의 저장소"
@@ -49,8 +48,8 @@
                     android:layout_marginRight="20dp"
                     android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
                     android:src="@drawable/ic_edit">
 
                 </ImageView>
@@ -62,21 +61,23 @@
         </LinearLayout>
 
     <TextView
+        android:layout_marginTop="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:includeFontPadding="false"
         android:text="공유 저장소"
-        android:paddingHorizontal="8dp"
+        android:paddingLeft="20dp"
         android:textColor="@color/grayB"
-        android:textSize="18sp" />
+        android:textSize="15sp" />
 
     <LinearLayout
+        android:paddingLeft="20dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingVertical="10dp">
+        android:layout_height="wrap_content">
 
         <RelativeLayout
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
@@ -86,8 +87,7 @@
                 android:paddingVertical="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="20dp"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textColor="@color/darkGrayC"
                 android:text="윤아리쵝오"
                 />
@@ -96,8 +96,8 @@
                 android:layout_marginRight="20dp"
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:src="@drawable/ic_trashbin">
 
             </ImageView>
@@ -113,8 +113,7 @@
                 android:paddingVertical="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="20dp"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textColor="@color/darkGrayC"
                 android:text="파이썬스터디"
                 />
@@ -123,8 +122,8 @@
                 android:layout_marginRight="20dp"
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:src="@drawable/ic_trashbin">
 
             </ImageView>
@@ -140,8 +139,7 @@
                 android:paddingVertical="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="20dp"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textColor="@color/darkGrayC"
                 android:text="의정부맛집전용"
                 />
@@ -150,34 +148,34 @@
                 android:layout_marginRight="20dp"
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:src="@drawable/ic_trashbin">
             </ImageView>
 
         </RelativeLayout>
         <RelativeLayout
-            android:paddingLeft="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <ImageView
                 android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:src="@drawable/ic_plus">
             </ImageView>
 
             <TextView
+                android:id="@+id/btn_add_share_storage"
                 android:layout_marginLeft="30dp"
                 android:includeFontPadding = "false"
                 android:paddingRight="12dp"
-                android:paddingVertical="20dp"
+                android:paddingVertical="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textColor="@color/darkGrayC"
                 android:text="공유 저장소 추가"
                 />
