@@ -2,46 +2,57 @@ package com.example.Capstone.activities
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.GravityCompat
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager.widget.ViewPager
 import com.example.Capstone.R
-import com.example.Capstone.adapter.FeedRecyclerViewAdapter
-import com.example.Capstone.model.Feed
+import com.example.Capstone.adapter.MainFragmentAdapter
+import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_activity_main.*
 import kotlinx.android.synthetic.main.nav_drawer.*
 
+
 class MainActivity : AppCompatActivity(){
 
-    lateinit var feedRecyclerViewAdapter: FeedRecyclerViewAdapter
+    lateinit var pager : ViewPager
+    lateinit var tabLayout: TabLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var dataList: ArrayList<Feed> = ArrayList()
+        pager = findViewById(R.id.vp_main)
+        val pagerAdapter = MainFragmentAdapter(supportFragmentManager)
+        pager.adapter = pagerAdapter
 
-        dataList.add(Feed(0, "instagram", "스테이크+소세지조합최고", "https://t1.daumcdn.net/cfile/tistory/244CE24556B5642E36"))
-        dataList.add(Feed(1, "facebook", "중앙대국밥하면순대나라", "http://blogfiles.naver.net/MjAxNjEwMzBfMTU5/MDAxNDc3ODEzNTAyNzc5.LcGMoEbTvDQ6VSw2VPg8DmWCKFLNgMjVwDsKT9287iUg.vjmV-" +
-                "W8lxd4uzMBY3A0ZwRU3NiSHxZ-C0__kprqbZa8g.JPEG.moonfrost/DSC04123.JPG"))
-        dataList.add(Feed(2, "instagram", "중앙대마라탕은칠기", "https://t1.daumcdn.net/cfile/tistory/244CE24556B5642E36"))
-        dataList.add(Feed(3, "instagram", "title", "https://t1.daumcdn.net/cfile/tistory/244CE24556B5642E36"))
+        val tabLayout : TabLayout = findViewById(R.id.tl_main)
 
-        feedRecyclerViewAdapter = FeedRecyclerViewAdapter(this, dataList)
-        rv_feed_container.adapter = feedRecyclerViewAdapter
-        rv_feed_container.layoutManager = LinearLayoutManager(this)
+        tabLayout.addTab(tabLayout!!.newTab().setIcon(R.drawable.ic_feed))
+        tabLayout.addTab(tabLayout!!.newTab().setIcon(R.drawable.ic_album))
+
+        pager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
+
+        tabLayout!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                pager.currentItem = tab.position
+            }
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+
+            }
+            override fun onTabReselected(tab: TabLayout.Tab) {
+
+            }
+        })
 
         btn_hamburger.setOnClickListener {
             if (!ly_drawer.isDrawerOpen(GravityCompat.END)) {
@@ -53,7 +64,7 @@ class MainActivity : AppCompatActivity(){
 //                    .apply(RequestOptions.circleCropTransform())?.into(iv_drawer_profileimg)
 //            } else {
 //                Glide.with(this@MainActivity)
-//                    .load(R.drawable.pofile)
+//                    .load(R.drawable.profile)
 //                    .apply(RequestOptions.circleCropTransform())?.into(iv_drawer_profileimg)
 //            }
         }
@@ -97,8 +108,7 @@ class MainActivity : AppCompatActivity(){
         val spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, spinnerList)
         spinner.adapter = spinnerAdapter
 
-        myNotification()
-
+        //myNotification()
     }
 
     private fun myNotification(){
@@ -130,8 +140,6 @@ class MainActivity : AppCompatActivity(){
             // notificationId is a unique int for each notification that you must define
             notify(1, builder.build())
         }
-
-
     }
 
 }
