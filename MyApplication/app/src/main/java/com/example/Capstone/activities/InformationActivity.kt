@@ -10,8 +10,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.EditText
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.Capstone.R
@@ -100,7 +99,17 @@ class InformationActivity : AppCompatActivity() {
         memoRecyclerViewAdapter = MemoRecyclerViewAdapter(this, memoList)
         rv_memo_container.adapter = memoRecyclerViewAdapter
         rv_memo_container.layoutManager = LinearLayoutManager(this)
+
+        btn_change_menu.setOnClickListener {
+            var menu : PopupMenu = PopupMenu(this, btn_change_menu)
+            menu.menu.add("전체")
+            menu.menu.add("맛집")
+            menu.menu.add("먹거리")
+            menu.show();
+        }
+
     }
+
 
     private fun addMemo(memo : String){
         memoList.add(memo)

@@ -118,7 +118,7 @@ class MainActivity : AppCompatActivity(){
             }
         }
 
-        var spinnerList = arrayOf("맛집", "화장품", "꿀팁")
+        var spinnerList = arrayOf("전체", "맛집", "화장품", "꿀팁")
 
         val spinner : Spinner = findViewById(R.id.spinner_menu)
 
