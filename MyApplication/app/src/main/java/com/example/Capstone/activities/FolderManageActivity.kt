@@ -1,8 +1,10 @@
 package com.example.Capstone.activities
 
+import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.view.Window
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -26,20 +28,18 @@ class FolderManageActivity : AppCompatActivity() {
         }
     }
 
-    private fun showDialog(){
-        val builder = AlertDialog.Builder(this)
-        val dialogView = layoutInflater.inflate(R.layout.dialog_add_folder, null)
-        val btn_dialog_add_folder = dialogView.findViewById<TextView>(R.id.btn_add_folder)
+    private fun showDialog() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.dialog_add_folder)
 
-        builder.setView(dialogView)
-        builder.setCancelable(true)
-        builder.show()
-
-        btn_dialog_add_folder.setOnClickListener {
-            // request post
-            finish()
+        val submit = dialog.findViewById(R.id.btn_add_folder) as TextView
+        submit.setOnClickListener {
+            dialog.dismiss()
             val intent = Intent(this, FolderManageActivity::class.java)
             startActivity(intent)
         }
+        dialog.show()
     }
 }

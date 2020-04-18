@@ -2,11 +2,14 @@ package com.example.Capstone.activities
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +23,7 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_activity_main.*
 import kotlinx.android.synthetic.main.nav_drawer.*
+import org.jetbrains.anko.inputMethodManager
 import org.jetbrains.anko.toast
 
 
@@ -54,7 +58,6 @@ class MainActivity : AppCompatActivity(){
 
             }
         })
-
         btn_hamburger.setOnClickListener {
             if (!ly_drawer.isDrawerOpen(GravityCompat.END)) {
                 ly_drawer.openDrawer(GravityCompat.END)
@@ -123,6 +126,14 @@ class MainActivity : AppCompatActivity(){
         spinner.adapter = spinnerAdapter
 
         //myNotification()
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (currentFocus != null) {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
+        }
+        return super.dispatchTouchEvent(ev)
     }
 
     private fun myNotification(){

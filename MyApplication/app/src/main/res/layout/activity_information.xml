@@ -25,7 +25,6 @@
             android:layout_height="wrap_content"/>
 
     <WebView
-        android:visibility="gone"
         android:layout_marginTop="15dp"
         android:scaleType="centerCrop"
         android:background="@color/grayB"
@@ -34,6 +33,7 @@
         android:id="@+id/web_url"/>
 
     <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+        android:visibility="gone"
         android:id="@+id/youtube_player_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:orientation="vertical"
@@ -98,26 +98,25 @@
                     android:text="#맛집"
                     android:textStyle="bold" />
             </LinearLayout>
-
             <TextView
+                android:layout_gravity="right"
+                android:id="@+id/btn_add_memo"
                 android:includeFontPadding = "false"
-                android:text="본문입니다본문입니다본문입니다본문입니다본문입니다본문입니다본문입니다
-본문입니다본문입니다본문입니다본문입니다본문입니다본문입니다본문입니다본문입니다본문입니다본문입니다
-본문입니다본문입니다본문입니다본문입니다본문입니다본문입니다본문입니다본문입니다본문입니다본문입니다
-본문입니다본문입니다본문입니다본문입니다본문입니다본문입니다본문입니다본문입니다본문입니다본문입니다"
-                android:textSize="17sp"
-                android:textColor="@color/darkGrayD"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:lineSpacingExtra="10dp"
-                android:id="@+id/info_content"/>
+                android:textSize="10sp"
+                android:textColor="@color/darkGrayC"
+                android:text="+ 메모 추가"
+                />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_memo_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </androidx.recyclerview.widget.RecyclerView>
 
         </LinearLayout>
 
-
     </ScrollView>
-
-
-
 
 </LinearLayout>

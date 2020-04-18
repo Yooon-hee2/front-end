@@ -111,7 +111,7 @@
 
 <!--        <ImageView-->
 <!--            android:padding="3sp"-->
-<!--            android:background="@drawable/shape_border_black"-->
+<!--            android:background="@drawable/shape_border_gray"-->
 <!--            android:layout_marginRight="55dp"-->
 <!--            android:layout_centerVertical="true"-->
 <!--            android:layout_alignParentRight="true"-->
