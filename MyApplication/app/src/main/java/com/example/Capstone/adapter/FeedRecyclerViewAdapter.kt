@@ -5,9 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.URLUtil
-import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.Capstone.R
@@ -15,32 +13,36 @@ import com.example.Capstone.activities.InformationActivity
 import com.example.Capstone.model.Feed
 import org.jetbrains.anko.startActivity
 
-class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>) :
+class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
 
-    RecyclerView.Adapter<FeedRecyclerViewAdapter.Holder>() {
+    RecyclerView.Adapter<FeedRecyclerViewAdapter.Holder>(), Filterable {
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, p1: Int): Holder {
-        val view: View = LayoutInflater.from(ctx).inflate(R.layout.rv_item_feed, viewGroup, false)
-        return Holder(view)
+    private var filteredList: ArrayList<Feed>? = null
+
+    init {
+        this.filteredList = list
     }
 
-    override fun getItemCount(): Int = list.size
+    override fun onCreateViewHolder(viewGroup: ViewGroup, p1: Int): Holder {
+            val view: View = LayoutInflater.from(ctx).inflate(R.layout.rv_item_feed, viewGroup, false)
+            return Holder(view)
+        }
+
+    override fun getItemCount(): Int = filteredList!!.size
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        holder.title.text = list[position].title
+        holder.title.text = filteredList!![position].title
 
-        if (list[position].src == "instagram"){
+        if (filteredList!![position].src == "instagram"){
             holder.src.setImageResource(R.drawable.ic_instagram)
         }
         else{
             holder.src.setImageResource(R.drawable.ic_facebook)
         }
 
-
-        if (URLUtil.isValidUrl(list[position].thumbnail)) {
-            Glide.with(ctx).load(list[position].thumbnail).into(holder.thumbnail)
+        if (URLUtil.isValidUrl(filteredList!![position].thumbnail)) {
+            Glide.with(ctx).load(filteredList!![position].thumbnail).into(holder.thumbnail)
         }
-
 
         holder.container.setOnClickListener {
             ctx.startActivity<InformationActivity>()
@@ -53,5 +55,33 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>) :
         var src = itemView.findViewById(R.id.rv_item_feed_src) as ImageView
         var thumbnail = itemView.findViewById(R.id.rv_item_feed_thumbnail) as ImageView
         var container = itemView.findViewById(R.id.rv_item_feed_container) as RelativeLayout
+    }
+
+    override fun getFilter(): Filter {
+        return object : Filter(){
+            override fun performFiltering(charSequence: CharSequence?): FilterResults {
+                val charString = charSequence.toString()
+                if(charString.isEmpty()){
+                    filteredList = list
+                }
+                else{
+                    val filteringList = ArrayList<Feed>()
+                    for(item in list) {
+                        if (item.title.toLowerCase().contains(charString.toLowerCase())) {
+                            filteringList.add(item)
+                        }
+                    }
+                    filteredList = filteringList
+                }
+                val filterResults = FilterResults()
+                filterResults.values = filteredList
+                return filterResults
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults) {
+                filteredList = results.values as ArrayList<Feed>
+                notifyDataSetChanged()
+            }
+        }
     }
 }

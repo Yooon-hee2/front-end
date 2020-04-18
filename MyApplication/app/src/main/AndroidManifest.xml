@@ -31,8 +31,7 @@
         <activity android:name=".activities.SignUpEmailActivity" />
         <activity android:name=".activities.LoginActivity" />
         <activity
-            android:name=".activities.MainActivity"
-            android:windowSoftInputMode="adjustResize">
+            android:name=".activities.MainActivity">
         </activity>
     </application>
 

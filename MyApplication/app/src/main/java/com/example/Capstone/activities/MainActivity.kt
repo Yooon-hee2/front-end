@@ -20,6 +20,7 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_activity_main.*
 import kotlinx.android.synthetic.main.nav_drawer.*
+import org.jetbrains.anko.toast
 
 
 class MainActivity : AppCompatActivity(){
@@ -67,6 +68,19 @@ class MainActivity : AppCompatActivity(){
 //                    .load(R.drawable.profile)
 //                    .apply(RequestOptions.circleCropTransform())?.into(iv_drawer_profileimg)
 //            }
+        }
+
+        switch_noti.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked){
+                switch_noti.setTrackResource(R.drawable.switch_track_on)
+            }
+            else{
+                switch_noti.setTrackResource(R.drawable.switch_track_off)
+            }
+        }
+
+        btn_search.setOnClickListener {
+            pagerAdapter.getEditText(search_item.text)
         }
 
         btn_personal_storage.setOnClickListener {

@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.Capstone.R
 import com.example.Capstone.adapter.FeedRecyclerViewAdapter
@@ -42,5 +43,8 @@ class FeedViewMainFragment : Fragment() {
         rv_feed_container.adapter = feedRecyclerViewAdapter
         rv_feed_container.layoutManager = LinearLayoutManager(context!!)
 
+    }
+    fun changeRecyclerViewData(charSequence: CharSequence){
+        feedRecyclerViewAdapter.filter.filter(charSequence)
     }
 }

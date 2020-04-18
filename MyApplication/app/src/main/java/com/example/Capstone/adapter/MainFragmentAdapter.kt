@@ -1,11 +1,14 @@
 package com.example.Capstone.adapter
 
+import android.util.Log
+import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.FragmentStatePagerAdapter
 import com.example.Capstone.fragments.AlbumViewMainFragment
 import com.example.Capstone.fragments.FeedViewMainFragment
+import org.jetbrains.anko.toast
 
 class MainFragmentAdapter(fm:FragmentManager) : FragmentStatePagerAdapter(fm) {
 
@@ -38,6 +41,11 @@ class MainFragmentAdapter(fm:FragmentManager) : FragmentStatePagerAdapter(fm) {
 
     override fun getCount(): Int {
         return 2
+    }
+
+    fun getEditText(charSequence: CharSequence){
+        getFeedFragment().changeRecyclerViewData(charSequence)
+        Log.d("ooo", charSequence.toString())
     }
 
 
