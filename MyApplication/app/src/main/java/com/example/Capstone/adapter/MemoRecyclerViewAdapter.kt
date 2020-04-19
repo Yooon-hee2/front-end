@@ -23,7 +23,7 @@ class MemoRecyclerViewAdapter(val ctx: Context, var memoList: ArrayList<String>)
         holder.memo_text.text = memoList[position]
 
         holder.memo_text.setOnLongClickListener{
-            showDialog(position)
+            showDeleteDialog(position)
             true
         }
     }
@@ -32,7 +32,7 @@ class MemoRecyclerViewAdapter(val ctx: Context, var memoList: ArrayList<String>)
         var memo_text = itemView.findViewById(R.id.rv_item_memo) as TextView
         //var container = itemView.findViewById(R.id.rv_item_memo_container) as RelativeLayout
     }
-    private fun showDialog(index : Int) {
+    private fun showDeleteDialog(index : Int) {
         val dialog = Dialog(ctx)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(true)

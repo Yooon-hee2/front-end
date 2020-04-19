@@ -111,7 +111,7 @@
                 <TextView
                     android:layout_marginVertical="15dp"
                     android:layout_gravity="center"
-                    android:id="@+id/rv_item_feed_hashtag"
+                    android:id="@+id/rv_item_member1"
                     android:background="@drawable/shape_graybtn_16dp"
                     android:includeFontPadding = "false"
                     android:layout_width="wrap_content"
@@ -125,7 +125,7 @@
                 <TextView
                     android:layout_marginVertical="15dp"
                     android:layout_gravity="center"
-                    android:id="@+id/rv_item_feed_hashtag1"
+                    android:id="@+id/rv_item_member2"
                     android:background="@drawable/shape_graybtn_16dp"
                     android:includeFontPadding = "false"
                     android:layout_width="wrap_content"

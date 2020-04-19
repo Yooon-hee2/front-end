@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:includeFontPadding="false"
         android:letterSpacing="0.01"
-        android:text="메모를 삭제하시겠습니까?"
+        android:text="정말 삭제하시겠습니까?"
         android:textColor="@color/darkGrayD"
         android:textSize="12sp" />
 

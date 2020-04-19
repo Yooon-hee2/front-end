@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    android:id="@+id/dialog_modify_title"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="250dp"
+    android:layout_height="wrap_content"
+    android:backgroundTint="@color/white"
+    android:background="@drawable/radius"
+    android:gravity="center_horizontal"
+    android:paddingHorizontal="20dp"
+    android:paddingVertical="10dp">
+
+    <TextView
+        android:id="@+id/dialog_category"
+        android:layout_gravity="left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:letterSpacing="0.01"
+        android:text="title"
+        android:textColor="@color/darkGrayD"
+        android:textSize="12sp" />
+
+    <EditText
+        android:id="@+id/edt_title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/shape_border_gray"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:gravity="top|left"
+        android:hint="수정하고 싶은 제목을 입력해주세요."
+        android:inputType="textMultiLine|textCapSentences"
+        android:lines="3"
+        android:maxWidth="200dp"
+        android:maxLength="100"
+        android:maxLines="10"
+        android:padding="5dp"
+        android:singleLine="false"
+        android:textColor="@color/black"
+        android:textSize="13dp" />
+
+    <TextView
+        android:id="@+id/btn_submit_title"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/shape_btn_red"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:paddingVertical="10dp"
+        android:text="제목 수정"
+        android:textColor="@color/white"
+        android:textSize="10dp" />
+</LinearLayout>
