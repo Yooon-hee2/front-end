@@ -213,7 +213,7 @@ class InformationActivity : AppCompatActivity() {
         dialog.setContentView(R.layout.dialog_modify_title)
 
         val title = dialog.findViewById(R.id.edt_title) as EditText
-        val submit = dialog.findViewById(R.id.btn_submit_memo) as TextView
+        val submit = dialog.findViewById(R.id.btn_submit_title) as TextView
         submit.setOnClickListener {
             dialog.dismiss()
             if (title.toString().isNotEmpty()){
