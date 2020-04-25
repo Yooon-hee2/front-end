@@ -24,6 +24,7 @@ import androidx.core.view.GravityCompat
 import androidx.viewpager.widget.ViewPager
 import com.example.Capstone.R
 import com.example.Capstone.adapter.MainFragmentAdapter
+import com.example.Capstone.model.Feed
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_activity_main.*
