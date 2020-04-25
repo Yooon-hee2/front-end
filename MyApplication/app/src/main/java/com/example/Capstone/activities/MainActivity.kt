@@ -1,5 +1,7 @@
 package com.example.Capstone.activities
 
+import android.app.ActivityManager
+import android.app.AlertDialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -7,6 +9,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.AdapterView
@@ -27,9 +30,28 @@ class MainActivity : AppCompatActivity(){
 
     lateinit var feedRecyclerViewAdapter: FeedRecyclerViewAdapter
 
+    private val TAG = "MainActivity"
+    lateinit var mIntent: Intent
+
+
+//    private fun handleSendText(intent: Intent) {
+//        intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
+//            // Update UI to reflect text being shared
+//            AlertDialog.Builder(this)
+//                .setTitle("MemMem")
+//                .setMessage(intent.getStringExtra(Intent.EXTRA_TEXT))
+//                .setPositiveButton(android.R.string.ok,null)
+//                .setCancelable(false)
+//                .create()
+//                .show();
+//        }
+//    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
 
         var dataList: ArrayList<Feed> = ArrayList()
 
@@ -134,4 +156,24 @@ class MainActivity : AppCompatActivity(){
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        // App을 종료할 때 서비스(ClipboardService)를 종료
+        stopService(mIntent)
+    }
+
+
+}
+
+
+fun Context.isServiceRunning(serviceClass: Class<*>): Boolean {
+    val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+
+    for (service in activityManager.getRunningServices(Integer.MAX_VALUE)) {
+        if (serviceClass.name == service.service.className) {
+            Log.e("isServiceRunning", "Service is running")
+            return true
+        }
+    }
+    return false
 }
