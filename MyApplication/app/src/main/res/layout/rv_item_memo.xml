@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rv_item_memo_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:textSize="13dp"
+        android:padding="10dp"
+        android:text="메모내용입니다"
+        android:id="@+id/rv_item_memo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></TextView>
+
+</RelativeLayout>

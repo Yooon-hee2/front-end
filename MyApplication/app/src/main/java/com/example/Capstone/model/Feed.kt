@@ -4,6 +4,6 @@ data class Feed (
     var id : Int,
     var src : String,
     var title : String,
-    var thumbnail : String
-//    var hashtag: ArrayList<String>?
+    var thumbnail : String,
+    var hashtag: ArrayList<String>?
 )

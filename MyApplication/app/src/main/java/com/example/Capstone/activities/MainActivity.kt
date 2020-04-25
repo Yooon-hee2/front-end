@@ -7,28 +7,35 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
-import android.widget.AdapterView
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.GravityCompat
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager.widget.ViewPager
 import com.example.Capstone.R
-import com.example.Capstone.adapter.FeedRecyclerViewAdapter
-import com.example.Capstone.model.Feed
+import com.example.Capstone.adapter.MainFragmentAdapter
+import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_activity_main.*
 import kotlinx.android.synthetic.main.nav_drawer.*
+import org.jetbrains.anko.inputMethodManager
+import org.jetbrains.anko.toast
+
 
 class MainActivity : AppCompatActivity(){
 
-    lateinit var feedRecyclerViewAdapter: FeedRecyclerViewAdapter
+    lateinit var pager : ViewPager
+    lateinit var tabLayout: TabLayout
 
     private val TAG = "MainActivity"
     lateinit var mIntent: Intent
@@ -54,17 +61,28 @@ class MainActivity : AppCompatActivity(){
 
 
         var dataList: ArrayList<Feed> = ArrayList()
+        pager = findViewById(R.id.vp_main)
+        val pagerAdapter = MainFragmentAdapter(supportFragmentManager)
+        pager.adapter = pagerAdapter
 
-        dataList.add(Feed(0, "instagram", "스테이크+소세지조합최고", "https://t1.daumcdn.net/cfile/tistory/244CE24556B5642E36"))
-        dataList.add(Feed(1, "facebook", "중앙대국밥하면순대나라", "http://blogfiles.naver.net/MjAxNjEwMzBfMTU5/MDAxNDc3ODEzNTAyNzc5.LcGMoEbTvDQ6VSw2VPg8DmWCKFLNgMjVwDsKT9287iUg.vjmV-" +
-                "W8lxd4uzMBY3A0ZwRU3NiSHxZ-C0__kprqbZa8g.JPEG.moonfrost/DSC04123.JPG"))
-        dataList.add(Feed(2, "instagram", "중앙대마라탕은칠기", "https://t1.daumcdn.net/cfile/tistory/244CE24556B5642E36"))
-        dataList.add(Feed(3, "instagram", "title", "https://t1.daumcdn.net/cfile/tistory/244CE24556B5642E36"))
+        val tabLayout : TabLayout = findViewById(R.id.tl_main)
 
-        feedRecyclerViewAdapter = FeedRecyclerViewAdapter(this, dataList)
-        rv_feed_container.adapter = feedRecyclerViewAdapter
-        rv_feed_container.layoutManager = LinearLayoutManager(this)
+        tabLayout.addTab(tabLayout!!.newTab().setIcon(R.drawable.ic_feed))
+        tabLayout.addTab(tabLayout!!.newTab().setIcon(R.drawable.ic_album))
 
+        pager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
+
+        tabLayout!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                pager.currentItem = tab.position
+            }
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+
+            }
+            override fun onTabReselected(tab: TabLayout.Tab) {
+
+            }
+        })
         btn_hamburger.setOnClickListener {
             if (!ly_drawer.isDrawerOpen(GravityCompat.END)) {
                 ly_drawer.openDrawer(GravityCompat.END)
@@ -75,9 +93,22 @@ class MainActivity : AppCompatActivity(){
 //                    .apply(RequestOptions.circleCropTransform())?.into(iv_drawer_profileimg)
 //            } else {
 //                Glide.with(this@MainActivity)
-//                    .load(R.drawable.pofile)
+//                    .load(R.drawable.profile)
 //                    .apply(RequestOptions.circleCropTransform())?.into(iv_drawer_profileimg)
 //            }
+        }
+
+        switch_noti.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked){
+                switch_noti.setTrackResource(R.drawable.switch_track_on)
+            }
+            else{
+                switch_noti.setTrackResource(R.drawable.switch_track_off)
+            }
+        }
+
+        btn_search.setOnClickListener {
+            pagerAdapter.getEditText(search_item.text)
         }
 
         btn_personal_storage.setOnClickListener {
@@ -112,15 +143,22 @@ class MainActivity : AppCompatActivity(){
             }
         }
 
-        var spinnerList = arrayOf("맛집", "화장품", "꿀팁")
+        var spinnerList = arrayOf("전체", "맛집", "화장품", "꿀팁")
 
         val spinner : Spinner = findViewById(R.id.spinner_menu)
 
         val spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, spinnerList)
         spinner.adapter = spinnerAdapter
 
-        myNotification()
+        //myNotification()
+    }
 
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (currentFocus != null) {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
+        }
+        return super.dispatchTouchEvent(ev)
     }
 
     private fun myNotification(){
@@ -152,8 +190,6 @@ class MainActivity : AppCompatActivity(){
             // notificationId is a unique int for each notification that you must define
             notify(1, builder.build())
         }
-
-
     }
 
     override fun onDestroy() {

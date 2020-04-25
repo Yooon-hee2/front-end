@@ -126,7 +126,5 @@
             android:text="폴더 추가"
             />
 
-        <!-- dialog로 폴더 추가 -->
-
     </RelativeLayout>
 </LinearLayout>
