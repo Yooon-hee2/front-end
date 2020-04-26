@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity(){
 
     companion object{
         val recommendedHashtagList = arrayListOf("#강남", "#이태원", "#플레이리스트", "#맛집", "#동물의숲")
+        lateinit var edt_search : EditText
     }
 
 
@@ -59,7 +60,7 @@ class MainActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
+        edt_search = findViewById(R.id.search_item)
 
         var dataList: ArrayList<Feed> = ArrayList()
         pager = findViewById(R.id.vp_main)
@@ -75,12 +76,12 @@ class MainActivity : AppCompatActivity(){
         listView.adapter = searchListCustomAdapter
 
 
-        tabLayout.addTab(tabLayout!!.newTab().setIcon(R.drawable.ic_feed))
-        tabLayout.addTab(tabLayout!!.newTab().setIcon(R.drawable.ic_album))
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_feed))
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_album))
 
         pager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
 
-        tabLayout!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 pager.currentItem = tab.position
             }
@@ -246,7 +247,6 @@ class MainActivity : AppCompatActivity(){
         // App을 종료할 때 서비스(ClipboardService)를 종료
         stopService(mIntent)
     }
-
 
 }
 

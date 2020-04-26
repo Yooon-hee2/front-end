@@ -1,13 +1,11 @@
 package com.example.Capstone.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.URLUtil
 import android.widget.*
-import androidx.core.view.marginStart
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.Capstone.R
@@ -88,7 +86,7 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
                     filteredList = list
                 }
                 else{
-                    if(charString.substring(0,1) == "#"){
+                    if(charString.substring(0,1) == "#"){ //if user search hashtag
                         val filteringList = ArrayList<Feed>()
                         for(item in list) {
                             if (item.hashtag!!.isNotEmpty()){
@@ -99,10 +97,14 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
                                 }
                             }
                         }
+                        val hashSet = HashSet<Feed>() //remove duplication
+                        filteringList.let { hashSet.addAll(it) }
+                        filteringList.clear()
+                        filteringList.addAll(hashSet)
                         filteredList = filteringList
                     }
                     else{
-                        val filteringList = ArrayList<Feed>()
+                        val filteringList = ArrayList<Feed>() //if user search title
                         for(item in list) {
                             if (item.title.toLowerCase().contains(charString.toLowerCase())) {
                                 filteringList.add(item)

@@ -78,7 +78,7 @@ class AddStorageActivity : AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE){
             //img_profile.setImageURI(data?.data)
             Glide.with(this).load(data?.data)
-                .apply(RequestOptions.circleCropTransform())?.into(img_profile)
+                .apply(RequestOptions.circleCropTransform()).into(img_profile)
         }
     }
 

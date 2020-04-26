@@ -31,7 +31,7 @@
 
             <TextView
                 android:includeFontPadding = "false"
-                android:text="이메일 주소를"
+                android:text="닉네임을"
                 android:textSize="24sp"
                 android:layout_marginLeft="29dp"
                 android:paddingTop="48dp"
@@ -63,7 +63,7 @@
 
             <TextView
                 android:includeFontPadding = "false"
-                android:text="e-mail"
+                android:text="name"
                 android:textSize="12sp"
                 android:textColor="@color/darkGrayD"
                 android:letterSpacing="0.01"
@@ -77,9 +77,9 @@
                 android:maxLines="1"
                 android:maxLength="15"
                 android:inputType="textPassword"
-                android:hint="ex) abc123"
+                android:hint="ex) 윤아리"
                 android:textSize="19sp"
-                android:id="@+id/et_signup_email"
+                android:id="@+id/et_signup_nickname"
                 android:textColor="@color/darkGrayD"
                 android:background="@drawable/shape_bottom_line_signup"
                 android:layout_width="300dp"
@@ -99,16 +99,11 @@
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
                     android:textColor="@color/grayA"
-                    android:text="유효성 확인"/>
+                    android:text="중복 확인"/>
             </RelativeLayout>
 
 
         </LinearLayout>
-
-
-
-
-
 
         <TextView
             android:includeFontPadding = "false"
@@ -119,13 +114,10 @@
             android:paddingVertical="20dp"
             android:text="다음"
             android:gravity="center"
-            android:id="@+id/btn_signup_email"
+            android:id="@+id/btn_signup_finish"
             android:textColor="@color/white"
             android:letterSpacing="0.01"
             android:layout_width="316dp"
             android:layout_height="wrap_content"/>
-
-
-
     </LinearLayout>
 </RelativeLayout>

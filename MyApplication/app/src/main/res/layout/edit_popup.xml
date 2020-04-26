@@ -10,32 +10,18 @@
     android:paddingHorizontal="20dp"
     android:paddingVertical="10dp">
 
+    <TextView
+        android:layout_gravity="left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:letterSpacing="0.01"
+        android:text="title"
+        android:textColor="@color/darkGrayD"
+        android:textSize="10sp" />
 
     <EditText
         android:id="@+id/btn_edit_title"
-        android:layout_width="match_parent"
-        android:layout_height="25dp"
-        android:layout_alignParentTop="true"
-        android:layout_gravity="center"
-        android:layout_marginTop="17dp"
-        android:background="@drawable/shape_border_gray"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:gravity="top|left"
-        android:hint="제목"
-        android:inputType="textMultiLine|textCapSentences"
-        android:lines="10"
-        android:maxWidth="200dp"
-        android:maxLength="200"
-        android:maxLines="10"
-        android:padding="5dp"
-        android:singleLine="false"
-        android:textColor="@color/black"
-        android:textSize="13dp" />
-
-
-    <EditText
-        android:id="@+id/btn_edit_hashtag"
         android:layout_width="match_parent"
         android:layout_height="25dp"
         android:layout_gravity="center"
@@ -43,17 +29,72 @@
         android:background="@drawable/shape_border_gray"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:gravity="top|left"
-        android:hint="해시태그 추가"
+        android:hint="제목을 입력해주세요"
         android:inputType="textMultiLine|textCapSentences"
-        android:lines="10"
         android:maxWidth="200dp"
         android:maxLength="200"
-        android:maxLines="10"
         android:padding="5dp"
         android:singleLine="false"
         android:textColor="@color/black"
-        android:textSize="13dp" />
+        android:textSize="10dp" />
+
+    <TextView
+        android:layout_marginTop="5dp"
+        android:layout_gravity="left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="hashtag"
+        android:textColor="@color/darkGrayD"
+        android:textSize="10sp" />
+
+    <LinearLayout
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:layout_width="150dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:background="@drawable/shape_border_gray"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:hint="추가할 해시태그를 입력해주세요"
+            android:inputType="textMultiLine|textCapSentences"
+            android:padding="5dp"
+            android:textColor="@color/black"
+            android:textSize="10dp" />
+
+        <ImageView
+            android:layout_marginLeft="5dp"
+            android:layout_gravity="center"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:layout_centerVertical="true"
+            android:id="@+id/btn_trashbin"
+            android:src="@drawable/ic_plus"/>
+
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_marginTop="5dp"
+        android:layout_gravity="left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="folder"
+        android:textColor="@color/darkGrayD"
+        android:textSize="10sp" />
+
+    <Spinner
+        android:layout_gravity="left"
+        android:id="@+id/spinner_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    </Spinner>
+
 
     <TextView
         android:id="@+id/btn_submit_edit"
