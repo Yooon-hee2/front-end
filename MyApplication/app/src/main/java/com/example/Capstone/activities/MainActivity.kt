@@ -130,8 +130,10 @@ class MainActivity : AppCompatActivity(){
 
             override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
                 if (charSequence!!.isNotBlank()) {
-                    searchListCustomAdapter.filter(charSequence.substring(1, charSequence.length))
                     pagerAdapter.getEditText(search_item.text)
+                    if(charSequence.toString().substring(0,1) == "#") {
+                        searchListCustomAdapter.filter(charSequence.substring(1, charSequence.length))
+                    }
                 }
             }
 

@@ -92,7 +92,7 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
                         val filteringList = ArrayList<Feed>()
                         for(item in list) {
                             if (item.hashtag!!.isNotEmpty()){
-                                for (ht in item.hashtag!!){
+                                for (ht in item.hashtag!!){ //해시태그끼리 동일한 문자 들어갔을 때 중복되게 뜨는거 해결해야함
                                     if (ht.toLowerCase().contains(charString.substring(1, charString.length).toLowerCase())) {
                                         filteringList.add(item)
                                     }
