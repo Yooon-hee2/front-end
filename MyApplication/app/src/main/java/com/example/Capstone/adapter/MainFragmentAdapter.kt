@@ -45,7 +45,6 @@ class MainFragmentAdapter(fm:FragmentManager) : FragmentStatePagerAdapter(fm) {
 
     fun getEditText(charSequence: CharSequence){
         getFeedFragment().changeRecyclerViewData(charSequence)
-        Log.d("ooo", charSequence.toString())
     }
 
 

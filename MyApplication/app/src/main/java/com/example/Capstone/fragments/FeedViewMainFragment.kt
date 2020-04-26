@@ -46,8 +46,8 @@ class FeedViewMainFragment : Fragment() {
         feedRecyclerViewAdapter = FeedRecyclerViewAdapter(context!!, dataList)
         rv_feed_container.adapter = feedRecyclerViewAdapter
         rv_feed_container.layoutManager = LinearLayoutManager(context!!)
-
     }
+
     fun changeRecyclerViewData(charSequence: CharSequence){
         feedRecyclerViewAdapter.filter.filter(charSequence)
     }

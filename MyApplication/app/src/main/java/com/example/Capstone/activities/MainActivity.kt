@@ -6,13 +6,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -20,18 +21,21 @@ import androidx.core.view.GravityCompat
 import androidx.viewpager.widget.ViewPager
 import com.example.Capstone.R
 import com.example.Capstone.adapter.MainFragmentAdapter
+import com.example.Capstone.adapter.SearchListViewAdapter
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_activity_main.*
 import kotlinx.android.synthetic.main.nav_drawer.*
-import org.jetbrains.anko.inputMethodManager
-import org.jetbrains.anko.toast
 
 
 class MainActivity : AppCompatActivity(){
 
     lateinit var pager : ViewPager
-    lateinit var tabLayout: TabLayout
+
+    companion object{
+        val recommendedHashtagList = arrayListOf("#강남", "#이태원", "#플레이리스트", "#맛집", "#동물의숲")
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +46,13 @@ class MainActivity : AppCompatActivity(){
         pager.adapter = pagerAdapter
 
         val tabLayout : TabLayout = findViewById(R.id.tl_main)
+        val listView = findViewById<ListView>(R.id.list_search_item)
+
+
+        val searchListCustomAdapter = SearchListViewAdapter(this)
+
+        listView.adapter = searchListCustomAdapter
+
 
         tabLayout.addTab(tabLayout!!.newTab().setIcon(R.drawable.ic_feed))
         tabLayout.addTab(tabLayout!!.newTab().setIcon(R.drawable.ic_album))
@@ -85,7 +96,46 @@ class MainActivity : AppCompatActivity(){
 
         btn_search.setOnClickListener {
             pagerAdapter.getEditText(search_item.text)
+            list_search_item.visibility = View.GONE
+            tab_main.visibility = View.VISIBLE
         }
+
+        btn_erase_all.setOnClickListener {
+            search_item.text.clear()
+            pagerAdapter.getEditText(search_item.text)
+        }
+
+        search_item.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                if (search_item.text.toString().isNotEmpty()){
+                    btn_erase_all.visibility = View.VISIBLE
+                    if(search_item.text.toString().substring(0,1) == "#") {
+                        list_search_item.visibility = View.VISIBLE
+                        tab_main.visibility = View.GONE
+                        search_item.setTextColor(resources.getColor(R.color.red))
+                    }
+                    else{
+                        search_item.setTextColor(resources.getColor(R.color.black))
+                    }
+                }
+                else{
+                    tab_main.visibility = View.VISIBLE
+                    list_search_item.visibility = View.GONE
+                    btn_erase_all.visibility = View.GONE
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
+                if (charSequence!!.isNotBlank()) {
+                    searchListCustomAdapter.filter(charSequence.substring(1, charSequence.length))
+                    pagerAdapter.getEditText(search_item.text)
+                }
+            }
+
+        })
 
         btn_personal_storage.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)

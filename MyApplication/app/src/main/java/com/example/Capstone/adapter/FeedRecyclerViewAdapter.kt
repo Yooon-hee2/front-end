@@ -49,7 +49,12 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
         holder.container.setOnClickListener {
             ctx.startActivity<InformationActivity>()
         }
+
         val hashtagList : ArrayList<String>? = filteredList!![position].hashtag
+
+        for (tag in holder.hashtag){
+            tag.visibility = View.GONE
+        }
 
         var hashtagSize = 0
         if (hashtagList != null) {
@@ -75,7 +80,7 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
         var hashtag = arrayListOf(hashtag1, hashtag2, hashtag3, hashtag4, hashtag5)
     }
 
-    override fun getFilter(): Filter {
+        override fun getFilter(): Filter {
         return object : Filter(){
             override fun performFiltering(charSequence: CharSequence?): FilterResults {
                 val charString = charSequence.toString()
@@ -83,13 +88,28 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
                     filteredList = list
                 }
                 else{
-                    val filteringList = ArrayList<Feed>()
-                    for(item in list) {
-                        if (item.title.toLowerCase().contains(charString.toLowerCase())) {
-                            filteringList.add(item)
+                    if(charString.substring(0,1) == "#"){
+                        val filteringList = ArrayList<Feed>()
+                        for(item in list) {
+                            if (item.hashtag!!.isNotEmpty()){
+                                for (ht in item.hashtag!!){
+                                    if (ht.toLowerCase().contains(charString.substring(1, charString.length).toLowerCase())) {
+                                        filteringList.add(item)
+                                    }
+                                }
+                            }
                         }
+                        filteredList = filteringList
                     }
-                    filteredList = filteringList
+                    else{
+                        val filteringList = ArrayList<Feed>()
+                        for(item in list) {
+                            if (item.title.toLowerCase().contains(charString.toLowerCase())) {
+                                filteringList.add(item)
+                            }
+                        }
+                        filteredList = filteringList
+                    }
                 }
                 val filterResults = FilterResults()
                 filterResults.values = filteredList

@@ -5,21 +5,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/white"
     tools:context=".activities.MainActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="55dp">
         <EditText
+            android:background="@android:color/transparent"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:inputType="textEmailAddress"
             android:paddingLeft="15dp"
-            android:background="@drawable/shape_bottom_line_gray"
-            android:layout_width="match_parent"
+            android:layout_width="270dp"
             android:layout_height="match_parent"
             android:id="@+id/search_item"
             android:hint="중앙대 맛집"/>
+        <ImageView
+            android:visibility="gone"
+            android:layout_marginRight="85dp"
+            android:layout_centerVertical="true"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentRight="true"
+            android:id="@+id/btn_erase_all"
+            android:src="@drawable/ic_cancel_large"/>
 
         <ImageView
             android:layout_marginRight="55dp"
@@ -39,108 +49,52 @@
             android:src="@drawable/ic_hamburger"/>
     </RelativeLayout>
 
-<!--    <RelativeLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="55dp">-->
-
-<!--        <LinearLayout-->
-<!--            android:layout_centerInParent="true"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="match_parent">-->
-
-<!--            <TextView-->
-<!--                android:textColor="@color/grayA"-->
-<!--                android:paddingHorizontal="5dp"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_gravity="center_vertical"-->
-<!--                android:text="feed"></TextView>-->
-
-<!--            <Switch-->
-<!--                android:checked="false"-->
-<!--                android:layout_marginHorizontal="10dp"-->
-<!--                android:id="@+id/switch_album_or_feed"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_gravity="center_vertical"-->
-<!--                android:track="@drawable/switch_track_on"-->
-<!--                android:thumb="@drawable/switch_thumb">-->
-<!--            </Switch>-->
-
-<!--            <TextView-->
-<!--                android:paddingHorizontal="5dp"-->
-<!--                android:textColor="@color/grayA"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_gravity="center_vertical"-->
-<!--                android:text="album"></TextView>-->
-
-<!--        </LinearLayout>-->
-
-<!--        <ImageView-->
-<!--            android:layout_marginRight="20dp"-->
-<!--            android:layout_centerVertical="true"-->
-<!--            android:layout_alignParentRight="true"-->
-<!--            android:layout_width="30dp"-->
-<!--            android:layout_height="25dp"-->
-<!--            android:src="@drawable/ic_down"/>-->
-<!--    </RelativeLayout>-->
-
-    <RelativeLayout
-        android:id="@+id/tab_main"
-        android:layout_width="match_parent"
-        android:layout_height="55dp">
-
-        <Spinner
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:id="@+id/spinner_menu"
-            android:layout_width="wrap_content"
+    <ListView
+            android:paddingLeft="10dp"
+            android:visibility="gone"
+            android:id="@+id/list_search_item"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        </Spinner>
+    </ListView>
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tl_main"
-            android:layout_width="wrap_content"
+    <LinearLayout
+            android:id="@+id/main_layout_with_rv"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            app:tabIndicatorColor="@color/transparent">
+            android:orientation="vertical">
+            <RelativeLayout
+                android:id="@+id/tab_main"
+                android:layout_width="match_parent"
+                android:layout_height="55dp">
 
-        </com.google.android.material.tabs.TabLayout>
+                <Spinner
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:id="@+id/spinner_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                </Spinner>
 
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tl_main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    app:tabIndicatorColor="@color/transparent">
+                </com.google.android.material.tabs.TabLayout>
 
-<!--        <ImageView-->
-<!--            android:padding="3sp"-->
-<!--            android:background="@drawable/shape_border_gray"-->
-<!--            android:layout_marginRight="55dp"-->
-<!--            android:layout_centerVertical="true"-->
-<!--            android:layout_alignParentRight="true"-->
-<!--            android:layout_width="20dp"-->
-<!--            android:layout_height="20dp"-->
-<!--            android:src="@drawable/ic_feed"/>-->
-<!--        <ImageView-->
-<!--            android:padding="3sp"-->
-<!--            android:layout_marginRight="20dp"-->
-<!--            android:layout_centerVertical="true"-->
-<!--            android:layout_alignParentRight="true"-->
-<!--            android:layout_width="20dp"-->
-<!--            android:layout_height="20dp"-->
-<!--            android:src="@drawable/ic_album"/>-->
-    </RelativeLayout>
+            </RelativeLayout>
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/vp_main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/vp_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignEnd="@+id/tab_main"
+                android:focusable="true"
+                android:focusableInTouchMode="true">
 
-    </androidx.viewpager.widget.ViewPager>
+            </androidx.viewpager.widget.ViewPager>
 
-
-
-
-<!--    <androidx.recyclerview.widget.RecyclerView-->
-<!--        android:id="@+id/rv_feed_container"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent" />-->
+        </LinearLayout>
 
 </LinearLayout>
