@@ -1,5 +1,6 @@
 package com.example.Capstone.activities
 
+import android.app.ActivityManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -8,10 +9,9 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +22,7 @@ import androidx.viewpager.widget.ViewPager
 import com.example.Capstone.R
 import com.example.Capstone.adapter.MainFragmentAdapter
 import com.example.Capstone.adapter.SearchListViewAdapter
+import com.example.Capstone.model.Feed
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_activity_main.*
@@ -37,10 +38,30 @@ class MainActivity : AppCompatActivity(){
     }
 
 
+    private val TAG = "MainActivity"
+    lateinit var mIntent: Intent
+
+
+//    private fun handleSendText(intent: Intent) {
+//        intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
+//            // Update UI to reflect text being shared
+//            AlertDialog.Builder(this)
+//                .setTitle("MemMem")
+//                .setMessage(intent.getStringExtra(Intent.EXTRA_TEXT))
+//                .setPositiveButton(android.R.string.ok,null)
+//                .setCancelable(false)
+//                .create()
+//                .show();
+//        }
+//    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
+
+        var dataList: ArrayList<Feed> = ArrayList()
         pager = findViewById(R.id.vp_main)
         val pagerAdapter = MainFragmentAdapter(supportFragmentManager)
         pager.adapter = pagerAdapter
@@ -220,4 +241,24 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        // App을 종료할 때 서비스(ClipboardService)를 종료
+        stopService(mIntent)
+    }
+
+
+}
+
+
+fun Context.isServiceRunning(serviceClass: Class<*>): Boolean {
+    val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+
+    for (service in activityManager.getRunningServices(Integer.MAX_VALUE)) {
+        if (serviceClass.name == service.service.className) {
+            Log.e("isServiceRunning", "Service is running")
+            return true
+        }
+    }
+    return false
 }
