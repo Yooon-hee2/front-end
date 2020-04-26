@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.DisplayMetrics
 import android.view.*
 import android.widget.Button
@@ -125,15 +126,17 @@ class ShowMsgActivity : AppCompatActivity() {
 
         val saved : TextView = dialog.findViewById(R.id.btn_save)
         saved.setOnClickListener{
+            showSavedPopup()
             dialog.cancel()
-            toast("저장됨!")
-            finish()
+//            toast("저장됨!")
+//            finish()
         }
 
         val edit : TextView = dialog.findViewById(R.id.btn_edit)
         edit.setOnClickListener {
             showModifyingPopup()
-            finish()
+            dialog.cancel()
+//            finish()
         }
     }
 
@@ -145,10 +148,37 @@ class ShowMsgActivity : AppCompatActivity() {
         dialog.setContentView(R.layout.edit_popup)
 
         dialog.show()
-
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         val edit_n_save : TextView = dialog.findViewById(R.id.btn_submit_edit)
         edit_n_save.setOnClickListener {
             dialog.dismiss()
+            finish()
+        }
+    }
+
+    private fun showSavedPopup(){
+
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.saved_popup)
+
+        dialog.show()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        Handler().postDelayed(object :Runnable {
+            override fun run() {
+                dialog.dismiss()
+                finish()
+            }
+        }, 3000)
+
+        val move_to_main : TextView = dialog.findViewById(R.id.btn_move_main)
+        move_to_main.setOnClickListener {
+            val intentMain = Intent(this, MainActivity::class.java)
+            intentMain.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            intentMain.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            startActivity(intentMain)
             finish()
         }
     }
