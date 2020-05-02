@@ -1,4 +1,4 @@
-package com.example.Capstone.network.get
+package com.example.Capstone.network.post
 
 
 data class PostSignUpResponse (

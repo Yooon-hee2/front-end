@@ -23,10 +23,16 @@ import com.example.Capstone.R
 import com.example.Capstone.adapter.MainFragmentAdapter
 import com.example.Capstone.adapter.SearchListViewAdapter
 import com.example.Capstone.model.Feed
+import com.example.Capstone.network.ApplicationController
+import com.example.Capstone.network.NetworkService
+import com.example.Capstone.network.get.GetAllScrapListResponse
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_activity_main.*
 import kotlinx.android.synthetic.main.nav_drawer.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class MainActivity : AppCompatActivity(){
@@ -37,25 +43,6 @@ class MainActivity : AppCompatActivity(){
         val recommendedHashtagList = arrayListOf("#강남", "#이태원", "#플레이리스트", "#맛집", "#동물의숲")
         lateinit var edt_search : EditText
     }
-
-
-    private val TAG = "MainActivity"
-    lateinit var mIntent: Intent
-
-
-//    private fun handleSendText(intent: Intent) {
-//        intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
-//            // Update UI to reflect text being shared
-//            AlertDialog.Builder(this)
-//                .setTitle("MemMem")
-//                .setMessage(intent.getStringExtra(Intent.EXTRA_TEXT))
-//                .setPositiveButton(android.R.string.ok,null)
-//                .setCancelable(false)
-//                .create()
-//                .show();
-//        }
-//    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -96,15 +83,6 @@ class MainActivity : AppCompatActivity(){
             if (!ly_drawer.isDrawerOpen(GravityCompat.END)) {
                 ly_drawer.openDrawer(GravityCompat.END)
             }
-//            if ((SharedPreferenceController.getUserImg(this))!!.isNotEmpty()) {
-//                Glide.with(this@MainActivity)
-//                    .load(SharedPreferenceController.getUserImg(this))
-//                    .apply(RequestOptions.circleCropTransform())?.into(iv_drawer_profileimg)
-//            } else {
-//                Glide.with(this@MainActivity)
-//                    .load(R.drawable.profile)
-//                    .apply(RequestOptions.circleCropTransform())?.into(iv_drawer_profileimg)
-//            }
         }
 
         switch_noti.setOnCheckedChangeListener { _, isChecked ->
@@ -151,8 +129,8 @@ class MainActivity : AppCompatActivity(){
             }
 
             override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
+                pagerAdapter.getEditText(search_item.text)
                 if (charSequence!!.isNotBlank()) {
-                    pagerAdapter.getEditText(search_item.text)
                     if(charSequence.toString().substring(0,1) == "#") {
                         searchListCustomAdapter.filter(charSequence.substring(1, charSequence.length))
                     }
@@ -240,12 +218,6 @@ class MainActivity : AppCompatActivity(){
             // notificationId is a unique int for each notification that you must define
             notify(1, builder.build())
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        // App을 종료할 때 서비스(ClipboardService)를 종료
-        stopService(mIntent)
     }
 
 }

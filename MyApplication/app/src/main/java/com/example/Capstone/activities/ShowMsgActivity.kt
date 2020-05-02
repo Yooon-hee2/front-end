@@ -1,23 +1,29 @@
 package com.example.Capstone.activities
 
-import android.app.AlertDialog
 import android.app.Dialog
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.*
-import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import com.example.Capstone.R
-import kotlinx.android.synthetic.main.alert_popup.*
-import org.jetbrains.anko.alert
+import com.example.Capstone.network.ApplicationController
+import com.example.Capstone.network.NetworkService
+import com.example.Capstone.network.post.PostScrapResponse
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import org.jetbrains.anko.toast
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class ShowMsgActivity : AppCompatActivity() {
@@ -25,10 +31,23 @@ class ShowMsgActivity : AppCompatActivity() {
     private var displayWidth : Int = 0
     private var displayHeight : Int = 0
 
+    private lateinit var hashtag1: TextView
+    private lateinit var hashtag2: TextView
+    private lateinit var hashtag3: TextView
+    private lateinit var hashtag4: TextView
+    private lateinit var hashtag5: TextView
+    private lateinit var hashtagTextList: ArrayList<TextView>
+
+    private lateinit var sharedUrl : String
+
+    private val networkService: NetworkService by lazy {
+        ApplicationController.instance.networkService
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        var intent: Intent = getIntent()
+        var intent: Intent = intent
 
         var action = intent.action
         var type = intent.type
@@ -37,22 +56,13 @@ class ShowMsgActivity : AppCompatActivity() {
         displayWidth = disp.widthPixels
         displayHeight = disp.heightPixels
 
-        if (Intent.ACTION_SEND.equals(action) && type != null) {
-
-            if ("text/plain".equals(type)) {
-//                var text: String = intent.getStringExtra(Intent.EXTRA_TEXT)
-////                toast(text)
-//                AlertDialog.Builder(this)
-//                            .setTitle("저장됨!")
-//                            .setMessage(text)
-//                            .setPositiveButton(android.R.string.ok,null)
-//                            .setMessage("저장됨!")
-//                            .setCancelable(true)
-//                            .create()
-//                            .show()
+        if (Intent.ACTION_SEND == action && type != null) {
+            if ("text/plain" == type) {
+                sharedUrl = intent.getStringExtra(Intent.EXTRA_TEXT)
                 showSettingPopup()
             }
         }
+
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -65,9 +75,9 @@ class ShowMsgActivity : AppCompatActivity() {
             if(x < 0 || y < 0) {
                 return false
             }
-            var ARGB : Int = bitmapScreen.getPixel(x.toInt(), y.toInt())
+            var color : Int = bitmapScreen.getPixel(x.toInt(), y.toInt())
 
-            if(Color.alpha(ARGB) == 0) {
+            if(Color.alpha(color) == 0) {
                 finish()
             }
             return true;
@@ -80,41 +90,6 @@ class ShowMsgActivity : AppCompatActivity() {
         overridePendingTransition(0,0)
     }
 
-//    private fun showSettingPopup(){
-//        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE)as LayoutInflater
-//
-//        val view = inflater.inflate(R.layout.alert_popup, null)
-////        val textView: TextView = view.findViewById(R.id.textView)
-////        textView.text = "저장됨"
-//
-//        val alertDialog = AlertDialog.Builder(this)
-//            .create()
-//        alertDialog.setView(view)
-//        alertDialog.show()
-////        alertDialog.window?.setLayout()
-//        alertDialog.window?.setGravity(Gravity.BOTTOM)
-//        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-//
-//        val saved : TextView = view.findViewById(R.id.btn_save)
-//        saved.setOnClickListener{
-//            alertDialog.cancel()
-//            toast("저장됨!")
-//            finish()
-//
-//        }
-//
-//        val edit : TextView = view.findViewById(R.id.btn_edit)
-//        edit.setOnClickListener {
-//            alertDialog.cancel()
-//            val edit_inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE)as LayoutInflater
-//            val edit_view = edit_inflater.inflate(R.layout.edit_popup,null)
-//            val editDialog = AlertDialog.Builder(this).create()
-//            editDialog.setView(edit_view)
-//            editDialog.show()
-//            editDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-//        }
-//    }
-
     private fun showSettingPopup(){
 
         val dialog = Dialog(this)
@@ -126,6 +101,7 @@ class ShowMsgActivity : AppCompatActivity() {
 
         val saved : TextView = dialog.findViewById(R.id.btn_save)
         saved.setOnClickListener{
+            scrapResponseData()
             showSavedPopup()
             dialog.cancel()
 //            toast("저장됨!")
@@ -149,8 +125,31 @@ class ShowMsgActivity : AppCompatActivity() {
 
         dialog.show()
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        val edit_n_save : TextView = dialog.findViewById(R.id.btn_submit_edit)
-        edit_n_save.setOnClickListener {
+
+        hashtag1 = dialog.findViewById(R.id.add_hashtag1)
+        hashtag2 = dialog.findViewById(R.id.add_hashtag2)
+        hashtag3 = dialog.findViewById(R.id.add_hashtag3)
+        hashtag4 = dialog.findViewById(R.id.add_hashtag4)
+        hashtag5 = dialog.findViewById(R.id.add_hashtag5)
+        hashtagTextList = arrayListOf(hashtag1, hashtag2, hashtag3, hashtag4, hashtag5)
+
+        val addHashtag : EditText = dialog.findViewById(R.id.edt_add_hashtag)
+        val editNSave : TextView = dialog.findViewById(R.id.btn_submit_edit)
+        val btnAdd : ImageView = dialog.findViewById(R.id.btn_add)
+        btnAdd.visibility = View.VISIBLE
+
+        var i = 0
+        btnAdd.setOnClickListener {
+            hashtagTextList[i].visibility = View.VISIBLE
+            hashtagTextList[i].text = addHashtag.text.toString()
+            i++
+            if(i == 5){
+                btnAdd.visibility = View.GONE
+            }
+        }
+
+        editNSave.setOnClickListener {
+            scrapResponseData()
             dialog.dismiss()
             finish()
         }
@@ -166,20 +165,45 @@ class ShowMsgActivity : AppCompatActivity() {
         dialog.show()
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        Handler().postDelayed(object :Runnable {
-            override fun run() {
-                dialog.dismiss()
-                finish()
-            }
-        }, 3000)
+//        Handler().postDelayed({
+//            dialog.dismiss()
+//            finish()
+//        }, 3000) //error 에러생김
 
-        val move_to_main : TextView = dialog.findViewById(R.id.btn_move_main)
-        move_to_main.setOnClickListener {
+        val moveToMain : TextView = dialog.findViewById(R.id.btn_move_main)
+        moveToMain.setOnClickListener {
             val intentMain = Intent(this, MainActivity::class.java)
             intentMain.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             intentMain.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
             startActivity(intentMain)
             finish()
         }
+    }
+
+    private fun scrapResponseData() {
+        var jsonObject = JSONObject()
+        jsonObject.put("url", sharedUrl)
+
+        val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
+
+        Log.e("request body", gsonObject.toString())
+
+        val postScrapResponse: Call<PostScrapResponse> =
+            networkService.postScrapResponse("application/json", gsonObject)
+
+        postScrapResponse.enqueue(object : Callback<PostScrapResponse> {
+            override fun onFailure(call: Call<PostScrapResponse>, t: Throwable) {
+                toast("crawling failed")
+                Log.e("fail", t.toString())
+            }
+
+            override fun onResponse(call: Call<PostScrapResponse>, response: Response<PostScrapResponse>) {
+                if (response.isSuccessful) {
+                    if (response.body()!!.status == 200) {
+                        toast("crawling success")
+                    }
+                }
+            }
+        })
     }
 }

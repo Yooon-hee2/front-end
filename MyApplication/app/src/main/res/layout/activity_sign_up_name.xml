@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <ImageView
-            android:id="@+id/btn_login_back"
+            android:id="@+id/btn_signup_back"
             android:layout_marginTop="9dp"
             android:layout_marginLeft="11dp"
             android:src="@drawable/ic_back"
@@ -76,7 +76,6 @@
                 android:lines="1"
                 android:maxLines="1"
                 android:maxLength="15"
-                android:inputType="textPassword"
                 android:hint="ex) 윤아리"
                 android:textSize="19sp"
                 android:id="@+id/et_signup_nickname"

@@ -47,16 +47,13 @@
         <activity android:name=".activities.FolderManageActivity" />
         <activity android:name=".activities.InformationActivity" />
         <activity android:name=".activities.SignUpPasswordActivity" />
-        <activity android:name=".activities.SignUpEmailActivity" />
-        <activity android:name=".activities.LoginActivity" />
+        <activity android:name=".activities.SignUpEmailActivity" >
+        </activity>
+        <activity android:name=".activities.LoginActivity" >
+        </activity>
         <activity
             android:name=".activities.MainActivity"
             android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

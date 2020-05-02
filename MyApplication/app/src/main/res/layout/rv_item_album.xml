@@ -6,6 +6,7 @@
     android:layout_height="wrap_content">
 
     <ImageView
+        android:padding="1sp"
         android:id="@+id/rv_item_album_thumbnail"
         android:layout_width="match_parent"
         android:layout_height="130dp"

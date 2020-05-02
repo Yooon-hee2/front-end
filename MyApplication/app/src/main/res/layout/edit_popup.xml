@@ -4,8 +4,7 @@
     android:orientation="vertical"
     android:layout_width="250dp"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/white"
-    android:background="@drawable/radius"
+    android:background="@color/white"
     android:gravity="center_horizontal"
     android:paddingHorizontal="20dp"
     android:paddingVertical="10dp">
@@ -25,8 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="25dp"
         android:layout_gravity="center"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/shape_border_gray"
+        android:background="@drawable/shape_bottom_line_gray"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:hint="제목을 입력해주세요"
@@ -48,15 +46,15 @@
         android:textSize="10sp" />
 
     <LinearLayout
-        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <EditText
-            android:layout_width="150dp"
+            android:id="@+id/edt_add_hashtag"
+            android:layout_width="170dp"
             android:layout_height="25dp"
             android:layout_gravity="center"
-            android:background="@drawable/shape_border_gray"
+            android:background="@drawable/shape_bottom_line_gray"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:hint="추가할 해시태그를 입력해주세요"
@@ -73,10 +71,87 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="5dp"
             android:layout_centerVertical="true"
-            android:id="@+id/btn_trashbin"
+            android:id="@+id/btn_add"
             android:src="@drawable/ic_plus"/>
+    </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/hashtag_container"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
+    <TextView
+        android:visibility="gone"
+        android:layout_marginVertical="10dp"
+        android:layout_gravity="center"
+        android:id="@+id/add_hashtag1"
+        android:background="@drawable/shape_graybtn_16dp"
+        android:includeFontPadding = "false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        android:padding="10dp"
+        android:layout_marginLeft="7dp"
+        android:textColor="@color/grayA"
+        android:textStyle="bold" />
+    <TextView
+        android:visibility="gone"
+        android:layout_marginVertical="10dp"
+        android:layout_gravity="center"
+        android:id="@+id/add_hashtag2"
+        android:background="@drawable/shape_graybtn_16dp"
+        android:includeFontPadding = "false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        android:padding="10dp"
+        android:layout_marginLeft="7dp"
+        android:textColor="@color/grayA"
+        android:textStyle="bold" />
+    <TextView
+        android:visibility="gone"
+        android:layout_marginVertical="10dp"
+        android:layout_gravity="center"
+        android:id="@+id/add_hashtag3"
+        android:background="@drawable/shape_graybtn_16dp"
+        android:includeFontPadding = "false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        android:padding="10dp"
+        android:layout_marginLeft="7dp"
+        android:textColor="@color/grayA"
+        android:textStyle="bold" />
+    <TextView
+        android:visibility="gone"
+        android:layout_marginVertical="10dp"
+        android:layout_gravity="center"
+        android:id="@+id/add_hashtag4"
+        android:background="@drawable/shape_graybtn_16dp"
+        android:includeFontPadding = "false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        android:padding="10dp"
+        android:layout_marginLeft="7dp"
+        android:textColor="@color/grayA"
+        android:textStyle="bold" />
+    <TextView
+        android:visibility="gone"
+        android:layout_marginVertical="10dp"
+        android:layout_gravity="center"
+        android:id="@+id/add_hashtag5"
+        android:background="@drawable/shape_graybtn_16dp"
+        android:includeFontPadding = "false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        android:padding="10dp"
+        android:layout_marginLeft="7dp"
+        android:textColor="@color/grayA"
+        android:textStyle="bold" />
     </LinearLayout>
 
     <TextView
@@ -87,6 +162,7 @@
         android:text="folder"
         android:textColor="@color/darkGrayD"
         android:textSize="10sp" />
+
 
     <Spinner
         android:layout_gravity="left"

@@ -30,8 +30,8 @@ import org.w3c.dom.Text
 class InformationActivity : AppCompatActivity() {
 
     //problem : instagram만 click이 막아지지 않음
-    //private val saved_url = "https://stackoverflow.com/questions/41790357/close-hide-the-android-soft-keyboard-with-kotlin"
-    private val saved_url = "https://www.youtube.com/embed/" + "zwjZ-ERMp1k"
+    private val saved_url = "https://stackoverflow.com/questions/41790357/close-hide-the-android-soft-keyboard-with-kotlin"
+//    private val saved_url = "https://www.youtube.com/embed/" + "zwjZ-ERMp1k"
     lateinit var memoRecyclerViewAdapter: MemoRecyclerViewAdapter
     var memoList: ArrayList<String> = ArrayList()
 

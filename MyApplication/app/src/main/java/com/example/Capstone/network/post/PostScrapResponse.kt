@@ -1,6 +1,6 @@
 package com.example.Capstone.network.post
 
-data class PostLoginResponse (
+data class PostScrapResponse(
     val status : Int,
-    val id : Int
+    val title : String
 )

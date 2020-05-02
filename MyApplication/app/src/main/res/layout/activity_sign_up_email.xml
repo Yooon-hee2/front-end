@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <ImageView
-            android:id="@+id/btn_login_back"
+            android:id="@+id/btn_signup_back"
             android:layout_marginTop="9dp"
             android:layout_marginLeft="11dp"
             android:src="@drawable/ic_back"
@@ -69,21 +69,21 @@
                 android:letterSpacing="0.01"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+
             <EditText
-                android:includeFontPadding = "false"
-                android:paddingBottom="3.5dp"
-                android:paddingTop="16dp"
-                android:lines="1"
-                android:maxLines="1"
-                android:maxLength="15"
-                android:inputType="textPassword"
-                android:hint="ex) abc123"
-                android:textSize="19sp"
                 android:id="@+id/et_signup_email"
-                android:textColor="@color/darkGrayD"
-                android:background="@drawable/shape_bottom_line_signup"
                 android:layout_width="300dp"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_bottom_line_signup"
+                android:hint="ex) abc123"
+                android:includeFontPadding="false"
+                android:lines="1"
+                android:maxLength="30"
+                android:maxLines="1"
+                android:paddingTop="16dp"
+                android:paddingBottom="3.5dp"
+                android:textColor="@color/darkGrayD"
+                android:textSize="19sp" />
 
             <RelativeLayout
                 android:background="@drawable/shape_graybtn_8dp"

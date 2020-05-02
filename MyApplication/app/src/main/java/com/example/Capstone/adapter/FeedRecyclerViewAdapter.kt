@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.example.Capstone.R
 import com.example.Capstone.activities.InformationActivity
 import com.example.Capstone.model.Feed
+import com.example.Capstone.network.data.TagData
 import org.jetbrains.anko.*
 
 class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
@@ -48,7 +49,7 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
             ctx.startActivity<InformationActivity>()
         }
 
-        val hashtagList : ArrayList<String>? = filteredList!![position].hashtag
+        val hashtagList : ArrayList<TagData>? = filteredList!![position].tags
 
         for (tag in holder.hashtag){
             tag.visibility = View.GONE
@@ -56,12 +57,13 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
 
         var hashtagSize = 0
         if (hashtagList != null) {
-            for (item in hashtagList){
+            for (item in hashtagList) {
                 holder.hashtag[hashtagSize].visibility = View.VISIBLE
-                holder.hashtag[hashtagSize].text = "#" + item
-                hashtagSize++
+                holder.hashtag[hashtagSize].text = "#" + item.tag_text
+                hashtagSize += 1
             }
         }
+
     }
 
     inner class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -89,9 +91,9 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
                     if(charString.substring(0,1) == "#"){ //if user search hashtag
                         val filteringList = ArrayList<Feed>()
                         for(item in list) {
-                            if (item.hashtag!!.isNotEmpty()){
-                                for (ht in item.hashtag!!){ //해시태그끼리 동일한 문자 들어갔을 때 중복되게 뜨는거 해결해야함
-                                    if (ht.toLowerCase().contains(charString.substring(1, charString.length).toLowerCase())) {
+                            if (item.tags!!.isNotEmpty()){
+                                for (ht in item.tags!!){
+                                    if (ht.tag_text.contains(charString.substring(1, charString.length).toLowerCase())) {
                                         filteringList.add(item)
                                     }
                                 }

@@ -17,7 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-
             <ImageView
                 android:layout_width="60dp"
                 android:layout_height="60dp"
@@ -50,9 +49,8 @@ g
             <ImageView
                 android:id="@+id/rv_item_feed_thumbnail"
                 android:layout_width="match_parent"
-                android:layout_height="350dp"
-                android:background="@color/grayB"
-                android:scaleType="centerCrop" />
+                android:layout_height="wrap_content"
+                android:background="@color/grayB" />
 
         </RelativeLayout>
         <LinearLayout

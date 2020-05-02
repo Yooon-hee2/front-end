@@ -21,6 +21,11 @@ class SignUpPasswordActivity : AppCompatActivity() {
             startActivity(intentFor<SignUpNameActivity>(
                 "email" to email,
                 "password" to et_password.text.toString()))
+            finish()
+        }
+
+        btn_signup_back.setOnClickListener {
+            onBackPressed()
         }
     }
 }
