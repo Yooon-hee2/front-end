@@ -50,3 +50,4 @@ interface NetworkService {
 //        @Path("folder_id") folder_id : Int
 //    ): Call<ArrayList<GetFolderScrapListResponse>>
 }
+

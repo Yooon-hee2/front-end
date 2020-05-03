@@ -44,15 +44,6 @@ class AlbumViewMainFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-//        var dataList: ArrayList<String> = ArrayList()
-//
-//        dataList.add("https://t1.daumcdn.net/cfile/tistory/244CE24556B5642E36")
-//        dataList.add("http://blogfiles.naver.net/MjAxNjEwMzBfMTU5/MDAxNDc3ODEzNTAyNzc5.LcGMoEbTvDQ6VSw2VPg8DmWCKFLNgMjVwDsKT9287iUg.vjmV-" +
-//                "W8lxd4uzMBY3A0ZwRU3NiSHxZ-C0__kprqbZa8g.JPEG.moonfrost/DSC04123.JPG")
-//        dataList.add("https://www.topstarnews.net/news/photo/201805/415426_62309_4431.jpg")
-//        dataList.add("https://lh3.googleusercontent.com/proxy/6dRaCzOlQZtZ52zySWmKPGcA0sWYOtw9tswZbdakgWLqB_D6B_" +
-//                "-Tj4OTbHQIZrfyzfe6APYFH3ix9EBh3UqLF3lm7ei_nBIrj5mZ0l4x5yNxFeUT01Tq3oW-prtnqxqZl9CyzxqA")
-
         getAllScrapUrlListResponse(SharedPreferenceController.getUserId(context!!)!!)
         albumRecyclerViewAdapter = AlbumRecyclerViewAdapter(context!!, dataList)
         rv_album_container.adapter = albumRecyclerViewAdapter

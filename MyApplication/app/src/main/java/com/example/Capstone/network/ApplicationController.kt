@@ -5,8 +5,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class ApplicationController : Application(){
-    private val baseURL = "https://4d5a32e2.ngrok.io" //ngrok켤때마다 바꿀것
-    //주소 뜨기전까지 주석 살리지 말것
+    private val baseURL = "https://28bb37b3.ngrok.io" //ngrok켤때마다 바꿀것
     lateinit var networkService: NetworkService
 
     companion object{

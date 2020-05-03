@@ -47,10 +47,10 @@ g
             android:layout_height="wrap_content">
 
             <ImageView
+                android:adjustViewBounds="true"
                 android:id="@+id/rv_item_feed_thumbnail"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/grayB" />
+                android:layout_height="wrap_content" />
 
         </RelativeLayout>
         <LinearLayout

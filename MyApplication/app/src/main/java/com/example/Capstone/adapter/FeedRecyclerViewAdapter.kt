@@ -42,7 +42,10 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
         }
 
         if (URLUtil.isValidUrl(filteredList!![position].thumbnail)) {
-            Glide.with(ctx).load(filteredList!![position].thumbnail).into(holder.thumbnail)
+            Glide.with(ctx)
+                .load(filteredList!![position].thumbnail)
+                .fitCenter()
+                .into(holder.thumbnail)
         }
 
         holder.container.setOnClickListener {
@@ -127,3 +130,4 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
         }
     }
 }
+

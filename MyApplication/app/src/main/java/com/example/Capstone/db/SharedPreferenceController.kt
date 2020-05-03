@@ -61,11 +61,11 @@ object SharedPreferenceController{
 //    }
 
 
-//    //erase all when logout
-//    fun clearUserSharedPreferences(ctx: Context){
-//        val preference: SharedPreferences = ctx.getSharedPreferences(NICKNAME, Context.MODE_PRIVATE)
-//        val editor: SharedPreferences.Editor = preference.edit()
-//        editor.clear()
-//        editor.commit()
-//    }
+    //erase all when logout
+    fun clearUserSharedPreferences(ctx: Context){
+        val preference: SharedPreferences = ctx.getSharedPreferences(NICKNAME, Context.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = preference.edit()
+        editor.clear()
+        editor.commit()
+    }
 }
