@@ -22,9 +22,11 @@ import androidx.viewpager.widget.ViewPager
 import com.example.Capstone.R
 import com.example.Capstone.adapter.MainFragmentAdapter
 import com.example.Capstone.adapter.SearchListViewAdapter
+import com.example.Capstone.db.SharedPreferenceController
 import com.example.Capstone.model.Feed
 import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
+import com.example.Capstone.network.get.GetAllFolderListResponse
 import com.example.Capstone.network.get.GetAllScrapListResponse
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
@@ -38,6 +40,12 @@ import retrofit2.Response
 class MainActivity : AppCompatActivity(){
 
     lateinit var pager : ViewPager
+
+    private var spinnerList : ArrayList<String> = ArrayList<String>()
+
+    val networkService: NetworkService by lazy {
+        ApplicationController.instance.networkService
+    }
 
     companion object{
         val recommendedHashtagList = arrayListOf("#강남", "#이태원", "#플레이리스트", "#맛집", "#동물의숲")
@@ -171,9 +179,9 @@ class MainActivity : AppCompatActivity(){
             }
         }
 
-        var spinnerList = arrayOf("전체", "맛집", "화장품", "꿀팁")
-
         val spinner : Spinner = findViewById(R.id.spinner_menu)
+
+        getAllFolderListResponse(SharedPreferenceController.getUserId(this)!!)
 
         val spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, spinnerList)
         spinner.adapter = spinnerAdapter
@@ -218,6 +226,39 @@ class MainActivity : AppCompatActivity(){
             // notificationId is a unique int for each notification that you must define
             notify(1, builder.build())
         }
+    }
+
+    private fun getAllFolderListResponse(id: Int){ //programId 넘겨주기
+        val getAllFolderListResponse = networkService.getAllFolderListResponse(id)
+
+        getAllFolderListResponse.enqueue(object : Callback<ArrayList<GetAllFolderListResponse>> {
+
+            override fun onFailure(call: Call<ArrayList<GetAllFolderListResponse>>, t: Throwable) {
+                Log.e("get List failed", t.toString())
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<GetAllFolderListResponse>>,
+                response: Response<ArrayList<GetAllFolderListResponse>>
+            ) {
+                if(response.isSuccessful){
+                    Log.d("babo", response.body().toString())
+
+                    val data: ArrayList<GetAllFolderListResponse>? = response.body()
+                    if (data != null) {
+                        for(folder in data) {
+                            for( folderName in folder.folders){
+                                spinnerList.add(folderName.folder_name)
+                            }
+                        }
+                    }
+                }
+
+                else{
+                    Log.e("error", "fail")
+                }
+            }
+        })
     }
 
 }

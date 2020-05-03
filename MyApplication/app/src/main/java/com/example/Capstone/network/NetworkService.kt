@@ -1,5 +1,6 @@
 package com.example.Capstone.network
 
+import com.example.Capstone.network.get.GetAllFolderListResponse
 import com.example.Capstone.network.get.GetAllScrapListResponse
 import com.example.Capstone.network.get.GetFolderScrapListResponse
 import com.example.Capstone.network.post.PostLoginResponse
@@ -34,6 +35,14 @@ interface NetworkService {
         @Header("Content-Type") content_type: String,
         @Body() body: JsonObject
     ): Call<PostScrapResponse>
+
+    //get all folder list
+    @GET("/memmem_app/users/{id}/folders/")
+    fun getAllFolderListResponse(
+        @Path("id") id : Int
+    ): Call<ArrayList<GetAllFolderListResponse>>
+
+
 
 
     //scrap information -----------------------------------------------

@@ -56,7 +56,7 @@ class FeedViewMainFragment : Fragment() {
         feedRecyclerViewAdapter.notifyDataSetChanged()
     }
 
-    private fun getAllScrapListResponse(id: Int){ //programId 넘겨주기
+    private fun getAllScrapListResponse(id: Int){
         val getAllScrapListResponse = networkService.getAllScrapListResponse(id)
 
         getAllScrapListResponse.enqueue(object : Callback<ArrayList<GetAllScrapListResponse>> {
