@@ -32,6 +32,8 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_activity_main.*
 import kotlinx.android.synthetic.main.nav_drawer.*
+import org.jetbrains.anko.sdk27.coroutines.onItemSelectedListener
+import org.jetbrains.anko.toast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -41,8 +43,6 @@ class MainActivity : AppCompatActivity(){
 
     lateinit var pager : ViewPager
 
-    private var spinnerList : ArrayList<String> = ArrayList<String>()
-
     val networkService: NetworkService by lazy {
         ApplicationController.instance.networkService
     }
@@ -50,13 +50,16 @@ class MainActivity : AppCompatActivity(){
     companion object{
         val recommendedHashtagList = arrayListOf("#강남", "#이태원", "#플레이리스트", "#맛집", "#동물의숲")
         lateinit var edt_search : EditText
+        var folderList : HashMap<String, Int> = HashMap()
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         edt_search = findViewById(R.id.search_item)
 
+        folder_name.text = "전체"
         var dataList: ArrayList<Feed> = ArrayList()
         pager = findViewById(R.id.vp_main)
         val pagerAdapter = MainFragmentAdapter(supportFragmentManager)
@@ -137,8 +140,8 @@ class MainActivity : AppCompatActivity(){
             }
 
             override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
-                pagerAdapter.getEditText(search_item.text)
                 if (charSequence!!.isNotBlank()) {
+                    pagerAdapter.getEditText(search_item.text)
                     if(charSequence.toString().substring(0,1) == "#") {
                         searchListCustomAdapter.filter(charSequence.substring(1, charSequence.length))
                     }
@@ -179,13 +182,21 @@ class MainActivity : AppCompatActivity(){
             }
         }
 
-        val spinner : Spinner = findViewById(R.id.spinner_menu)
-
         getAllFolderListResponse(SharedPreferenceController.getUserId(this)!!)
 
-        val spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, spinnerList)
-        spinner.adapter = spinnerAdapter
-
+        val button = findViewById<ImageView>(R.id.folder_menu)
+        button.setOnClickListener {
+            val popupMenu = PopupMenu(this, button)
+            for (folder in folderList.keys){
+                popupMenu.menu.add(folder)
+            }
+            popupMenu.setOnMenuItemClickListener { item ->
+                folder_name.text = item.title
+                folderList[item.title]?.let { it1 -> pagerAdapter.changeFolder(it1) }
+                true
+            }
+            popupMenu.show()
+        }
         //myNotification()
     }
 
@@ -246,23 +257,27 @@ class MainActivity : AppCompatActivity(){
 
                     val data: ArrayList<GetAllFolderListResponse>? = response.body()
                     if (data != null) {
-                        for(folder in data) {
-                            for( folderName in folder.folders){
-                                spinnerList.add(folderName.folder_name)
+                        for(folders in data) {
+                            for(folder in folders.folders){
+                                Log.d("dddddddddd", folder.folder_id.toString())
+                                if(folder.folder_key == 0){
+                                    folderList["전체"] = folder.folder_id
+                                }
+                                else{
+                                    folderList[folder.folder_name] = folder.folder_id
+                                }
                             }
                         }
+                        SharedPreferenceController.setUserFolderInfo(this@MainActivity, folderList)
                     }
                 }
-
                 else{
                     Log.e("error", "fail")
                 }
             }
         })
     }
-
 }
-
 
 fun Context.isServiceRunning(serviceClass: Class<*>): Boolean {
     val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager

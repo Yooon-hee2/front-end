@@ -7,7 +7,8 @@ data class Feed (
     var id : Int,
     var src : String,
     var title : String,
-    var thumbnail : String,
+    var thumbnail : String?,
+    var domain : String,
     val memos : ArrayList<MemoData>,
     val tags : ArrayList<TagData>
 )

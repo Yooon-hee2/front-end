@@ -30,7 +30,7 @@
         android:maxLength="10"
         android:hint="ex)새 폴더"
         android:textSize="13sp"
-        android:id="@+id/et_login_email"
+        android:id="@+id/et_new_folder"
         android:textColor="@color/darkGrayD"
         android:background="@drawable/shape_bottom_line_gray"
         android:layout_width="match_parent"

@@ -5,22 +5,33 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.Capstone.R
+import com.example.Capstone.adapter.HashtagRecyclerViewAdapter
+import com.example.Capstone.db.SharedPreferenceController
 import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
+import com.example.Capstone.network.data.TagData
 import com.example.Capstone.network.post.PostScrapResponse
+import com.example.Capstone.network.put.PutScrapInfoResponse
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import kotlinx.android.synthetic.main.content_activity_main.*
 import org.jetbrains.anko.toast
 import org.json.JSONObject
+import org.w3c.dom.Text
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,14 +42,15 @@ class ShowMsgActivity : AppCompatActivity() {
     private var displayWidth : Int = 0
     private var displayHeight : Int = 0
 
-    private lateinit var hashtag1: TextView
-    private lateinit var hashtag2: TextView
-    private lateinit var hashtag3: TextView
-    private lateinit var hashtag4: TextView
-    private lateinit var hashtag5: TextView
-    private lateinit var hashtagTextList: ArrayList<TextView>
+    private lateinit var copiedUrl : String
+    lateinit var hashTagRecyclerViewAdapter: HashtagRecyclerViewAdapter
 
-    private lateinit var sharedUrl : String
+    private var title : String = ""
+    private var scrapId : Int = 0
+    private var folderId : Int = 0
+
+    var hashtagList : ArrayList<String> = ArrayList()
+    lateinit var folderList : HashMap<String, Int>
 
     private val networkService: NetworkService by lazy {
         ApplicationController.instance.networkService
@@ -46,6 +58,8 @@ class ShowMsgActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        folderList = SharedPreferenceController.getUserFolderInfo(this)
 
         var intent: Intent = intent
 
@@ -58,11 +72,12 @@ class ShowMsgActivity : AppCompatActivity() {
 
         if (Intent.ACTION_SEND == action && type != null) {
             if ("text/plain" == type) {
-                sharedUrl = intent.getStringExtra(Intent.EXTRA_TEXT)
+                copiedUrl = intent.getStringExtra(Intent.EXTRA_TEXT)
                 showSettingPopup()
             }
         }
 
+        hashTagRecyclerViewAdapter = HashtagRecyclerViewAdapter(this, hashtagList)
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -101,8 +116,8 @@ class ShowMsgActivity : AppCompatActivity() {
 
         val saved : TextView = dialog.findViewById(R.id.btn_save)
         saved.setOnClickListener{
-            scrapResponseData()
-            showSavedPopup()
+            scrapResponseData("save")
+//            showSavedPopup()
             dialog.cancel()
 //            toast("저장됨!")
 //            finish()
@@ -110,49 +125,80 @@ class ShowMsgActivity : AppCompatActivity() {
 
         val edit : TextView = dialog.findViewById(R.id.btn_edit)
         edit.setOnClickListener {
-            showModifyingPopup()
+            scrapResponseData("edit")
+//            showModifyingPopup()
             dialog.cancel()
 //            finish()
         }
     }
 
-    private fun showModifyingPopup(){
+    private fun showModifyingPopup(title : String, hashTag : ArrayList<TagData>){
 
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(true)
         dialog.setContentView(R.layout.edit_popup)
 
+        val editTitle : EditText = dialog.findViewById(R.id.et_edit_title)
+        val recyclerviewContainer : RecyclerView = dialog.findViewById(R.id.rv_hashtag_container_dialog)
+        val editNSave : TextView = dialog.findViewById(R.id.btn_submit_edit)
+        val btnAdd : ImageView = dialog.findViewById(R.id.btn_add)
+        val folderName : TextView = dialog.findViewById(R.id.folder_name_modify)
+
+        folderName.text = "전체"
+
         dialog.show()
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        hashtag1 = dialog.findViewById(R.id.add_hashtag1)
-        hashtag2 = dialog.findViewById(R.id.add_hashtag2)
-        hashtag3 = dialog.findViewById(R.id.add_hashtag3)
-        hashtag4 = dialog.findViewById(R.id.add_hashtag4)
-        hashtag5 = dialog.findViewById(R.id.add_hashtag5)
-        hashtagTextList = arrayListOf(hashtag1, hashtag2, hashtag3, hashtag4, hashtag5)
-
-        val addHashtag : EditText = dialog.findViewById(R.id.edt_add_hashtag)
-        val editNSave : TextView = dialog.findViewById(R.id.btn_submit_edit)
-        val btnAdd : ImageView = dialog.findViewById(R.id.btn_add)
         btnAdd.visibility = View.VISIBLE
 
-        var i = 0
-        btnAdd.setOnClickListener {
-            hashtagTextList[i].visibility = View.VISIBLE
-            hashtagTextList[i].text = addHashtag.text.toString()
-            i++
-            if(i == 5){
-                btnAdd.visibility = View.GONE
+        editTitle.hint = title
+
+        recyclerviewContainer.adapter = hashTagRecyclerViewAdapter
+        recyclerviewContainer.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+
+        hashtagList.clear()
+        if (hashTag != null) {
+            for (tag in hashTag) {
+                hashtagList.add(tag.tag_text)
             }
+        }
+        hashTagRecyclerViewAdapter.notifyDataSetChanged()
+
+        val button : ImageView = dialog.findViewById(R.id.folder_menu)
+        button.setOnClickListener {
+            val popupMenu = PopupMenu(this, button)
+            for (folder in folderList?.keys!!){
+                popupMenu.menu.add(folder)
+            }
+            popupMenu.setOnMenuItemClickListener { item ->
+                folderName.text = item.title
+                folderId = folderList!![item.title]!!
+                true
+            }
+            popupMenu.show()
         }
 
         editNSave.setOnClickListener {
-            scrapResponseData()
             dialog.dismiss()
+            if(editTitle.text.toString() == ""){
+                modifyScrapResponseData(title)
+            }
+            else{
+                modifyScrapResponseData(editTitle.text.toString())
+            }
             finish()
         }
+    }
+
+    private fun createNewTextView(text: String): TextView? {
+        val lparams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        val textView = TextView(this)
+        textView.layoutParams = lparams
+        textView.text = "$text"
+        textView.textSize = resources.getDimension(R.dimen.big_font)
+        textView.setTextColor(resources.getColor(R.color.black))
+        return textView
     }
 
     private fun showSavedPopup(){
@@ -180,28 +226,86 @@ class ShowMsgActivity : AppCompatActivity() {
         }
     }
 
-    private fun scrapResponseData() {
+    private fun scrapResponseData(status : String) {
+
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.dialog_load)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val logo = dialog.findViewById(R.id.dialog_logo) as ImageView
+        val animation: Animation =
+            AnimationUtils.loadAnimation(applicationContext, R.anim.rotate)
+        logo.startAnimation(animation)
+        dialog.show()
+
         var jsonObject = JSONObject()
-        jsonObject.put("url", sharedUrl)
+        jsonObject.put("id", SharedPreferenceController.getUserId(this)!!.toString())
+        jsonObject.put("folder_id", folderList["전체"].toString().substring(0,1))
+        jsonObject.put("url", copiedUrl)
 
         val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
 
-        Log.e("request body", gsonObject.toString())
+        Log.d("bodyforscrap", gsonObject.toString())
 
         val postScrapResponse: Call<PostScrapResponse> =
             networkService.postScrapResponse("application/json", gsonObject)
 
         postScrapResponse.enqueue(object : Callback<PostScrapResponse> {
             override fun onFailure(call: Call<PostScrapResponse>, t: Throwable) {
-                toast("crawling failed")
                 Log.e("fail", t.toString())
+                dialog.cancel()
             }
 
             override fun onResponse(call: Call<PostScrapResponse>, response: Response<PostScrapResponse>) {
                 if (response.isSuccessful) {
-                    if (response.body()!!.status == 200) {
-                        toast("crawling success")
+                    Log.e("crawlingbody", response.body().toString())
+                    dialog.cancel()
+                    if (status == "edit"){
+                        showModifyingPopup(response.body()!!.scrap.title, response.body()!!.scrap.tags)
                     }
+                    if(status == "save"){
+                        showSavedPopup()
+                    }
+                    scrapId = response.body()?.scrap?.scrap_id!!
+                    title = response.body()?.scrap?.title!!
+                }
+                else{
+                    toast("비공개 계정입니다")
+                    finish()
+                }
+            }
+        })
+    }
+
+    private fun modifyScrapResponseData(modifyingTitle: String) {
+
+        var jsonObject = JSONObject()
+        jsonObject.put("scrap_id", scrapId)
+        if (folderId == 0){
+            jsonObject.put("folder", folderList["전체"].toString().substring(0,1))
+        }
+        else{
+            jsonObject.put("folder", folderId)
+        }
+        jsonObject.put("title", modifyingTitle)
+
+        val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
+
+        Log.d("bodyformodify", gsonObject.toString())
+
+        val putScrapInfoResponse: Call<PutScrapInfoResponse> =
+            networkService.putScrapInfoResponse("application/json", scrapId, gsonObject)
+
+        putScrapInfoResponse.enqueue(object : Callback<PutScrapInfoResponse> {
+            override fun onFailure(call: Call<PutScrapInfoResponse>, t: Throwable) {
+                Log.e("fail", t.toString())
+            }
+
+            override fun onResponse(call: Call<PutScrapInfoResponse>, response: Response<PutScrapInfoResponse>) {
+                if (response.isSuccessful) {
+                    Log.e("crawlingbody", response.body().toString())
                 }
             }
         })

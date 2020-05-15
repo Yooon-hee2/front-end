@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:layout_marginHorizontal="2dp">
+
+    <TextView
+        android:text="#해시태그"
+        android:id="@+id/rv_item_hashtag"
+        android:background="@drawable/shape_graybtn_16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:padding="10dp"
+        android:textColor="@color/grayA"
+        android:textStyle="bold" />
+</RelativeLayout>

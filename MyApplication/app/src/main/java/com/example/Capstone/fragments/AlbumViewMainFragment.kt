@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.Capstone.R
 import com.example.Capstone.adapter.AlbumRecyclerViewAdapter
 import com.example.Capstone.db.SharedPreferenceController
@@ -30,6 +29,7 @@ class AlbumViewMainFragment : Fragment() {
     }
 
     private var dataList : ArrayList<String> = ArrayList()
+    private var idList : ArrayList<Int> = ArrayList()
 
     lateinit var albumRecyclerViewAdapter: AlbumRecyclerViewAdapter
 
@@ -45,7 +45,7 @@ class AlbumViewMainFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         getAllScrapUrlListResponse(SharedPreferenceController.getUserId(context!!)!!)
-        albumRecyclerViewAdapter = AlbumRecyclerViewAdapter(context!!, dataList)
+        albumRecyclerViewAdapter = AlbumRecyclerViewAdapter(context!!, dataList, idList)
         rv_album_container.adapter = albumRecyclerViewAdapter
         rv_album_container.layoutManager = GridLayoutManager(context!!, 3)
     }
@@ -70,8 +70,6 @@ class AlbumViewMainFragment : Fragment() {
                 response: Response<ArrayList<GetAllScrapListResponse>>
             ) {
                 if(response.isSuccessful){
-                    Log.d("babo", response.body().toString())
-
                     val data: ArrayList<GetAllScrapListResponse>? = response.body() //temp가 없을 때 터짐
                     val tempDataList : ArrayList<String> = ArrayList()
 
@@ -79,6 +77,7 @@ class AlbumViewMainFragment : Fragment() {
                         for(scrap in data) {
                             tempDataList.add(scrap.thumbnail)
                             updateDataList(tempDataList)
+                            idList.add(scrap.scrap_id)
                         }
                     }
                 }
@@ -89,4 +88,5 @@ class AlbumViewMainFragment : Fragment() {
             }
         })
     }
+
 }

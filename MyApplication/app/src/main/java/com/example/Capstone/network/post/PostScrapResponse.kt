@@ -1,6 +1,7 @@
 package com.example.Capstone.network.post
 
+import com.example.Capstone.network.get.GetAllFolderScrapListResponse
+
 data class PostScrapResponse(
-    val status : Int,
-    val title : String
+    val scrap : GetAllFolderScrapListResponse
 )

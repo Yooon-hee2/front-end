@@ -1,12 +1,19 @@
 package com.example.Capstone.db
 
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import android.text.TextUtils
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import org.json.JSONObject
+
 
 object SharedPreferenceController{
     private val NICKNAME = "nickname"
     private val USERID = "userid"
     private val NOTIFICATION = "notification"
+    private val FOLDER = "folder"
 
     //닉네임 저장, 받아오기
     fun setUserNickname(context:Context, nickname: String){
@@ -21,6 +28,28 @@ object SharedPreferenceController{
         return pref.getString(NICKNAME, "")
     }
 
+    //폴더 정보 저장/ 받아오기
+    fun setUserFolderInfo(context:Context, folder: HashMap<String, Int>){
+        val gson = Gson()
+        val pref = context.getSharedPreferences(FOLDER, Context.MODE_PRIVATE)
+        val editor = pref.edit()
+        val json = gson.toJson(folder)
+        editor.putString(FOLDER, json)
+        editor.commit()
+    }
+
+    fun getUserFolderInfo(context:Context): HashMap<String, Int> {
+        val pref = context.getSharedPreferences(FOLDER, Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = pref.getString(FOLDER, "")
+        val defValue = Gson().toJson(HashMap<String, Int>())
+        val typeToken = object: TypeToken<HashMap<String, Any>>(){}
+        var obj: HashMap<String, Int> = HashMap()
+        if (!TextUtils.isEmpty(json)) {
+            obj = gson.fromJson<Any>(json, typeToken.type) as HashMap<String, Int>
+        }
+        return obj
+    }
     //유저 아이디 저장, 받아오기
     fun setUserId(context:Context, userId: Int){
         val pref = context.getSharedPreferences(NICKNAME, Context.MODE_PRIVATE)

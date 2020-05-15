@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.Window
@@ -14,9 +15,15 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.Capstone.R
+import com.example.Capstone.adapter.HashtagRecyclerViewAdapter
 import com.example.Capstone.adapter.MemoRecyclerViewAdapter
+import com.example.Capstone.network.ApplicationController
+import com.example.Capstone.network.NetworkService
+import com.example.Capstone.network.data.TagData
+import com.example.Capstone.network.get.GetSpecificScrapResponse
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import kotlinx.android.synthetic.main.activity_information.*
 import kotlinx.android.synthetic.main.toolbar_with_trashbin.*
@@ -25,37 +32,35 @@ import kotlinx.android.synthetic.main.dialog_modify_title.*
 import org.jetbrains.anko.lines
 import org.jetbrains.anko.toast
 import org.w3c.dom.Text
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class InformationActivity : AppCompatActivity() {
 
+    val networkService: NetworkService by lazy {
+        ApplicationController.instance.networkService
+    }
+
     //problem : instagram만 click이 막아지지 않음
-    private val saved_url = "https://stackoverflow.com/questions/41790357/close-hide-the-android-soft-keyboard-with-kotlin"
+    private var saved_url = ""
 //    private val saved_url = "https://www.youtube.com/embed/" + "zwjZ-ERMp1k"
+
     lateinit var memoRecyclerViewAdapter: MemoRecyclerViewAdapter
+    lateinit var hashTagRecyclerViewAdapter: HashtagRecyclerViewAdapter
+
     var memoList: ArrayList<String> = ArrayList()
+    var hashtagList : ArrayList<String> = ArrayList()
 
-    val hashtagList : ArrayList<String>? = ArrayList()
-    var hashtagSize = 0
-
-    private lateinit var hashtag1: TextView
-    private lateinit var hashtag2: TextView
-    private lateinit var hashtag3: TextView
-    private lateinit var hashtag4: TextView
-    private lateinit var hashtag5: TextView
-    private lateinit var hashtagTextList: ArrayList<TextView>
+    private var scrapId : Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_information)
 
-        hashtag1 = findViewById(R.id.info_hashtag1)
-        hashtag2 = findViewById(R.id.info_hashtag2)
-        hashtag3 = findViewById(R.id.info_hashtag3)
-        hashtag4 = findViewById(R.id.info_hashtag4)
-        hashtag5 = findViewById(R.id.info_hashtag5)
-        hashtagTextList = arrayListOf(hashtag1, hashtag2, hashtag3, hashtag4, hashtag5)
-
+        scrapId = intent.getIntExtra("id", 0)
+        getSpecificScrapResponse(scrapId)
 
         //get web view settings instance
         val settings = web_url.settings
@@ -87,13 +92,11 @@ class InformationActivity : AppCompatActivity() {
         settings.javaScriptCanOpenWindowsAutomatically = true
         settings.mediaPlaybackRequiresUserGesture = false
 
-        web_url.loadUrl(saved_url)
-
         web_url.webViewClient = object: WebViewClient(){
             //blocking move to any other url
             override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
                 val uri = Uri.parse(view?.url)
-                if (uri.equals(saved_url)) { //youtube일때는 이동 허용해주는 코드 필요
+                if (uri.toString() == (saved_url)) { //youtube일때는 이동 허용해주는 코드 필요
                     // This is my web site, so do not override; let my WebView load the page
                     return false
                 }
@@ -105,9 +108,6 @@ class InformationActivity : AppCompatActivity() {
                 return true
             }
         }
-
-        val youTubePlayerView: YouTubePlayerView = findViewById(R.id.youtube_player_view)
-        lifecycle.addObserver(youTubePlayerView)
 
         btn_back.setOnClickListener {
             finish()
@@ -126,42 +126,85 @@ class InformationActivity : AppCompatActivity() {
             true
         }
 
-        memoList.add("이전에 추가했던 메모입니다")
-
         memoRecyclerViewAdapter = MemoRecyclerViewAdapter(this, memoList)
         rv_memo_container.adapter = memoRecyclerViewAdapter
         rv_memo_container.layoutManager = LinearLayoutManager(this)
+
+        hashTagRecyclerViewAdapter = HashtagRecyclerViewAdapter(this, hashtagList)
+        rv_hashtag_container.adapter = hashTagRecyclerViewAdapter
+        rv_hashtag_container.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         btn_change_menu.setOnClickListener {
             var menu : PopupMenu = PopupMenu(this, btn_change_menu)
             menu.menu.add("전체")
             menu.menu.add("맛집")
             menu.menu.add("먹거리")
-            menu.show();
+            menu.show()
         }
 
         btn_add_hashtag.setOnClickListener {
             showHashtagDialog()
         }
 
-        hashtagList?.add("애플")
-        hashtagList?.add( "사랑해")
-        hashtagList?.add("귀여워")
+//        for (ht in hashtagTextList){
+//            ht.setOnLongClickListener{
+//                showDeleteDialog(ht)
+//                true
+//            }
+//        }
+    }
 
-        if (hashtagList != null) {
-            for (item in hashtagList){
-                hashtagTextList[hashtagSize].visibility = View.VISIBLE
-                hashtagTextList[hashtagSize].text = "#" + item
-                hashtagSize++
-            }
-        }
+    private fun getSpecificScrapResponse(id: Int){
+        val getAllScrapListResponse = networkService.getSpecificScrapResponse(id)
 
-        for (ht in hashtagTextList){
-            ht.setOnLongClickListener{
-                showDeleteDialog(ht)
-                true
+        getAllScrapListResponse.enqueue(object : Callback<GetSpecificScrapResponse> {
+
+            override fun onFailure(call: Call<GetSpecificScrapResponse>, t: Throwable) {
+                Log.e("get scrap content failed", t.toString())
             }
-        }
+
+            override fun onResponse(
+                call: Call<GetSpecificScrapResponse>,
+                response: Response<GetSpecificScrapResponse>
+            ) {
+                if(response.isSuccessful){
+                    Log.d("babo", response.body().toString())
+
+                    val data: GetSpecificScrapResponse? = response.body()
+
+                    if (data != null) {
+                        info_title.text = data.title
+                        saved_url = data.url
+                        info_date.text = data.date.substring(0,10)
+
+                        hashtagList.clear()
+                        if (data.tags != null) {
+                            for (tag in data.tags) {
+                                hashtagList.add(tag.tag_text)
+                            }
+                        }
+
+                        memoList.clear()
+                        if (data.memos != null) {
+                            for (memo in data.memos) {
+                                memoList.add(memo.memo)
+                            }
+                        }
+
+                        hashTagRecyclerViewAdapter.notifyDataSetChanged()
+                        memoRecyclerViewAdapter.notifyDataSetChanged()
+
+                        web_url.loadUrl(saved_url)
+
+                    }
+
+                }
+
+                else{
+                    Log.e("error", "fail")
+                }
+            }
+        })
     }
 
     private fun addMemo(memo : String){
@@ -241,15 +284,15 @@ class InformationActivity : AppCompatActivity() {
         submit.setOnClickListener {
             dialog.dismiss()
             if (hashtag.text.toString().isNotEmpty()){
-                addHashtag(hashtag.text.toString())
+//                addHashtag(hashtag.text.toString())
             }
         }
         dialog.show()
     }
-    private fun addHashtag(str: String) {
-        var tempHashtag = hashtagTextList[hashtagSize]
-        tempHashtag.visibility = View.VISIBLE
-        tempHashtag.text = "#" + str
-        hashtagSize++
-    }
+//    private fun addHashtag(str: String) {
+//        var tempHashtag = hashtagTextList[hashtagSize]
+//        tempHashtag.visibility = View.VISIBLE
+//        tempHashtag.text = "#" + str
+//        hashtagSize++
+//    }
 }

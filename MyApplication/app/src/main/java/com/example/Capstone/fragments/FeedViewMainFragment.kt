@@ -13,7 +13,9 @@ import com.example.Capstone.db.SharedPreferenceController
 import com.example.Capstone.model.Feed
 import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
+import com.example.Capstone.network.get.GetAllFolderScrapListResponse
 import com.example.Capstone.network.get.GetAllScrapListResponse
+import com.example.Capstone.network.get.GetFolderScrapListResponse
 import kotlinx.android.synthetic.main.fragment_feed_view_main.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -29,27 +31,49 @@ class FeedViewMainFragment : Fragment() {
         ApplicationController.instance.networkService
     }
 
+    private var userId : Int = -1
     private var dataList : ArrayList<Feed> = ArrayList()
     lateinit var feedRecyclerViewAdapter: FeedRecyclerViewAdapter
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        feedRecyclerViewAdapter = FeedRecyclerViewAdapter(context!!, dataList)
+        userId = SharedPreferenceController.getUserId(context!!)!!
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
+        getAllScrapListResponse(userId)
         return inflater.inflate(R.layout.fragment_feed_view_main, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        getAllScrapListResponse(SharedPreferenceController.getUserId(context!!)!!)
-        feedRecyclerViewAdapter = FeedRecyclerViewAdapter(context!!, dataList)
         rv_feed_container.adapter = feedRecyclerViewAdapter
         rv_feed_container.layoutManager = LinearLayoutManager(context!!)
+        getAllScrapListResponse(userId)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getAllScrapListResponse(userId)
     }
 
     fun changeRecyclerViewData(charSequence: CharSequence){
         feedRecyclerViewAdapter.filter.filter(charSequence)
         feedRecyclerViewAdapter.notifyDataSetChanged()
     }
+
+    fun changeFolder(folderId: Int){
+        if (userId != -1) {
+            when(folderId){
+                2 -> getAllScrapListResponse(userId)
+                else -> getAllFolderScrapListResponse(userId, folderId)
+            }
+        }
+    }
+
+
     private fun updateDataList(list: ArrayList<Feed>){
         dataList.clear()
         dataList.addAll(list)
@@ -70,7 +94,6 @@ class FeedViewMainFragment : Fragment() {
                 response: Response<ArrayList<GetAllScrapListResponse>>
             ) {
                 if(response.isSuccessful){
-                    Log.d("babo", response.body().toString())
 
                     val data: ArrayList<GetAllScrapListResponse>? = response.body() //temp가 없을 때 터짐
                     val tempDataList : ArrayList<Feed> = ArrayList()
@@ -79,6 +102,41 @@ class FeedViewMainFragment : Fragment() {
                         for(scrap in data) {
                             tempDataList.add(scrap.toFeedDetail())
                             updateDataList(tempDataList)
+                        }
+                    }
+                }
+
+                else{
+                    Log.e("error", "fail")
+                }
+            }
+        })
+    }
+
+    private fun getAllFolderScrapListResponse(id: Int, folderId : Int){
+        val getAllFolderScrapListResponse = networkService.getFolderScrapListResponse(id, folderId)
+
+        getAllFolderScrapListResponse.enqueue(object : Callback<ArrayList<GetFolderScrapListResponse>> {
+
+            override fun onFailure(call: Call<ArrayList<GetFolderScrapListResponse>>, t: Throwable) {
+                Log.e("get List failed", t.toString())
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<GetFolderScrapListResponse>>,
+                response: Response<ArrayList<GetFolderScrapListResponse>>
+            ) {
+                if(response.isSuccessful){
+                    Log.d("success", response.body().toString())
+                    val data: ArrayList<GetFolderScrapListResponse>? = response.body() //temp가 없을 때 터짐
+                    val tempDataList : ArrayList<Feed> = ArrayList()
+
+                    if (data != null) {
+                        for(folder in data) {
+                            for (scrap in folder.scraps!!) {
+                                tempDataList.add(scrap.toFeedDetail())
+                                updateDataList(tempDataList)
+                            }
                         }
                     }
                 }

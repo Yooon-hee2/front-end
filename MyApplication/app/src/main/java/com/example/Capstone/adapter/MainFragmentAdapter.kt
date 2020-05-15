@@ -47,5 +47,7 @@ class MainFragmentAdapter(fm:FragmentManager) : FragmentStatePagerAdapter(fm) {
         getFeedFragment().changeRecyclerViewData(charSequence)
     }
 
-
+    fun changeFolder(folderId : Int) {
+        getFeedFragment().changeFolder(folderId)
+    }
 }

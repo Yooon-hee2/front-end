@@ -1,11 +1,10 @@
 package com.example.Capstone.network
 
-import com.example.Capstone.network.get.GetAllFolderListResponse
-import com.example.Capstone.network.get.GetAllScrapListResponse
-import com.example.Capstone.network.get.GetFolderScrapListResponse
+import com.example.Capstone.network.get.*
 import com.example.Capstone.network.post.PostLoginResponse
 import com.example.Capstone.network.post.PostScrapResponse
 import com.example.Capstone.network.post.PostSignUpResponse
+import com.example.Capstone.network.put.PutScrapInfoResponse
 import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.http.*
@@ -29,13 +28,6 @@ interface NetworkService {
     @Body() body: JsonObject
     ): Call<PostSignUpResponse>
 
-    //send url for crawling
-    @POST("/user/nickname/")
-    fun postScrapResponse(
-        @Header("Content-Type") content_type: String,
-        @Body() body: JsonObject
-    ): Call<PostScrapResponse>
-
     //get all folder list
     @GET("/memmem_app/users/{id}/folders/")
     fun getAllFolderListResponse(
@@ -43,20 +35,41 @@ interface NetworkService {
     ): Call<ArrayList<GetAllFolderListResponse>>
 
 
-
-
     //scrap information -----------------------------------------------
     //scrap list for all folders
-    @GET("/memmem_app/users/{id}/listall")
+    @GET("/memmem_app/users/{id}/listall/")
     fun getAllScrapListResponse(
         @Path("id") id : Int
     ): Call<ArrayList<GetAllScrapListResponse>>
 
-//    //scrap list for specific folders
-//    @GET("/users/{id}/{folder_id}")
-//    fun getFolderScrapListResponse(
-//        @Path("id") id : Int,
-//        @Path("folder_id") folder_id : Int
-//    ): Call<ArrayList<GetFolderScrapListResponse>>
+    //scrap list for specific folders
+    @GET("/memmem_app/users/{id}/folders/{folder_key}/")
+    fun getFolderScrapListResponse(
+        @Path("id") id : Int,
+        @Path("folder_key") folder_key : Int
+    ): Call<ArrayList<GetFolderScrapListResponse>>
+
+    //show scrap detail
+    @GET("/memmem_app/scrap/{id}/")
+    fun getSpecificScrapResponse(
+        @Path("id") id : Int
+    ): Call<GetSpecificScrapResponse>
+
+
+    //send url for crawling
+    @POST("/memmem_app/addscrap/")
+    fun postScrapResponse(
+        @Header("Content-Type") content_type: String,
+        @Body() body: JsonObject
+    ): Call<PostScrapResponse>
+
+    //send modified scrap information
+    @PUT("/memmem_app/updatescrap/{id}/")
+    fun putScrapInfoResponse(
+        @Header("Content-Type") content_type: String,
+        @Path("id") id : Int,
+        @Body() body: JsonObject
+    ): Call<PutScrapInfoResponse>
+
 }
 
