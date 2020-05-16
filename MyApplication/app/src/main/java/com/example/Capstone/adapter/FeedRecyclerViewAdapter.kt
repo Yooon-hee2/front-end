@@ -66,24 +66,6 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
             ctx.startActivity(intent)
         }
 
-        //val hashtagList : ArrayList<TagData>? = filteredList!![position].tags
-
-//        for (tag in holder.hashtag){
-//            tag.visibility = View.GONE
-//        }
-
-//        var hashtagSize = 0
-//        if (hashtagList != null) {
-//            for (item in hashtagList) {
-//                holder.hashtag[hashtagSize].visibility = View.VISIBLE
-//                holder.hashtag[hashtagSize].text = item.tag_text
-//                hashtagSize += 1
-//                if(hashtagSize == 5){
-//                    break
-//                }
-//            }
-//        }
-
         var hashtagList: ArrayList<String> = ArrayList()
 
         if (filteredList!![position].tags != null) {

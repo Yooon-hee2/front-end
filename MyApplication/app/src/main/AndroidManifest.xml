@@ -20,7 +20,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activities.SignUpNameActivity"></activity>
+        <service
+            android:name=".background.NotificationJobFireBaseService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name=".background.AlarmBroadcastReceiver" />
+
+        <activity android:name=".activities.SignUpNameActivity" />
         <activity
             android:name=".activities.ShowMsgActivity"
             android:theme="@style/TransparentTheme">

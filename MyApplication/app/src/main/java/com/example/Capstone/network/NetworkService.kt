@@ -55,7 +55,6 @@ interface NetworkService {
         @Path("id") id : Int
     ): Call<GetSpecificScrapResponse>
 
-
     //send url for crawling
     @POST("/memmem_app/addscrap/")
     fun postScrapResponse(

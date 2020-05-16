@@ -1,11 +1,8 @@
 package com.example.Capstone.activities
 
 import android.app.ActivityManager
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,25 +12,21 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.view.GravityCompat
 import androidx.viewpager.widget.ViewPager
 import com.example.Capstone.R
 import com.example.Capstone.adapter.MainFragmentAdapter
 import com.example.Capstone.adapter.SearchListViewAdapter
+import com.example.Capstone.background.JobScheduler
 import com.example.Capstone.db.SharedPreferenceController
 import com.example.Capstone.model.Feed
 import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
 import com.example.Capstone.network.get.GetAllFolderListResponse
-import com.example.Capstone.network.get.GetAllScrapListResponse
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_activity_main.*
 import kotlinx.android.synthetic.main.nav_drawer.*
-import org.jetbrains.anko.sdk27.coroutines.onItemSelectedListener
-import org.jetbrains.anko.toast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -43,7 +36,7 @@ class MainActivity : AppCompatActivity(){
 
     lateinit var pager : ViewPager
 
-    val networkService: NetworkService by lazy {
+    private val networkService: NetworkService by lazy {
         ApplicationController.instance.networkService
     }
 
@@ -56,6 +49,7 @@ class MainActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        JobScheduler.start(this)
 
         edt_search = findViewById(R.id.search_item)
 
@@ -140,14 +134,13 @@ class MainActivity : AppCompatActivity(){
             }
 
             override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
+//                pagerAdapter.getEditText(search_item.text)
                 if (charSequence!!.isNotBlank()) {
-                    pagerAdapter.getEditText(search_item.text)
                     if(charSequence.toString().substring(0,1) == "#") {
                         searchListCustomAdapter.filter(charSequence.substring(1, charSequence.length))
                     }
                 }
             }
-
         })
 
         btn_personal_storage.setOnClickListener {
@@ -197,7 +190,7 @@ class MainActivity : AppCompatActivity(){
             }
             popupMenu.show()
         }
-        //myNotification()
+
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
@@ -206,37 +199,6 @@ class MainActivity : AppCompatActivity(){
             imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
         }
         return super.dispatchTouchEvent(ev)
-    }
-
-    private fun myNotification(){
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create the NotificationChannel
-            val name = getString(R.string.channel_name)
-            val descriptionText = getString(R.string.channel_description)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val mChannel = NotificationChannel("memmem", name, importance)
-            mChannel.description = descriptionText
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(mChannel)
-        }
-
-
-        var builder = NotificationCompat.Builder(this, "memmem")
-            .setSmallIcon(R.drawable.ic_noti)
-            .setContentTitle("memmem notification")
-            .setContentText("Much longer text that cannot fit one line...")
-            .setStyle(NotificationCompat.BigTextStyle()
-                .bigText("오늘 저녁식사 메뉴를 정하지 못했다면 ?."))
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setAutoCancel(true)
-
-        with(NotificationManagerCompat.from(this)) {
-            // notificationId is a unique int for each notification that you must define
-            notify(1, builder.build())
-        }
     }
 
     private fun getAllFolderListResponse(id: Int){ //programId 넘겨주기

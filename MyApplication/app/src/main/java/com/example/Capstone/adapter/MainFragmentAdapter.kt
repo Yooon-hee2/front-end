@@ -45,9 +45,11 @@ class MainFragmentAdapter(fm:FragmentManager) : FragmentStatePagerAdapter(fm) {
 
     fun getEditText(charSequence: CharSequence){
         getFeedFragment().changeRecyclerViewData(charSequence)
+        getAlbumFragment().changeRecyclerViewData(charSequence)
     }
 
     fun changeFolder(folderId : Int) {
         getFeedFragment().changeFolder(folderId)
+        getAlbumFragment().changeFolder(folderId)
     }
 }
