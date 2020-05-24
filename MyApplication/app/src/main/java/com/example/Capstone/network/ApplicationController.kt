@@ -5,7 +5,11 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.Capstone.R
+import com.example.Capstone.background.LocationWorker
+import com.example.Capstone.background.TimeWorker
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -13,7 +17,7 @@ import java.util.concurrent.TimeUnit
 
 
 class ApplicationController : Application(){
-    private val baseURL = "https://9ef33bca.ngrok.io" //ngrok켤때마다 바꿀것
+    private val baseURL = "https://c6020cbf.ngrok.io" //ngrok켤때마다 바꿀것
     lateinit var networkService: NetworkService
 
     companion object{
@@ -25,6 +29,7 @@ class ApplicationController : Application(){
         instance = this
         buildNetWork()
         makeNotificationChannel()
+        activateWorker()
     }
 
     var okHttpClient = OkHttpClient.Builder() //set timeout
@@ -58,4 +63,11 @@ class ApplicationController : Application(){
         }
     }
 
+    private fun activateWorker(){
+        val workRequestAboutLocation = PeriodicWorkRequestBuilder<LocationWorker>(15, TimeUnit.MINUTES).build()
+        val workRequestAboutTime = PeriodicWorkRequestBuilder<TimeWorker>(2, TimeUnit.HOURS).build()
+        val workManager = WorkManager.getInstance()
+        workManager?.enqueue(workRequestAboutLocation)
+        workManager?.enqueue(workRequestAboutTime)
+    }
 }

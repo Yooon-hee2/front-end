@@ -4,11 +4,11 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.Capstone.R
 
-class HashtagRecyclerViewAdapter(val ctx: Context, var list: ArrayList<String>?)  :
+class HashtagRecyclerViewAdapter(val ctx: Context, var list: ArrayList<String>?, var editable: Boolean)  :
 
     RecyclerView.Adapter<HashtagRecyclerViewAdapter.Holder>() {
 
@@ -22,10 +22,21 @@ class HashtagRecyclerViewAdapter(val ctx: Context, var list: ArrayList<String>?)
     override fun onBindViewHolder(holder: Holder, position: Int) {
         holder.tagName.text = list?.get(position)
 
-        holder.tagName.setOnClickListener{
-//            showDeleteDialog(position)
-            true
+        if(editable){
+            holder.tagName.setOnLongClickListener{
+                removeItem(position)
+                true
+            }
         }
+    }
+
+    private fun removeItem(position: Int) {
+        list?.removeAt(position)
+        notifyDataSetChanged()
+    }
+
+    fun returnCurrHashTag(): ArrayList<String>? {
+        return list
     }
 
     inner class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {

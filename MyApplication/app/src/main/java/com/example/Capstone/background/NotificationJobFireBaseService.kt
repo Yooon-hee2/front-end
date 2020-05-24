@@ -4,13 +4,13 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.SystemClock
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import com.firebase.jobdispatcher.JobParameters
 import com.firebase.jobdispatcher.JobService
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
+import com.google.android.gms.location.LocationServices
 
 class NotificationJobFireBaseService : JobService() {
     override fun onStartJob(job: JobParameters): Boolean {
@@ -22,11 +22,13 @@ class NotificationJobFireBaseService : JobService() {
         val pendingIntent = PendingIntent.getBroadcast(this, 111, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val intent2 = Intent(this, AlarmBroadcastReceiver::class.java)
-        intent.putExtra("id", 121)
+        intent2.putExtra("id", 121)
         val pendingIntent2 = PendingIntent.getBroadcast(this, 121, intent2, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val intent3 = Intent(this, AlarmBroadcastReceiver::class.java)
+        intent3.putExtra("id", 131)
         val pendingIntent3 = PendingIntent.getBroadcast(this, 131, intent3, PendingIntent.FLAG_UPDATE_CURRENT)
+
         /**
          * Intent 플래그
          * FLAG_ONE_SHOT : 한번만 사용하고 다음에 이 PendingIntent가 불려지면 Fail을 함
@@ -35,13 +37,16 @@ class NotificationJobFireBaseService : JobService() {
          * FLAG_UPDATE_CURRENT : 실행중인 PendingIntent가 있다면  Extra Data만 교체함
          */
 
+        //time alaram
         manager.set(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() + 2 * 60 * 60 * 1000, pendingIntent) //2시간 간격
         manager.set(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() +  7 * 24 * 60 * 60 * 1000, pendingIntent2) // 1주일 간격
         manager.set(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() + 3 * 24 * 60 * 60 * 1000, pendingIntent3) // 3일 간격
+
         return false // Answers the question: "Is there still work going on?"
     }
 
     override fun onStopJob(job: JobParameters): Boolean {
         return false // Answers the question: "Should this job be retried?"
     }
+
 }

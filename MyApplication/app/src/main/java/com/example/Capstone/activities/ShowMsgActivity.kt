@@ -8,7 +8,10 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.*
+import android.view.Gravity
+import android.view.MotionEvent
+import android.view.View
+import android.view.Window
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.EditText
@@ -24,14 +27,15 @@ import com.example.Capstone.db.SharedPreferenceController
 import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
 import com.example.Capstone.network.data.TagData
+import com.example.Capstone.network.post.PostFolderResponse
 import com.example.Capstone.network.post.PostScrapResponse
 import com.example.Capstone.network.put.PutScrapInfoResponse
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import kotlinx.android.synthetic.main.content_activity_main.*
+import kotlinx.android.synthetic.main.edit_popup.*
 import org.jetbrains.anko.toast
+import org.json.JSONArray
 import org.json.JSONObject
-import org.w3c.dom.Text
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -76,8 +80,7 @@ class ShowMsgActivity : AppCompatActivity() {
                 showSettingPopup()
             }
         }
-
-        hashTagRecyclerViewAdapter = HashtagRecyclerViewAdapter(this, hashtagList)
+        hashTagRecyclerViewAdapter = HashtagRecyclerViewAdapter(this, hashtagList, true)
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -142,15 +145,29 @@ class ShowMsgActivity : AppCompatActivity() {
         val editTitle : EditText = dialog.findViewById(R.id.et_edit_title)
         val recyclerviewContainer : RecyclerView = dialog.findViewById(R.id.rv_hashtag_container_dialog)
         val editNSave : TextView = dialog.findViewById(R.id.btn_submit_edit)
-        val btnAdd : ImageView = dialog.findViewById(R.id.btn_add)
+        val btnAddHashTag : ImageView = dialog.findViewById(R.id.btn_add)
         val folderName : TextView = dialog.findViewById(R.id.folder_name_modify)
+        val createFolder : TextView = dialog.findViewById(R.id.btn_add_folder_dialog)
+        val editHashTag : EditText = dialog.findViewById(R.id.edt_add_hashtag)
 
         folderName.text = "전체"
 
         dialog.show()
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        btnAdd.visibility = View.VISIBLE
+        btnAddHashTag.setOnClickListener {
+            if(editHashTag.text.toString().isNotBlank()){
+                var newHashTagName = editHashTag.text.toString()
+                if(newHashTagName.substring(0,1) == "#"){
+                    hashtagList.add(newHashTagName)
+                }
+                else{
+                    hashtagList.add("#$newHashTagName")
+                }
+            }
+            hashTagRecyclerViewAdapter.notifyDataSetChanged()
+            editHashTag.text.clear()
+        }
 
         editTitle.hint = title
 
@@ -189,16 +206,10 @@ class ShowMsgActivity : AppCompatActivity() {
             }
             finish()
         }
-    }
 
-    private fun createNewTextView(text: String): TextView? {
-        val lparams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        val textView = TextView(this)
-        textView.layoutParams = lparams
-        textView.text = "$text"
-        textView.textSize = resources.getDimension(R.dimen.big_font)
-        textView.setTextColor(resources.getColor(R.color.black))
-        return textView
+        createFolder.setOnClickListener {
+            showCreateFolderDialog()
+        }
     }
 
     private fun showSavedPopup(){
@@ -211,11 +222,6 @@ class ShowMsgActivity : AppCompatActivity() {
         dialog.show()
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-//        Handler().postDelayed({
-//            dialog.dismiss()
-//            finish()
-//        }, 3000) //error 에러생김
-
         val moveToMain : TextView = dialog.findViewById(R.id.btn_move_main)
         moveToMain.setOnClickListener {
             val intentMain = Intent(this, MainActivity::class.java)
@@ -225,6 +231,24 @@ class ShowMsgActivity : AppCompatActivity() {
             finish()
         }
     }
+
+    private fun showCreateFolderDialog() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.dialog_add_folder)
+
+        val newFolderName = dialog.findViewById(R.id.et_new_folder) as EditText
+
+        val submit = dialog.findViewById(R.id.btn_add_folder) as TextView
+        submit.setOnClickListener {
+            dialog.dismiss()
+            if(newFolderName.text.toString().isNotEmpty())
+                folderResponseData(newFolderName.text.toString())
+        }
+        dialog.show()
+    }
+
 
     private fun scrapResponseData(status : String) {
 
@@ -291,6 +315,19 @@ class ShowMsgActivity : AppCompatActivity() {
         }
         jsonObject.put("title", modifyingTitle)
 
+        var tagList = hashTagRecyclerViewAdapter.returnCurrHashTag()
+
+        val jsonArray = JSONArray()
+
+        if (tagList != null) {
+            for (tag in tagList){
+                var tagJsonObject = JSONObject()
+                tagJsonObject.put("tag_text", tag)
+                jsonArray.put(tagJsonObject)
+            }
+        }
+
+        jsonObject.put("tags", jsonArray)
         val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
 
         Log.d("bodyformodify", gsonObject.toString())
@@ -306,6 +343,46 @@ class ShowMsgActivity : AppCompatActivity() {
             override fun onResponse(call: Call<PutScrapInfoResponse>, response: Response<PutScrapInfoResponse>) {
                 if (response.isSuccessful) {
                     Log.e("crawlingbody", response.body().toString())
+                }
+            }
+        })
+    }
+
+    //create new folder
+    private fun folderResponseData(folderName : String) {
+
+        var jsonObject = JSONObject()
+        jsonObject.put("id", SharedPreferenceController.getUserId(this)!!.toString())
+        jsonObject.put("folder_name", folderName)
+
+        val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
+
+        Log.d("bodyforNewFolder", gsonObject.toString())
+
+        val folderScrapResponse: Call<PostFolderResponse> =
+            networkService.postFolderResponse("application/json", gsonObject)
+
+        folderScrapResponse.enqueue(object : Callback<PostFolderResponse> {
+            override fun onFailure(call: Call<PostFolderResponse>, t: Throwable) {
+                Log.e("fail", t.toString())
+            }
+
+            override fun onResponse(call: Call<PostFolderResponse>, response: Response<PostFolderResponse>) {
+                if (response.isSuccessful) {
+                    folderList.clear()
+                    Log.e("addNewFolder", response.body().toString())
+                    val data: PostFolderResponse? = response.body()
+                    if (data != null) {
+                        for(folder in data.folders) {
+                                if(folder.folder_key == 0){
+                                    folderList["전체"] = folder.folder_id
+                                }
+                                else{
+                                    folderList[folder.folder_name] = folder.folder_id
+                                }
+                            }
+                        SharedPreferenceController.setUserFolderInfo(this@ShowMsgActivity, folderList)
+                    }
                 }
             }
         })

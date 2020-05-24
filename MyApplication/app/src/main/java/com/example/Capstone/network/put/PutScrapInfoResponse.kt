@@ -1,8 +1,8 @@
 package com.example.Capstone.network.put
 
+import com.example.Capstone.network.get.GetSpecificScrapResponse
+
 
 data class PutScrapInfoResponse(
-    val scrap_id : Int,
-    val folder : Int,
-    val title : String
+    val scrap : GetSpecificScrapResponse
 )

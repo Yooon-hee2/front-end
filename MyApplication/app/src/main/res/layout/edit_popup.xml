@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="280dp"
+    android:layout_width="300dp"
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:gravity="center_horizontal"
@@ -64,16 +64,14 @@
             android:inputType="textMultiLine|textCapSentences"
             android:padding="5dp"
             android:textColor="@color/black"
-            android:textSize="15dp" />
+            android:textSize="15sp" />
 
         <ImageView
             android:layout_marginLeft="5dp"
             android:layout_gravity="center"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_alignParentRight="true"
             android:layout_marginRight="5dp"
-            android:layout_centerVertical="true"
             android:id="@+id/btn_add"
             android:src="@drawable/ic_plus"/>
     </LinearLayout>
@@ -129,29 +127,44 @@
         android:textColor="@color/darkGrayD"
         android:textSize="10sp" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:textColor="@color/black"
+            android:text="전체"
+            android:id="@+id/folder_name_modify"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp">
+
+        </TextView>
 
         <ImageView
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center"
             android:src="@drawable/ic_down"
             android:layout_centerVertical="true"
             android:id="@+id/folder_menu"
             android:layout_width="15dp"
             android:layout_height="15dp">
         </ImageView>
+    </LinearLayout>
 
-        <TextView
-            android:layout_marginLeft="45dp"
-            android:id="@+id/folder_name_modify"
-            android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="15sp">
-        </TextView>
-
-    </RelativeLayout>
-
+    <TextView
+        android:id="@+id/btn_add_folder_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginVertical="5dp"
+        android:includeFontPadding="false"
+        android:text="+ 폴더 추가"
+        android:textColor="@color/darkGrayC"
+        android:textSize="10sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/btn_submit_edit"

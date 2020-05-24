@@ -7,16 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.URLUtil
 import android.widget.*
-import androidx.core.content.ContextCompat.startActivity
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.Capstone.R
 import com.example.Capstone.activities.InformationActivity
 import com.example.Capstone.model.Feed
-import com.example.Capstone.network.data.TagData
-import kotlinx.android.synthetic.main.activity_information.*
-import org.jetbrains.anko.*
+
 
 class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
 
@@ -74,7 +72,7 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
             }
         }
 
-        var hashTagRecyclerViewAdapter = HashtagRecyclerViewAdapter(ctx, hashtagList)
+        var hashTagRecyclerViewAdapter = HashtagRecyclerViewAdapter(ctx, hashtagList, false)
         holder.hashtagContainer.adapter = hashTagRecyclerViewAdapter
         holder.hashtagContainer.layoutManager = LinearLayoutManager(ctx, LinearLayoutManager.HORIZONTAL, false)
     }
@@ -85,13 +83,29 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
         var thumbnail = itemView.findViewById(R.id.rv_item_feed_thumbnail) as ImageView
         var container = itemView.findViewById(R.id.rv_item_feed_container) as RelativeLayout
         var hashtagContainer = itemView.findViewById(R.id.rv_item_hashtag_container_main) as RecyclerView
-        var hashtag1 = itemView.findViewById(R.id.rv_item_feed_hashtag1) as TextView
-        var hashtag2 = itemView.findViewById(R.id.rv_item_feed_hashtag2) as TextView
-        var hashtag3 = itemView.findViewById(R.id.rv_item_feed_hashtag3) as TextView
-        var hashtag4 = itemView.findViewById(R.id.rv_item_feed_hashtag4) as TextView
-        var hashtag5 = itemView.findViewById(R.id.rv_item_feed_hashtag5) as TextView
-        var hashtag = arrayListOf(hashtag1, hashtag2, hashtag3, hashtag4, hashtag5)
+    }
 
+    fun calcDiff(newList: ArrayList<Feed>) {
+        val tileDiffUtilCallback = DataDiffUtilCallback(filteredList!!, newList)
+        val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(tileDiffUtilCallback)
+        filteredList!!.clear()
+        filteredList!!.addAll(newList)
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    inner class DataDiffUtilCallback(
+        private var oldData: ArrayList<Feed>,
+        private var newData: ArrayList<Feed>
+    ) : DiffUtil.Callback() {
+        override fun getOldListSize(): Int = oldData.size
+        override fun getNewListSize(): Int = newData.size
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldData[oldItemPosition] == newData[newItemPosition]
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return areItemsTheSame(oldItemPosition, newItemPosition)
+        }
     }
 
         override fun getFilter(): Filter {

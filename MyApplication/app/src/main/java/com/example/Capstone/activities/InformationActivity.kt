@@ -130,7 +130,7 @@ class InformationActivity : AppCompatActivity() {
         rv_memo_container.adapter = memoRecyclerViewAdapter
         rv_memo_container.layoutManager = LinearLayoutManager(this)
 
-        hashTagRecyclerViewAdapter = HashtagRecyclerViewAdapter(this, hashtagList)
+        hashTagRecyclerViewAdapter = HashtagRecyclerViewAdapter(this, hashtagList, true)
         rv_hashtag_container.adapter = hashTagRecyclerViewAdapter
         rv_hashtag_container.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 

@@ -1,12 +1,10 @@
 package com.example.Capstone.db
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.text.TextUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import org.json.JSONObject
 
 
 object SharedPreferenceController{
@@ -14,6 +12,8 @@ object SharedPreferenceController{
     private val USERID = "userid"
     private val NOTIFICATION = "notification"
     private val FOLDER = "folder"
+    private val LATITUDE = "latitude"
+    private val LONGITUDE = "longitude"
 
     //닉네임 저장, 받아오기
     fun setUserNickname(context:Context, nickname: String){
@@ -76,18 +76,30 @@ object SharedPreferenceController{
         return pref.getBoolean(NOTIFICATION, false)
     }
 
-//    //이메일 저장, 받아오기
-//    fun setUserEmail(context: Context, email: String){
-//        val pref = context.getSharedPreferences(USER_EMAIL, Context.MODE_PRIVATE)
-//        val editor = pref.edit()
-//        editor.putString(USER_EMAIL, email)
-//        editor.commit()
-//    }
-//
-//    fun getUserEmail(context: Context): String? {
-//        val pref = context.getSharedPreferences(USER_EMAIL, Context.MODE_PRIVATE)
-//        return pref.getString(MYAUTH, "")
-//    }
+    //유저 위치 받아오기
+    fun setUserLatitude(context:Context, latitude: Double){
+        val pref = context.getSharedPreferences(LATITUDE, Context.MODE_PRIVATE)
+        val editor = pref.edit()
+        editor.putFloat(LATITUDE, latitude.toFloat())
+        editor.commit()
+    }
+
+    fun getUserLatitude(context:Context): Double? {
+        val pref = context.getSharedPreferences(LATITUDE, Context.MODE_PRIVATE)
+        return pref.getFloat(LATITUDE, 1F).toDouble()
+    }
+
+    fun setUserLongitude(context:Context, longitude: Double){
+        val pref = context.getSharedPreferences(LONGITUDE, Context.MODE_PRIVATE)
+        val editor = pref.edit()
+        editor.putFloat(LONGITUDE, longitude.toFloat())
+        editor.commit()
+    }
+
+    fun getUserLongitude(context:Context): Double? {
+        val pref = context.getSharedPreferences(LONGITUDE, Context.MODE_PRIVATE)
+        return pref.getFloat(LONGITUDE, 1F).toDouble()
+    }
 
 
     //erase all when logout

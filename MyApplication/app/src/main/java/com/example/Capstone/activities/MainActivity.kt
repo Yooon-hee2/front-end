@@ -1,9 +1,13 @@
 package com.example.Capstone.activities
 
-import android.app.ActivityManager
+import android.Manifest
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -12,17 +16,23 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.viewpager.widget.ViewPager
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import com.example.Capstone.R
 import com.example.Capstone.adapter.MainFragmentAdapter
 import com.example.Capstone.adapter.SearchListViewAdapter
+import com.example.Capstone.background.AlarmBroadcastReceiver
 import com.example.Capstone.background.JobScheduler
+import com.example.Capstone.background.LocationWorker
 import com.example.Capstone.db.SharedPreferenceController
 import com.example.Capstone.model.Feed
 import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
 import com.example.Capstone.network.get.GetAllFolderListResponse
+import com.google.android.gms.location.*
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_activity_main.*
@@ -30,6 +40,7 @@ import kotlinx.android.synthetic.main.nav_drawer.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity(){
@@ -40,6 +51,10 @@ class MainActivity : AppCompatActivity(){
         ApplicationController.instance.networkService
     }
 
+    private val LOCATION_REQUEST_CODE = 1000
+
+
+
     companion object{
         val recommendedHashtagList = arrayListOf("#강남", "#이태원", "#플레이리스트", "#맛집", "#동물의숲")
         lateinit var edt_search : EditText
@@ -49,7 +64,7 @@ class MainActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        JobScheduler.start(this)
+//        JobScheduler.start(this)
 
         edt_search = findViewById(R.id.search_item)
 
@@ -72,6 +87,14 @@ class MainActivity : AppCompatActivity(){
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_album))
 
         pager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
+
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.e("location", "no permission")
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_REQUEST_CODE)
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), LOCATION_REQUEST_CODE)
+        }
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
@@ -134,7 +157,7 @@ class MainActivity : AppCompatActivity(){
             }
 
             override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
-//                pagerAdapter.getEditText(search_item.text)
+                pagerAdapter.getEditText(search_item.text)
                 if (charSequence!!.isNotBlank()) {
                     if(charSequence.toString().substring(0,1) == "#") {
                         searchListCustomAdapter.filter(charSequence.substring(1, charSequence.length))
@@ -192,7 +215,6 @@ class MainActivity : AppCompatActivity(){
         }
 
     }
-
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         if (currentFocus != null) {
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -201,7 +223,7 @@ class MainActivity : AppCompatActivity(){
         return super.dispatchTouchEvent(ev)
     }
 
-    private fun getAllFolderListResponse(id: Int){ //programId 넘겨주기
+    private fun getAllFolderListResponse(id: Int){
         val getAllFolderListResponse = networkService.getAllFolderListResponse(id)
 
         getAllFolderListResponse.enqueue(object : Callback<ArrayList<GetAllFolderListResponse>> {
@@ -239,16 +261,4 @@ class MainActivity : AppCompatActivity(){
             }
         })
     }
-}
-
-fun Context.isServiceRunning(serviceClass: Class<*>): Boolean {
-    val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-
-    for (service in activityManager.getRunningServices(Integer.MAX_VALUE)) {
-        if (serviceClass.name == service.service.className) {
-            Log.e("isServiceRunning", "Service is running")
-            return true
-        }
-    }
-    return false
 }

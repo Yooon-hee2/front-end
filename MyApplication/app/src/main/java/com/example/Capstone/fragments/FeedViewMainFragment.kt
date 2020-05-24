@@ -73,13 +73,6 @@ class FeedViewMainFragment : Fragment() {
         }
     }
 
-
-    private fun updateDataList(list: ArrayList<Feed>){
-        dataList.clear()
-        dataList.addAll(list)
-        feedRecyclerViewAdapter.notifyDataSetChanged()
-    }
-
     private fun getAllScrapListResponse(id: Int){
         val getAllScrapListResponse = networkService.getAllScrapListResponse(id)
 
@@ -101,7 +94,7 @@ class FeedViewMainFragment : Fragment() {
                     if (data != null) {
                         for(scrap in data) {
                             tempDataList.add(scrap.toFeedDetail())
-                            updateDataList(tempDataList)
+                            feedRecyclerViewAdapter.calcDiff(tempDataList)
                         }
                     }
                 }
@@ -135,7 +128,7 @@ class FeedViewMainFragment : Fragment() {
                         for(folder in data) {
                             for (scrap in folder.scraps!!) {
                                 tempDataList.add(scrap.toFeedDetail())
-                                updateDataList(tempDataList)
+                                feedRecyclerViewAdapter.calcDiff(tempDataList)
                             }
                         }
                     }
