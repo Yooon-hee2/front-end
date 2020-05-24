@@ -60,6 +60,7 @@ class FeedViewMainFragment : Fragment() {
     }
 
     fun changeRecyclerViewData(charSequence: CharSequence){
+//        feedRecyclerViewAdapter = FeedRecyclerViewAdapter(context!!, dataList)
         feedRecyclerViewAdapter.filter.filter(charSequence)
         feedRecyclerViewAdapter.notifyDataSetChanged()
     }

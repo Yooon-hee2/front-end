@@ -135,6 +135,7 @@ class MainActivity : AppCompatActivity(){
 
         search_item.addTextChangedListener(object : TextWatcher{
             override fun afterTextChanged(s: Editable?) {
+                pagerAdapter.getEditText(search_item.text)
                 if (search_item.text.toString().isNotEmpty()){
                     btn_erase_all.visibility = View.VISIBLE
                     if(search_item.text.toString().substring(0,1) == "#") {
@@ -157,8 +158,8 @@ class MainActivity : AppCompatActivity(){
             }
 
             override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
-                pagerAdapter.getEditText(search_item.text)
                 if (charSequence!!.isNotBlank()) {
+                    pagerAdapter.getEditText(search_item.text)
                     if(charSequence.toString().substring(0,1) == "#") {
                         searchListCustomAdapter.filter(charSequence.substring(1, charSequence.length))
                     }
@@ -197,9 +198,7 @@ class MainActivity : AppCompatActivity(){
                 ly_drawer.closeDrawer(GravityCompat.END)
             }
         }
-
         getAllFolderListResponse(SharedPreferenceController.getUserId(this)!!)
-
         val button = findViewById<ImageView>(R.id.folder_menu)
         button.setOnClickListener {
             val popupMenu = PopupMenu(this, button)
@@ -213,8 +212,13 @@ class MainActivity : AppCompatActivity(){
             }
             popupMenu.show()
         }
-
     }
+
+    override fun onResume() {
+        super.onResume()
+        getAllFolderListResponse(SharedPreferenceController.getUserId(this)!!)
+    }
+
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         if (currentFocus != null) {
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

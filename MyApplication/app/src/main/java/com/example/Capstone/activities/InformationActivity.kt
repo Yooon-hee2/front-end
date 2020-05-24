@@ -1,7 +1,6 @@
 package com.example.Capstone.activities
 
 import android.app.Dialog
-import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -15,23 +14,23 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.Capstone.R
+import com.example.Capstone.activities.MainActivity.Companion.folderList
 import com.example.Capstone.adapter.HashtagRecyclerViewAdapter
 import com.example.Capstone.adapter.MemoRecyclerViewAdapter
 import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
-import com.example.Capstone.network.data.TagData
 import com.example.Capstone.network.get.GetSpecificScrapResponse
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import com.example.Capstone.network.put.PutScrapInfoResponse
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import kotlinx.android.synthetic.main.activity_information.*
 import kotlinx.android.synthetic.main.toolbar_with_trashbin.*
-import kotlinx.android.synthetic.main.dialog_add_memo.*
-import kotlinx.android.synthetic.main.dialog_modify_title.*
 import org.jetbrains.anko.lines
 import org.jetbrains.anko.toast
-import org.w3c.dom.Text
+import org.json.JSONArray
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -45,7 +44,6 @@ class InformationActivity : AppCompatActivity() {
 
     //problem : instagram만 click이 막아지지 않음
     private var saved_url = ""
-//    private val saved_url = "https://www.youtube.com/embed/" + "zwjZ-ERMp1k"
 
     lateinit var memoRecyclerViewAdapter: MemoRecyclerViewAdapter
     lateinit var hashTagRecyclerViewAdapter: HashtagRecyclerViewAdapter
@@ -53,7 +51,9 @@ class InformationActivity : AppCompatActivity() {
     var memoList: ArrayList<String> = ArrayList()
     var hashtagList : ArrayList<String> = ArrayList()
 
+    private var scrapTitle : String = ""
     private var scrapId : Int = 0
+    private var folderId : Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -135,23 +135,31 @@ class InformationActivity : AppCompatActivity() {
         rv_hashtag_container.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         btn_change_menu.setOnClickListener {
-            var menu : PopupMenu = PopupMenu(this, btn_change_menu)
-            menu.menu.add("전체")
-            menu.menu.add("맛집")
-            menu.menu.add("먹거리")
-            menu.show()
+            val popupMenu = PopupMenu(this, btn_change_menu)
+            for (folder in folderList?.keys!!){
+                popupMenu.menu.add(folder)
+            }
+            popupMenu.setOnMenuItemClickListener { item ->
+                folderId = folderList!![item.title]!!
+                true
+            }
+            popupMenu.show()
         }
+
 
         btn_add_hashtag.setOnClickListener {
             showHashtagDialog()
         }
+    }
 
-//        for (ht in hashtagTextList){
-//            ht.setOnLongClickListener{
-//                showDeleteDialog(ht)
-//                true
-//            }
-//        }
+    override fun onResume() {
+        super.onResume()
+        modifyScrapResponseData(scrapTitle)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        modifyScrapResponseData(scrapTitle)
     }
 
     private fun getSpecificScrapResponse(id: Int){
@@ -176,6 +184,9 @@ class InformationActivity : AppCompatActivity() {
                         info_title.text = data.title
                         saved_url = data.url
                         info_date.text = data.date.substring(0,10)
+
+                        scrapTitle = data.title
+                        folderId = data.folder
 
                         hashtagList.clear()
                         if (data.tags != null) {
@@ -261,6 +272,7 @@ class InformationActivity : AppCompatActivity() {
             dialog.dismiss()
             if (title.toString().isNotEmpty()){
                 info_title.text = title.text.toString()
+                scrapTitle = title.text.toString()
             }
         }
         dialog.show()
@@ -284,15 +296,55 @@ class InformationActivity : AppCompatActivity() {
         submit.setOnClickListener {
             dialog.dismiss()
             if (hashtag.text.toString().isNotEmpty()){
-//                addHashtag(hashtag.text.toString())
+                hashtagList.add(hashtag.text.toString())
+                hashTagRecyclerViewAdapter.notifyDataSetChanged()
             }
         }
         dialog.show()
     }
-//    private fun addHashtag(str: String) {
-//        var tempHashtag = hashtagTextList[hashtagSize]
-//        tempHashtag.visibility = View.VISIBLE
-//        tempHashtag.text = "#" + str
-//        hashtagSize++
-//    }
+
+    private fun modifyScrapResponseData(modifyingTitle: String) {
+
+        var jsonObject = JSONObject()
+        jsonObject.put("scrap_id", scrapId)
+        if (folderId == 0){
+            jsonObject.put("folder", folderList["전체"].toString().substring(0,1))
+        }
+        else{
+            jsonObject.put("folder", folderId)
+        }
+        jsonObject.put("title", modifyingTitle)
+
+        var tagList = hashTagRecyclerViewAdapter.returnCurrHashTag()
+
+        val jsonArray = JSONArray()
+
+        if (tagList != null) {
+            for (tag in tagList){
+                var tagJsonObject = JSONObject()
+                tagJsonObject.put("tag_text", tag)
+                jsonArray.put(tagJsonObject)
+            }
+        }
+
+        jsonObject.put("tags", jsonArray)
+        val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
+
+        Log.d("bodyformodify", gsonObject.toString())
+
+        val putScrapInfoResponse: Call<PutScrapInfoResponse> =
+            networkService.putScrapInfoResponse("application/json", scrapId, gsonObject)
+
+        putScrapInfoResponse.enqueue(object : Callback<PutScrapInfoResponse> {
+            override fun onFailure(call: Call<PutScrapInfoResponse>, t: Throwable) {
+                Log.e("fail", t.toString())
+            }
+
+            override fun onResponse(call: Call<PutScrapInfoResponse>, response: Response<PutScrapInfoResponse>) {
+                if (response.isSuccessful) {
+                    Log.e("crawlingbody", response.body().toString())
+                }
+            }
+        })
+    }
 }

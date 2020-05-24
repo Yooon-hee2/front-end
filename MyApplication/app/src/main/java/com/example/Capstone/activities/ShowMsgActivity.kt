@@ -120,7 +120,6 @@ class ShowMsgActivity : AppCompatActivity() {
         val saved : TextView = dialog.findViewById(R.id.btn_save)
         saved.setOnClickListener{
             scrapResponseData("save")
-//            showSavedPopup()
             dialog.cancel()
 //            toast("저장됨!")
 //            finish()
@@ -129,9 +128,7 @@ class ShowMsgActivity : AppCompatActivity() {
         val edit : TextView = dialog.findViewById(R.id.btn_edit)
         edit.setOnClickListener {
             scrapResponseData("edit")
-//            showModifyingPopup()
             dialog.cancel()
-//            finish()
         }
     }
 

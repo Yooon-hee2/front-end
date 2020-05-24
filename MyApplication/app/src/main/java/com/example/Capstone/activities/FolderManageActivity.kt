@@ -28,6 +28,7 @@ import kotlinx.android.synthetic.main.activity_folder_manage.*
 import kotlinx.android.synthetic.main.nav_drawer.view.*
 import kotlinx.android.synthetic.main.toolbar_with_onlyback.*
 import org.json.JSONObject
+import org.w3c.dom.Text
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -69,7 +70,7 @@ class FolderManageActivity : AppCompatActivity() {
 
         val newFolderName = dialog.findViewById(R.id.et_new_folder) as EditText
 
-        val submit = dialog.findViewById(R.id.btn_add_folder_container) as RelativeLayout
+        val submit = dialog.findViewById(R.id.btn_add_folder) as TextView
         submit.setOnClickListener {
             dialog.dismiss()
             if(newFolderName.text.toString().isNotEmpty())
