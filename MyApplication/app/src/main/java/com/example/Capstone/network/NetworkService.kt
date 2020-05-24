@@ -1,11 +1,10 @@
 package com.example.Capstone.network
 
 import com.example.Capstone.network.delete.DeleteFolderResponse
+import com.example.Capstone.network.delete.DeleteSpecificScrapResponse
 import com.example.Capstone.network.get.*
-import com.example.Capstone.network.post.PostFolderResponse
-import com.example.Capstone.network.post.PostLoginResponse
-import com.example.Capstone.network.post.PostScrapResponse
-import com.example.Capstone.network.post.PostSignUpResponse
+import com.example.Capstone.network.post.*
+import com.example.Capstone.network.put.PutRecrawlResponse
 import com.example.Capstone.network.put.PutScrapInfoResponse
 import com.google.gson.JsonObject
 import retrofit2.Call
@@ -30,7 +29,7 @@ interface NetworkService {
     @Body() body: JsonObject
     ): Call<PostSignUpResponse>
 
-
+    //folder information -----------------------------------------------
 
     //get all folder list
     @GET("/memmem_app/users/{id}/folders/")
@@ -73,12 +72,26 @@ interface NetworkService {
         @Path("id") id : Int
     ): Call<GetSpecificScrapResponse>
 
+    //delete scrap detail
+    @DELETE("/memmem_app/scrap/{scrap_id}/")
+    fun deleteSpecificScrapResponse(
+        @Header("Content-Type") content_type: String,
+        @Path("scrap_id") scrap_id : Int
+    ): Call<DeleteSpecificScrapResponse>
+
     //send url for crawling
     @POST("/memmem_app/addscrap/")
     fun postScrapResponse(
         @Header("Content-Type") content_type: String,
         @Body() body: JsonObject
     ): Call<PostScrapResponse>
+
+    //send url for recrawling
+    @PUT("/memmem_app/recrawling/")
+    fun putRecrawlResponse(
+        @Header("Content-Type") content_type: String,
+        @Body() body: JsonObject
+    ): Call<PutRecrawlResponse>
 
     //send modified scrap information
     @PUT("/memmem_app/updatescrap/{id}/")
@@ -87,6 +100,24 @@ interface NetworkService {
         @Path("id") id : Int,
         @Body() body: JsonObject
     ): Call<PutScrapInfoResponse>
+
+    //location alarm
+    @POST("/memmem_app/location/user/{id}/")
+    fun postLocationAlarmResponse(
+        @Header("Content-Type") content_type: String,
+        @Path("id") id : Int,
+        @Body() body: JsonObject
+    ): Call<PostLocationAlarmResponse>
+
+    //time alarm
+    @GET("/memmem_app/food/user/{id}/")
+    fun getTimeAlarmResponse(
+        @Header("Content-Type") content_type: String,
+        @Path("id") id : Int
+    ): Call<GetTimeAlarmResponse>
+
+
+
 
 }
 

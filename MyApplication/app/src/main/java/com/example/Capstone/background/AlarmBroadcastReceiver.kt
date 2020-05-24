@@ -18,14 +18,19 @@ import com.example.Capstone.R
 import com.example.Capstone.db.SharedPreferenceController
 import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
-import com.example.Capstone.network.get.GetSpecificScrapResponse
+import com.example.Capstone.network.post.PostLocationAlarmResponse
+import com.example.Capstone.network.get.GetTimeAlarmResponse
 import com.google.android.gms.location.*
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class AlarmBroadcastReceiver : BroadcastReceiver() {
@@ -56,7 +61,7 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
         when(code){
             111 ->   //시간이 밥때일 때
                 if (time.toString().substring(0,2) in mealTime){
-                    getSpecificScrapResponse(98, context)
+                    postTimeAlarmResponse(SharedPreferenceController.getUserId(context)!!, context)
                 }
 //            121 ->
 //                //주말
@@ -125,7 +130,8 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
 
                     if(distance > 1000){
                         //alarm request
-                        getSpecificScrapResponse(98, context)
+                        postLocationAlarmResponse(SharedPreferenceController.getUserId(context)!!,
+                            location.latitude.toFloat(), location.longitude.toFloat(), context)
                     }
 
                     SharedPreferenceController.setUserLatitude(context, location.latitude) //distance가 100이상일 때만 업데이트할지 말지 결정하기
@@ -141,42 +147,111 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
         return fusedLocationClient
     }
 
+    private fun makeDeleteNotification(context: Context, titleList : ArrayList<String>){
+        var builder = NotificationCompat.Builder(context, "멤멤")
+            .setSmallIcon(R.drawable.ic_noti)
+            .setContentTitle("다음 글이 삭제되었어요 !")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
 
-    private fun getSpecificScrapResponse(id: Int, context: Context) {
-        val getAllScrapListResponse = networkService.getSpecificScrapResponse(id)
+        if (titleList != null) {
+            builder.setContentText(titleList[0])
+            NotificationManagerCompat.from(context).notify(NOTICATION_ID, builder.build())
+        }
+    }
 
-        getAllScrapListResponse.enqueue(object : Callback<GetSpecificScrapResponse> {
 
-            override fun onFailure(call: Call<GetSpecificScrapResponse>, t: Throwable) {
+    private fun postLocationAlarmResponse(id: Int, latitude : Float, longitude : Float, context: Context) {
+
+        var jsonObject = JSONObject()
+        jsonObject.put("latitude", latitude)
+        jsonObject.put("longitude", longitude)
+
+        val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
+        val postLocationAlarmResponse = networkService.postLocationAlarmResponse("application/json", id, gsonObject)
+
+        postLocationAlarmResponse.enqueue(object : Callback<PostLocationAlarmResponse> {
+
+            override fun onFailure(call: Call<PostLocationAlarmResponse>, t: Throwable) {
                 Log.e("get scrap content failed", t.toString())
             }
 
             override fun onResponse(
-                call: Call<GetSpecificScrapResponse>,
-                response: Response<GetSpecificScrapResponse>
+                call: Call<PostLocationAlarmResponse>,
+                response: Response<PostLocationAlarmResponse>
             ) {
                 if (response.isSuccessful) {
                     Log.d("babo", response.body().toString())
 
-                    val data: GetSpecificScrapResponse? = response.body()
+                    val data: PostLocationAlarmResponse? = response.body()
 
                     var builder = NotificationCompat.Builder(context, "멤멤")
                         .setSmallIcon(R.drawable.ic_noti)
-                        .setContentTitle("식사 메뉴를 정하지 못했다면 ?")
+                        .setContentTitle("지금 다시 보면 좋은 글이에요")
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                         .setAutoCancel(true)
 
                     if (data != null) {
                         Glide.with(context)
                             .asBitmap()
-                            .load(data.thumbnail)
+                            .load(data.scrap.thumbnail)
                             .into(object : SimpleTarget<Bitmap?>() {
                                 override fun onResourceReady(
                                     resource: Bitmap,
                                     transition: Transition<in Bitmap?>?
                                 ) {
                                     val bitmap = getCircularBitmap(resource!!)
-                                    builder.setContentText(data?.title)
+                                    builder.setContentText(data?.scrap.title)
+                                    builder.setLargeIcon(bitmap)
+                                    NotificationManagerCompat.from(context).notify(NOTICATION_ID, builder.build())
+                                }
+                            })
+                    }
+                }
+
+                else {
+                    Log.e("error", "fail")
+                }
+            }
+        })
+    }
+
+    private fun postTimeAlarmResponse(id: Int, context: Context) {
+
+        val getTimeAlarmResponse = networkService.getTimeAlarmResponse("application/json", id)
+
+        getTimeAlarmResponse.enqueue(object : Callback<GetTimeAlarmResponse> {
+
+            override fun onFailure(call: Call<GetTimeAlarmResponse>, t: Throwable) {
+                Log.e("get scrap content failed", t.toString())
+            }
+
+            override fun onResponse(
+                call: Call<GetTimeAlarmResponse>,
+                response: Response<GetTimeAlarmResponse>
+            ) {
+                if (response.isSuccessful) {
+                    Log.d("babo", response.body().toString())
+
+                    val data: GetTimeAlarmResponse? = response.body()
+
+                    var builder = NotificationCompat.Builder(context, "멤멤")
+                        .setSmallIcon(R.drawable.ic_noti)
+                        .setContentTitle("지금 다시 보면 좋은 글이에요")
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setAutoCancel(true)
+
+                    if (data != null) {
+                        Glide.with(context)
+                            .asBitmap()
+                            .load(data.scrap.thumbnail)
+                            .into(object : SimpleTarget<Bitmap?>() {
+                                override fun onResourceReady(
+                                    resource: Bitmap,
+                                    transition: Transition<in Bitmap?>?
+                                ) {
+                                    val bitmap = getCircularBitmap(resource!!)
+                                    builder.setContentText(data?.scrap.title)
                                     builder.setLargeIcon(bitmap)
                                     NotificationManagerCompat.from(context).notify(NOTICATION_ID, builder.build())
                                 }

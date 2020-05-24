@@ -6,13 +6,14 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
-import android.view.View
 import android.view.Window
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.*
+import android.widget.EditText
+import android.widget.PopupMenu
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.Capstone.R
@@ -21,6 +22,7 @@ import com.example.Capstone.adapter.HashtagRecyclerViewAdapter
 import com.example.Capstone.adapter.MemoRecyclerViewAdapter
 import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
+import com.example.Capstone.network.delete.DeleteSpecificScrapResponse
 import com.example.Capstone.network.get.GetSpecificScrapResponse
 import com.example.Capstone.network.put.PutScrapInfoResponse
 import com.google.gson.JsonObject
@@ -60,6 +62,7 @@ class InformationActivity : AppCompatActivity() {
         setContentView(R.layout.activity_information)
 
         scrapId = intent.getIntExtra("id", 0)
+        Log.d("scrapid", scrapId.toString())
         getSpecificScrapResponse(scrapId)
 
         //get web view settings instance
@@ -109,12 +112,12 @@ class InformationActivity : AppCompatActivity() {
             }
         }
 
-        btn_back.setOnClickListener {
+        btn_back_info.setOnClickListener {
             finish()
         }
 
-        btn_trashbin.setOnClickListener {
-            showDeleteDialog(null)
+        btn_trashbin_info.setOnClickListener {
+            showDeleteDialog()
         }
 
         btn_add_memo.setOnClickListener {
@@ -140,12 +143,12 @@ class InformationActivity : AppCompatActivity() {
                 popupMenu.menu.add(folder)
             }
             popupMenu.setOnMenuItemClickListener { item ->
+                txt_folder_name.text = item.title
                 folderId = folderList!![item.title]!!
                 true
             }
             popupMenu.show()
         }
-
 
         btn_add_hashtag.setOnClickListener {
             showHashtagDialog()
@@ -186,7 +189,14 @@ class InformationActivity : AppCompatActivity() {
                         info_date.text = data.date.substring(0,10)
 
                         scrapTitle = data.title
+
                         folderId = data.folder
+
+                        for (entry in folderList.entries) {
+                            if (entry.value == folderId) {
+                                txt_folder_name.text = entry.key
+                            }
+                        }
 
                         hashtagList.clear()
                         if (data.tags != null) {
@@ -239,7 +249,7 @@ class InformationActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun showDeleteDialog(view : TextView?) {
+    private fun showDeleteDialog() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(true)
@@ -248,14 +258,8 @@ class InformationActivity : AppCompatActivity() {
         val delete = dialog.findViewById(R.id.btn_delete_memo) as TextView
         delete.setOnClickListener {
             dialog.dismiss()
-            if (view != null) {
-                view.visibility = View.GONE
-                //delete hashtag request
-            }
-            else{
-                finish()
-                //delete information request
-            }
+            scrapDeleteResponseData(scrapId)
+            finish()
         }
         dialog.show()
     }
@@ -277,6 +281,7 @@ class InformationActivity : AppCompatActivity() {
         }
         dialog.show()
     }
+
     private fun showHashtagDialog() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -343,6 +348,24 @@ class InformationActivity : AppCompatActivity() {
             override fun onResponse(call: Call<PutScrapInfoResponse>, response: Response<PutScrapInfoResponse>) {
                 if (response.isSuccessful) {
                     Log.e("crawlingbody", response.body().toString())
+                }
+            }
+        })
+    }
+
+    private fun scrapDeleteResponseData(userId : Int) {
+
+        val deleteSpecificScrapResponse: Call<DeleteSpecificScrapResponse> =
+            networkService.deleteSpecificScrapResponse("application/json", userId)
+
+        deleteSpecificScrapResponse.enqueue(object : Callback<DeleteSpecificScrapResponse> {
+            override fun onFailure(call: Call<DeleteSpecificScrapResponse>, t: Throwable) {
+                Log.e("fail", t.toString())
+            }
+
+            override fun onResponse(call: Call<DeleteSpecificScrapResponse>, response: Response<DeleteSpecificScrapResponse>) {
+                if (response.isSuccessful) {
+
                 }
             }
         })

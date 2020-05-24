@@ -2,6 +2,8 @@ package com.example.Capstone.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.os.AsyncTask
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +16,18 @@ import com.bumptech.glide.Glide
 import com.example.Capstone.R
 import com.example.Capstone.activities.InformationActivity
 import com.example.Capstone.model.Feed
+import com.example.Capstone.network.ApplicationController
+import com.example.Capstone.network.NetworkService
+import com.example.Capstone.network.put.PutRecrawlResponse
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
+import org.json.JSONArray
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.net.HttpURLConnection
+import java.net.URL
 
 
 class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
@@ -22,9 +36,16 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
 
     private var filteredList: ArrayList<Feed>? = null
 
+    private var recrawlScrapId : ArrayList<Int>? = null
+
     init {
         this.filteredList = list
     }
+
+    val networkService: NetworkService by lazy {
+        ApplicationController.instance.networkService
+    }
+
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, p1: Int): Holder {
             val view: View = LayoutInflater.from(ctx).inflate(R.layout.rv_item_feed, viewGroup, false)
@@ -85,7 +106,13 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
         var hashtagContainer = itemView.findViewById(R.id.rv_item_hashtag_container_main) as RecyclerView
     }
 
+    private fun removeItem(position: Int) {
+        filteredList!!.removeAt(position)
+        notifyDataSetChanged()
+    }
+
     fun calcDiff(newList: ArrayList<Feed>) {
+        Log.d("difference", newList.toString())
         val tileDiffUtilCallback = DataDiffUtilCallback(filteredList!!, newList)
         val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(tileDiffUtilCallback)
         filteredList!!.clear()
@@ -154,5 +181,40 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
             }
         }
     }
+
+//    private fun requestRecrawlResponseData() {
+//
+//        var jsonObject = JSONObject()
+//
+//        val jsonArray = JSONArray()
+//
+//        if (recrawlScrapId != null) {
+//            for (scrap_id in recrawlScrapId!!){
+//                var scrapJsonObject = JSONObject()
+//                scrapJsonObject.put("scrap_id", scrap_id)
+//                jsonArray.put(scrapJsonObject)
+//            }
+//        }
+//
+//        jsonObject.put("id_list", jsonArray)
+//        val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
+//
+//        Log.d("bodyforrecrawl", gsonObject.toString())
+//
+//        val putRecrawlResponse: Call<PutRecrawlResponse> =
+//            networkService.putRecrawlResponse("application/json", gsonObject)
+//
+//        putRecrawlResponse.enqueue(object : Callback<PutRecrawlResponse> {
+//            override fun onFailure(call: Call<PutRecrawlResponse>, t: Throwable) {
+//                Log.e("fail", t.toString())
+//            }
+//
+//            override fun onResponse(call: Call<PutRecrawlResponse>, response: Response<PutRecrawlResponse>) {
+//                if (response.isSuccessful) {
+//                    Log.e("success recrawl", response.body().toString())
+//                }
+//            }
+//        })
+//    }
 }
 

@@ -7,9 +7,54 @@
     android:orientation="vertical"
     android:background="@color/white">
 
-    <include
-        layout="@layout/toolbar_with_trashbin">
-    </include>
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="55dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="34dp"
+                android:layout_centerVertical="true"
+                android:id="@+id/btn_back_info"
+                android:src="@drawable/ic_back"/>
+
+            <LinearLayout
+                android:layout_centerVertical="true"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_marginRight="5dp"
+                    android:textColor="@color/black"
+                    android:id="@+id/txt_folder_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15dp">
+                </TextView>
+
+                <ImageView
+                    android:id="@+id/btn_change_menu"
+                    android:layout_width="25dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_down" />
+
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="20dp"
+                android:layout_centerVertical="true"
+                android:id="@+id/btn_trashbin_info"
+                android:src="@drawable/ic_trashbin"/>
+        </RelativeLayout>
+
+    </androidx.appcompat.widget.Toolbar>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -28,19 +73,10 @@
             android:textColor="@color/darkGrayD"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
-        <ImageView
-            android:id="@+id/btn_change_menu"
-            android:layout_width="25dp"
-            android:layout_height="20dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:src="@drawable/ic_menu" />
     </RelativeLayout>
 
     <WebView
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:scaleType="centerCrop"
         android:background="@color/grayB"
         android:layout_width="match_parent"

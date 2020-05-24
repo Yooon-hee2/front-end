@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
 
 
 class ApplicationController : Application(){
-    private val baseURL = "https://c6020cbf.ngrok.io" //ngrok켤때마다 바꿀것
+    private val baseURL = "https://27c750d5.ngrok.io" //ngrok켤때마다 바꿀것
     lateinit var networkService: NetworkService
 
     companion object{

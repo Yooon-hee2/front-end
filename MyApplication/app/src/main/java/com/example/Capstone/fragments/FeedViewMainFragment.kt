@@ -60,7 +60,6 @@ class FeedViewMainFragment : Fragment() {
     }
 
     fun changeRecyclerViewData(charSequence: CharSequence){
-//        feedRecyclerViewAdapter = FeedRecyclerViewAdapter(context!!, dataList)
         feedRecyclerViewAdapter.filter.filter(charSequence)
         feedRecyclerViewAdapter.notifyDataSetChanged()
     }
@@ -91,12 +90,12 @@ class FeedViewMainFragment : Fragment() {
 
                     val data: ArrayList<GetAllScrapListResponse>? = response.body() //temp가 없을 때 터짐
                     val tempDataList : ArrayList<Feed> = ArrayList()
-
+                    Log.d("success", response.body().toString())
                     if (data != null) {
                         for(scrap in data) {
                             tempDataList.add(scrap.toFeedDetail())
-                            feedRecyclerViewAdapter.calcDiff(tempDataList)
                         }
+                        feedRecyclerViewAdapter.calcDiff(tempDataList)
                     }
                 }
 
@@ -121,8 +120,8 @@ class FeedViewMainFragment : Fragment() {
                 response: Response<ArrayList<GetFolderScrapListResponse>>
             ) {
                 if(response.isSuccessful){
-                    Log.d("success", response.body().toString())
                     val data: ArrayList<GetFolderScrapListResponse>? = response.body() //temp가 없을 때 터짐
+                    Log.d("good", data.toString())
                     val tempDataList : ArrayList<Feed> = ArrayList()
 
                     if (data != null) {
