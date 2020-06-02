@@ -1,13 +1,10 @@
 package com.example.Capstone.activities
 
 import android.Manifest
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -19,20 +16,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.viewpager.widget.ViewPager
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkManager
 import com.example.Capstone.R
 import com.example.Capstone.adapter.MainFragmentAdapter
 import com.example.Capstone.adapter.SearchListViewAdapter
-import com.example.Capstone.background.AlarmBroadcastReceiver
-import com.example.Capstone.background.JobScheduler
-import com.example.Capstone.background.LocationWorker
 import com.example.Capstone.db.SharedPreferenceController
-import com.example.Capstone.model.Feed
 import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
 import com.example.Capstone.network.get.GetAllFolderListResponse
-import com.google.android.gms.location.*
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_activity_main.*
@@ -40,7 +30,6 @@ import kotlinx.android.synthetic.main.nav_drawer.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity(){
@@ -53,8 +42,6 @@ class MainActivity : AppCompatActivity(){
 
     private val LOCATION_REQUEST_CODE = 1000
 
-
-
     companion object{
         val recommendedHashtagList = arrayListOf("#강남", "#이태원", "#플레이리스트", "#맛집", "#동물의숲")
         lateinit var edt_search : EditText
@@ -64,12 +51,12 @@ class MainActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        JobScheduler.start(this)
 
         edt_search = findViewById(R.id.search_item)
 
         folder_name.text = "전체"
-        var dataList: ArrayList<Feed> = ArrayList()
+        tv_drawer_email.text = SharedPreferenceController.getUserEmail(this)
+        tv_drawer_nickname.text = SharedPreferenceController.getUserNickname(this)
         pager = findViewById(R.id.vp_main)
         val pagerAdapter = MainFragmentAdapter(supportFragmentManager)
         pager.adapter = pagerAdapter
@@ -81,7 +68,6 @@ class MainActivity : AppCompatActivity(){
         val searchListCustomAdapter = SearchListViewAdapter(this)
 
         listView.adapter = searchListCustomAdapter
-
 
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_feed))
         tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_album))
@@ -171,6 +157,8 @@ class MainActivity : AppCompatActivity(){
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
             ly_drawer.closeDrawer(GravityCompat.END)
+            val userPrivateId = SharedPreferenceController.getUserId(this)
+            SharedPreferenceController.setCurrentUserId(this, userPrivateId!!)
             startActivity(intent)
         }
 
@@ -198,7 +186,17 @@ class MainActivity : AppCompatActivity(){
                 ly_drawer.closeDrawer(GravityCompat.END)
             }
         }
-        getAllFolderListResponse(SharedPreferenceController.getUserId(this)!!)
+
+        btn_logout.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            ly_drawer.closeDrawer(GravityCompat.END)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+            SharedPreferenceController.clearUserSharedPreferences(this)
+            startActivity(intent)
+        }
+
+        getAllFolderListResponse(SharedPreferenceController.getCurrentUserId(this)!!)
         val button = findViewById<ImageView>(R.id.folder_menu)
         button.setOnClickListener {
             val popupMenu = PopupMenu(this, button)
@@ -216,7 +214,7 @@ class MainActivity : AppCompatActivity(){
 
     override fun onResume() {
         super.onResume()
-        getAllFolderListResponse(SharedPreferenceController.getUserId(this)!!)
+        getAllFolderListResponse(SharedPreferenceController.getCurrentUserId(this)!!)
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
@@ -243,11 +241,12 @@ class MainActivity : AppCompatActivity(){
                 if(response.isSuccessful){
                     Log.d("babo", response.body().toString())
 
+                    folderList.clear()
+
                     val data: ArrayList<GetAllFolderListResponse>? = response.body()
                     if (data != null) {
                         for(folders in data) {
                             for(folder in folders.folders){
-                                Log.d("dddddddddd", folder.folder_id.toString())
                                 if(folder.folder_key == 0){
                                     folderList["전체"] = folder.folder_id
                                 }

@@ -68,16 +68,18 @@
                 android:layout_height="55dp">
 
                 <ImageView
-                    android:layout_marginLeft="20dp"
+                    android:padding="15dp"
+                    android:layout_marginLeft="5dp"
                     android:src="@drawable/ic_down"
                     android:layout_centerVertical="true"
                     android:id="@+id/folder_menu"
-                    android:layout_width="15dp"
-                    android:layout_height="15dp">
+                    android:layout_width="50dp"
+                    android:layout_height="50dp">
                 </ImageView>
 
                 <TextView
-                    android:layout_marginLeft="45dp"
+                    android:text="전체"
+                    android:layout_marginLeft="50dp"
                     android:id="@+id/folder_name"
                     android:layout_centerVertical="true"
                     android:layout_width="wrap_content"

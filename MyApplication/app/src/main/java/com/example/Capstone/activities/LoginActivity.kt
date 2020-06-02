@@ -11,9 +11,12 @@ import com.example.Capstone.db.SharedPreferenceController
 import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
 import com.example.Capstone.network.post.PostLoginResponse
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.activity_login.btn_login_login
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import org.json.JSONObject
@@ -25,6 +28,7 @@ class LoginActivity : AppCompatActivity() {
 
     private var nickname : String = ""
     private var password : String = ""
+    private var email : String = ""
 
     val networkService: NetworkService by lazy {
         ApplicationController.instance.networkService
@@ -41,7 +45,6 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-
 
         et_login_nickname.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -75,7 +78,10 @@ class LoginActivity : AppCompatActivity() {
             startActivity<SignUpEmailActivity>()
             finish()
         }
+
+        getFirebaseToken()
     }
+
     private fun loginResponseData() {
         var jsonObject = JSONObject()
         jsonObject.put("username", nickname)
@@ -99,14 +105,35 @@ class LoginActivity : AppCompatActivity() {
                     if (response.body()!!.status == 200) {
                         toast("login success")
                         val nickname = nickname
+                        val email = email
                         Log.e("id", response.body()!!.id.toString())
                         SharedPreferenceController.setUserNickname(this@LoginActivity, nickname)
+                        SharedPreferenceController.setCurrentUserId(this@LoginActivity, response.body()!!.id)
                         SharedPreferenceController.setUserId(this@LoginActivity, response.body()!!.id)
+                        SharedPreferenceController.setUserEmail(this@LoginActivity, response.body()!!.email)
                         startActivity<MainActivity>()
                         finish()
                     }
                 }
             }
         })
+    }
+
+    fun getFirebaseToken(){
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w("fcm", "getInstanceId failed", task.exception)
+                    return@OnCompleteListener
+                }
+
+                // Get new Instance ID token
+                val token = task.result?.token
+
+                // Log and toast
+                val msg = token.toString()
+                Log.d("fcm", msg)
+//                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+            })
     }
 }

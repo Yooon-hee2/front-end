@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".network.ApplicationController"
@@ -22,14 +22,28 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_noti" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/black" />
+
         <service
-            android:name=".background.NotificationJobFireBaseService"
-            android:enabled="true"
-            android:exported="true">
+            android:name=".fcm.MyFirebaseMessagingService"
+            android:exported="false">
             <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <activity
+            android:name=".activities.NotificationListActivity"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:excludeFromRecents="true" />
 
         <receiver android:name=".background.AlarmBroadcastReceiver" />
 
@@ -60,14 +74,11 @@
         <activity android:name=".activities.FolderManageActivity" />
         <activity android:name=".activities.InformationActivity" />
         <activity android:name=".activities.SignUpPasswordActivity" />
-        <activity android:name=".activities.SignUpEmailActivity" >
-        </activity>
-        <activity android:name=".activities.LoginActivity" >
-        </activity>
+        <activity android:name=".activities.SignUpEmailActivity"></activity>
+        <activity android:name=".activities.LoginActivity"></activity>
         <activity
             android:name=".activities.MainActivity"
-            android:windowSoftInputMode="adjustResize">
-        </activity>
+            android:windowSoftInputMode="adjustResize"></activity>
     </application>
 
 </manifest>

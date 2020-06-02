@@ -35,7 +35,7 @@ class AlbumViewMainFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         albumRecyclerViewAdapter = AlbumRecyclerViewAdapter(context!!, dataList)
-        userId = SharedPreferenceController.getUserId(context!!)!!
+        userId = SharedPreferenceController.getCurrentUserId(context!!)!!
         super.onCreate(savedInstanceState)
     }
 
@@ -55,6 +55,13 @@ class AlbumViewMainFragment : Fragment() {
         rv_album_container.adapter = albumRecyclerViewAdapter
         rv_album_container.layoutManager = GridLayoutManager(context!!, 3)
     }
+
+    override fun onResume() {
+        super.onResume()
+        userId = SharedPreferenceController.getCurrentUserId(context!!)!!
+        getAllScrapListResponse(userId)
+    }
+
 
     fun changeFolder(folderId: Int){
         if (userId != -1) {
@@ -95,11 +102,15 @@ class AlbumViewMainFragment : Fragment() {
                     val data: ArrayList<GetAllScrapListResponse>? = response.body() //temp가 없을 때 터짐
                     val tempDataList : ArrayList<Feed> = ArrayList()
 
-                    if (data != null) {
+                    if (!data.isNullOrEmpty()) {
+                        img_for_empty.visibility = View.GONE
                         for(scrap in data) {
                             tempDataList.add(scrap.toFeedDetail())
                             updateDataList(tempDataList)
                         }
+                    }
+                    else{
+                        img_for_empty.visibility = View.VISIBLE
                     }
                 }
 
@@ -128,13 +139,17 @@ class AlbumViewMainFragment : Fragment() {
                     val data: ArrayList<GetFolderScrapListResponse>? = response.body() //temp가 없을 때 터짐
                     val tempDataList : ArrayList<Feed> = ArrayList()
 
-                    if (data != null) {
+                    if (!data.isNullOrEmpty()) {
+                        img_for_empty.visibility = View.GONE
                         for(folder in data) {
                             for (scrap in folder.scraps!!) {
                                 tempDataList.add(scrap.toFeedDetail())
                                 updateDataList(tempDataList)
                             }
                         }
+                    }
+                    else{
+                        img_for_empty.visibility = View.VISIBLE
                     }
                 }
 

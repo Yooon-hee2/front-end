@@ -1,6 +1,7 @@
 package com.example.Capstone.background
 
 
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -15,11 +16,12 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.Capstone.ImageUtils.getCircularBitmap
 import com.example.Capstone.R
+import com.example.Capstone.activities.NotificationListActivity
 import com.example.Capstone.db.SharedPreferenceController
 import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
-import com.example.Capstone.network.post.PostLocationAlarmResponse
 import com.example.Capstone.network.get.GetTimeAlarmResponse
+import com.example.Capstone.network.post.PostLocationAlarmisNullResponse
 import com.google.android.gms.location.*
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -30,7 +32,6 @@ import retrofit2.Response
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class AlarmBroadcastReceiver : BroadcastReceiver() {
@@ -61,7 +62,7 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
         when(code){
             111 ->   //시간이 밥때일 때
                 if (time.toString().substring(0,2) in mealTime){
-                    postTimeAlarmResponse(SharedPreferenceController.getUserId(context)!!, context)
+                    postTimeAlarmResponse(SharedPreferenceController.getCurrentUserId(context)!!, context)
                 }
 //            121 ->
 //                //주말
@@ -130,7 +131,7 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
 
                     if(distance > 1000){
                         //alarm request
-                        postLocationAlarmResponse(SharedPreferenceController.getUserId(context)!!,
+                        postLocationAlarmisNullResponse(SharedPreferenceController.getCurrentUserId(context)!!,
                             location.latitude.toFloat(), location.longitude.toFloat(), context)
                     }
 
@@ -139,6 +140,7 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
                     Log.d("location", "${location.latitude} , ${location.longitude}")
                 }
             }
+
             .addOnFailureListener {
                 Log.e("location", "location error is ${it.message}")
                 it.printStackTrace()
@@ -161,52 +163,46 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
     }
 
 
-    private fun postLocationAlarmResponse(id: Int, latitude : Float, longitude : Float, context: Context) {
+    private fun postLocationAlarmisNullResponse(id: Int, latitude : Float, longitude : Float, context: Context) {
 
         var jsonObject = JSONObject()
         jsonObject.put("latitude", latitude)
         jsonObject.put("longitude", longitude)
 
         val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
-        val postLocationAlarmResponse = networkService.postLocationAlarmResponse("application/json", id, gsonObject)
+        val postLocationAlarmisNullResponse = networkService.postLocationAlarmisNullResponse("application/json", id, gsonObject)
 
-        postLocationAlarmResponse.enqueue(object : Callback<PostLocationAlarmResponse> {
-
-            override fun onFailure(call: Call<PostLocationAlarmResponse>, t: Throwable) {
+        postLocationAlarmisNullResponse.enqueue(object : Callback<PostLocationAlarmisNullResponse> {
+            override fun onFailure(call: Call<PostLocationAlarmisNullResponse>, t: Throwable) {
                 Log.e("get scrap content failed", t.toString())
             }
 
             override fun onResponse(
-                call: Call<PostLocationAlarmResponse>,
-                response: Response<PostLocationAlarmResponse>
+                call: Call<PostLocationAlarmisNullResponse>,
+                response: Response<PostLocationAlarmisNullResponse>
             ) {
-                if (response.isSuccessful) {
+                if (response.isSuccessful && response.body()!!.status == 200) {
                     Log.d("babo", response.body().toString())
 
-                    val data: PostLocationAlarmResponse? = response.body()
+                        val intent = Intent(context, NotificationListActivity::class.java)
+                        intent.putExtra("latitude", latitude)
+                        intent.putExtra("longitude", longitude)
 
-                    var builder = NotificationCompat.Builder(context, "멤멤")
-                        .setSmallIcon(R.drawable.ic_noti)
-                        .setContentTitle("지금 다시 보면 좋은 글이에요")
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                        .setAutoCancel(true)
+                        val pendingIntent: PendingIntent = PendingIntent.getActivity(
+                            context,
+                            0,  //default값 0을 삽입
+                            intent,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                        )
 
-                    if (data != null) {
-                        Glide.with(context)
-                            .asBitmap()
-                            .load(data.scrap.thumbnail)
-                            .into(object : SimpleTarget<Bitmap?>() {
-                                override fun onResourceReady(
-                                    resource: Bitmap,
-                                    transition: Transition<in Bitmap?>?
-                                ) {
-                                    val bitmap = getCircularBitmap(resource!!)
-                                    builder.setContentText(data?.scrap.title)
-                                    builder.setLargeIcon(bitmap)
-                                    NotificationManagerCompat.from(context).notify(NOTICATION_ID, builder.build())
-                                }
-                            })
-                    }
+                        var builder = NotificationCompat.Builder(context, "멤멤")
+                            .setSmallIcon(R.drawable.ic_noti)
+                            .setContentTitle("지금 다시 보면 좋은 글이에요")
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                            .setAutoCancel(true)
+                            .setContentIntent(pendingIntent)
+
+                        NotificationManagerCompat.from(context).notify(NOTICATION_ID, builder.build())
                 }
 
                 else {

@@ -13,56 +13,6 @@
         layout="@layout/toolbar_with_onlyback">
     </include>
 
-
-<!--    <TextView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:includeFontPadding="false"-->
-<!--        android:text="개인 저장소"-->
-<!--        android:paddingHorizontal="8dp"-->
-<!--        android:textColor="@color/grayB"-->
-<!--        android:textSize="18sp" />-->
-
-
-<!--    <LinearLayout-->
-<!--        android:orientation="vertical"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:paddingVertical="10dp">-->
-
-<!--        <RelativeLayout-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content">-->
-
-<!--            <TextView-->
-<!--                android:includeFontPadding = "false"-->
-<!--                android:paddingRight="12dp"-->
-<!--                android:paddingVertical="20dp"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:paddingLeft="20dp"-->
-<!--                android:textSize="20sp"-->
-<!--                android:textColor="@color/darkGrayC"-->
-<!--                android:id="@+id/txt_my_storage"-->
-<!--                android:text="윤희의 저장소"-->
-<!--                />-->
-
-<!--            <ImageView-->
-<!--                android:layout_marginRight="20dp"-->
-<!--                android:layout_centerVertical="true"-->
-<!--                android:layout_alignParentRight="true"-->
-<!--                android:layout_width="30dp"-->
-<!--                android:layout_height="30dp"-->
-<!--                android:src="@drawable/ic_edit">-->
-
-<!--            </ImageView>-->
-
-
-<!--        </RelativeLayout>-->
-
-
-<!--    </LinearLayout>-->
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -71,60 +21,13 @@
         android:textColor="@color/grayB"
         android:textSize="15sp" />
 
-    <LinearLayout
-        android:orientation="vertical"
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_storage_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:includeFontPadding = "false"
-            android:paddingRight="12dp"
-            android:paddingVertical="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:textSize="18sp"
-            android:textColor="@color/darkGrayC"
-            android:text="윤아리쵝오"
-            />
-        <View
-            android:layout_gravity="center_horizontal"
-            android:background="@color/lightGrayA"
-            android:layout_width="400dp"
-            android:layout_height="2dp"
-            />
-
-        <TextView
-            android:includeFontPadding = "false"
-            android:paddingRight="12dp"
-            android:paddingVertical="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:textSize="18sp"
-            android:textColor="@color/darkGrayC"
-            android:text="파이썬스터디"
-            />
-        <View
-            android:layout_gravity="center_horizontal"
-            android:background="@color/lightGrayA"
-            android:layout_width="400dp"
-            android:layout_height="2dp"
-            />
-        <TextView
-            android:includeFontPadding = "false"
-            android:paddingRight="12dp"
-            android:paddingVertical="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:textSize="18sp"
-            android:textColor="@color/darkGrayC"
-            android:text="의정부맛집전용"
-            />
-
-
-    </LinearLayout>
+    </androidx.recyclerview.widget.RecyclerView>
 
 
 </LinearLayout>

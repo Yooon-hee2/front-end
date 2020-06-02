@@ -61,7 +61,7 @@ class FolderRecyclerViewAdapter(val ctx: Context, var folderList: ArrayList<Fold
         val delete = dialog.findViewById(R.id.btn_delete_memo) as TextView
         delete.setOnClickListener {
             dialog.dismiss()
-            folderDeleteResponseData(SharedPreferenceController.getUserId(ctx)!!, folderList[index].folder_id)
+            folderDeleteResponseData(SharedPreferenceController.getCurrentUserId(ctx)!!, folderList[index].folder_id)
             folderList.removeAt(index)
             notifyItemRemoved(index)
         }

@@ -13,7 +13,6 @@ import com.example.Capstone.db.SharedPreferenceController
 import com.example.Capstone.model.Feed
 import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
-import com.example.Capstone.network.get.GetAllFolderScrapListResponse
 import com.example.Capstone.network.get.GetAllScrapListResponse
 import com.example.Capstone.network.get.GetFolderScrapListResponse
 import kotlinx.android.synthetic.main.fragment_feed_view_main.*
@@ -38,7 +37,7 @@ class FeedViewMainFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         feedRecyclerViewAdapter = FeedRecyclerViewAdapter(context!!, dataList)
-        userId = SharedPreferenceController.getUserId(context!!)!!
+        userId = SharedPreferenceController.getCurrentUserId(context!!)!!
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -56,6 +55,7 @@ class FeedViewMainFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        userId = SharedPreferenceController.getCurrentUserId(context!!)!!
         getAllScrapListResponse(userId)
     }
 
@@ -91,11 +91,15 @@ class FeedViewMainFragment : Fragment() {
                     val data: ArrayList<GetAllScrapListResponse>? = response.body() //temp가 없을 때 터짐
                     val tempDataList : ArrayList<Feed> = ArrayList()
                     Log.d("success", response.body().toString())
-                    if (data != null) {
+                    if (!data.isNullOrEmpty()) {
+                        img_for_empty.visibility = View.GONE
                         for(scrap in data) {
                             tempDataList.add(scrap.toFeedDetail())
                         }
                         feedRecyclerViewAdapter.calcDiff(tempDataList)
+                    }
+                    else{
+                        img_for_empty.visibility = View.VISIBLE
                     }
                 }
 
@@ -121,16 +125,20 @@ class FeedViewMainFragment : Fragment() {
             ) {
                 if(response.isSuccessful){
                     val data: ArrayList<GetFolderScrapListResponse>? = response.body() //temp가 없을 때 터짐
-                    Log.d("good", data.toString())
+                    Log.d("good", response.body().toString())
                     val tempDataList : ArrayList<Feed> = ArrayList()
 
-                    if (data != null) {
+                    if (!data.isNullOrEmpty()) {
+                        img_for_empty.visibility = View.GONE
                         for(folder in data) {
                             for (scrap in folder.scraps!!) {
                                 tempDataList.add(scrap.toFeedDetail())
                                 feedRecyclerViewAdapter.calcDiff(tempDataList)
                             }
                         }
+                    }
+                    else{
+                        img_for_empty.visibility = View.VISIBLE
                     }
                 }
 

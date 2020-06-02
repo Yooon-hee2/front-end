@@ -10,7 +10,6 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
-import android.view.View
 import android.view.Window
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -32,7 +31,6 @@ import com.example.Capstone.network.post.PostScrapResponse
 import com.example.Capstone.network.put.PutScrapInfoResponse
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import kotlinx.android.synthetic.main.edit_popup.*
 import org.jetbrains.anko.toast
 import org.json.JSONArray
 import org.json.JSONObject
@@ -262,8 +260,8 @@ class ShowMsgActivity : AppCompatActivity() {
         dialog.show()
 
         var jsonObject = JSONObject()
-        jsonObject.put("id", SharedPreferenceController.getUserId(this)!!.toString())
-        jsonObject.put("folder_id", folderList["전체"].toString().substring(0,1))
+        jsonObject.put("id", SharedPreferenceController.getCurrentUserId(this)!!.toString())
+        jsonObject.put("folder_id", folderList["전체"]!!.toInt().toString())
         jsonObject.put("url", copiedUrl)
 
         val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
@@ -281,16 +279,18 @@ class ShowMsgActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call<PostScrapResponse>, response: Response<PostScrapResponse>) {
                 if (response.isSuccessful) {
-                    Log.e("crawlingbody", response.body().toString())
+                    Log.e("crawlingbody", response.body()!!.message)
                     dialog.cancel()
-                    if (status == "edit"){
-                        showModifyingPopup(response.body()!!.scrap.title, response.body()!!.scrap.tags)
+                    if (response.body()?.scrap != null){
+                        if (status == "edit"){
+                            showModifyingPopup(response.body()!!.scrap!!.title, response.body()!!.scrap!!.tags)
+                        }
+                        if(status == "save"){
+                            showSavedPopup()
+                        }
+                        scrapId = response.body()?.scrap!!.scrap_id!!
+                        title = response.body()?.scrap!!.title!!
                     }
-                    if(status == "save"){
-                        showSavedPopup()
-                    }
-                    scrapId = response.body()?.scrap?.scrap_id!!
-                    title = response.body()?.scrap?.title!!
                 }
                 else{
                     toast("비공개 계정입니다")
@@ -315,6 +315,7 @@ class ShowMsgActivity : AppCompatActivity() {
         var tagList = hashTagRecyclerViewAdapter.returnCurrHashTag()
 
         val jsonArray = JSONArray()
+        val jsonArrayMemos = JSONArray()
 
         if (tagList != null) {
             for (tag in tagList){
@@ -323,7 +324,7 @@ class ShowMsgActivity : AppCompatActivity() {
                 jsonArray.put(tagJsonObject)
             }
         }
-
+        jsonObject.put("memos", jsonArrayMemos)
         jsonObject.put("tags", jsonArray)
         val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
 
@@ -349,7 +350,7 @@ class ShowMsgActivity : AppCompatActivity() {
     private fun folderResponseData(folderName : String) {
 
         var jsonObject = JSONObject()
-        jsonObject.put("id", SharedPreferenceController.getUserId(this)!!.toString())
+        jsonObject.put("id", SharedPreferenceController.getCurrentUserId(this)!!.toString())
         jsonObject.put("folder_name", folderName)
 
         val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject

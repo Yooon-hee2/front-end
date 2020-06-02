@@ -12,13 +12,15 @@
     </include>
 
     <LinearLayout
-        android:paddingHorizontal="20dp"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="530dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="30dp">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <ImageView
                 android:id="@+id/img_profile"
                 android:layout_width="112dp"
@@ -36,32 +38,41 @@
                 android:layout_marginTop="110dp"
                 android:src="@drawable/ic_edit_photo" />
         </RelativeLayout>
-        <TextView
-            android:includeFontPadding = "false"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:id="@+id/curr_nickname"
-            android:layout_width="match_parent"
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"
-            android:textColor="@color/darkGrayA"
-            android:letterSpacing="0.06"
-            android:text="윤아리 저장소"
-            />
+            android:layout_gravity="center">
+
+            <EditText
+                android:id="@+id/et_storage_name"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_bottom_line_gray"
+                android:hint="ex) 윤 아 리 저 장 소"
+                android:includeFontPadding="false"
+                android:lines="1"
+                android:maxLength="15"
+                android:maxLines="1"
+                android:paddingTop="16dp"
+                android:paddingBottom="3.5dp"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+        </RelativeLayout>
 
         <View
-            android:layout_marginVertical="20dp"
-            android:background="@color/lightGrayB"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            ></View>
+            android:layout_marginVertical="20dp"
+            android:background="@color/lightGrayB"></View>
 
         <LinearLayout
-            android:layout_marginTop="20dp"
-            android:orientation="vertical"
-            android:layout_gravity="center_horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -70,92 +81,66 @@
                 android:letterSpacing="0.01"
                 android:text="멤버 추가"
                 android:textColor="@color/darkGrayD"
-                android:textSize="15sp" />
+                android:textSize="13sp" />
 
             <RelativeLayout
-                android:paddingHorizontal="10sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:includeFontPadding = "false"
-                    android:paddingBottom="3.5dp"
-                    android:paddingTop="16dp"
-                    android:lines="1"
-                    android:maxLines="1"
-                    android:maxLength="20"
-                    android:inputType="textEmailAddress"
-                    android:hint="ex) 김윤희"
-                    android:textSize="18sp"
-                    android:id="@+id/et_login_email"
-                    android:textColor="@color/darkGrayD"
-                    android:background="@drawable/shape_bottom_line_signup"
+                    android:id="@+id/et_add_member"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_bottom_line_signup"
+                    android:hint="ex) 김윤희"
+                    android:includeFontPadding="false"
+                    android:inputType="textEmailAddress"
+                    android:lines="1"
+                    android:maxLength="20"
+                    android:maxLines="1"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="3.5dp"
+                    android:textColor="@color/darkGrayD"
+                    android:textSize="15sp" />
+
                 <ImageView
+                    android:id="@+id/btn_add_member"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="5dp"
                     android:layout_centerVertical="true"
-                    android:id="@+id/btn_trashbin"
-                    android:src="@drawable/ic_plus"/>
+                    android:layout_marginRight="5dp"
+                    android:src="@drawable/ic_plus" />
 
             </RelativeLayout>
 
             <LinearLayout
-                android:gravity="center"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:gravity="center">
 
-                <TextView
-                    android:layout_marginVertical="15dp"
-                    android:layout_gravity="center"
-                    android:id="@+id/rv_item_member1"
-                    android:background="@drawable/shape_graybtn_16dp"
-                    android:includeFontPadding = "false"
-                    android:layout_width="wrap_content"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_container_member"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:padding="10dp"
-                    android:textColor="@color/grayB"
-                    android:text="금아현"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_marginVertical="15dp"
-                    android:layout_gravity="center"
-                    android:id="@+id/rv_item_member2"
-                    android:background="@drawable/shape_graybtn_16dp"
-                    android:includeFontPadding = "false"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:padding="10dp"
-                    android:layout_marginLeft="7dp"
-                    android:textColor="@color/grayB"
-                    android:text="김혜리"
-                    android:textStyle="bold" />
+                    android:layout_marginVertical="5dp" />
             </LinearLayout>
 
         </LinearLayout>
 
-        <TextView
-            android:includeFontPadding = "false"
-            android:layout_marginTop="60.5dp"
-            android:background="@drawable/shape_btn_red"
-            android:layout_gravity="bottom"
-            android:paddingVertical="20dp"
-            android:text="완료"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:id="@+id/btn_login_login"
-            android:textColor="@color/white"
-            android:letterSpacing="0.01"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
     </LinearLayout>
+    <TextView
+        android:includeFontPadding = "false"
+        android:background="@drawable/shape_btn_red"
+        android:layout_gravity="center"
+        android:paddingHorizontal="120dp"
+        android:paddingVertical="20dp"
+        android:text="저장소 생성"
+        android:gravity="center"
+        android:id="@+id/btn_storage_submit"
+        android:textColor="@color/white"
+        android:letterSpacing="0.01"
+        android:layout_width="316dp"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

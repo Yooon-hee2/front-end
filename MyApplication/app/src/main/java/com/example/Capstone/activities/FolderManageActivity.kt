@@ -1,20 +1,14 @@
 package com.example.Capstone.activities
 
 import android.app.Dialog
-import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.view.Window
 import android.widget.EditText
-import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.Capstone.R
-import com.example.Capstone.adapter.FeedRecyclerViewAdapter
 import com.example.Capstone.adapter.FolderRecyclerViewAdapter
 import com.example.Capstone.db.SharedPreferenceController
 import com.example.Capstone.network.ApplicationController
@@ -25,10 +19,8 @@ import com.example.Capstone.network.post.PostFolderResponse
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import kotlinx.android.synthetic.main.activity_folder_manage.*
-import kotlinx.android.synthetic.main.nav_drawer.view.*
 import kotlinx.android.synthetic.main.toolbar_with_onlyback.*
 import org.json.JSONObject
-import org.w3c.dom.Text
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -59,7 +51,7 @@ class FolderManageActivity : AppCompatActivity() {
         rv_folder_container.adapter = folderRecyclerViewAdapter
         rv_folder_container.layoutManager = LinearLayoutManager(this)
 
-        getAllFolderListResponse(SharedPreferenceController.getUserId(this)!!)
+        getAllFolderListResponse(SharedPreferenceController.getCurrentUserId(this)!!)
     }
 
     private fun showDialog() {
@@ -116,7 +108,7 @@ class FolderManageActivity : AppCompatActivity() {
     private fun folderResponseData(folderName : String) {
 
         var jsonObject = JSONObject()
-        jsonObject.put("id", SharedPreferenceController.getUserId(this)!!.toString())
+        jsonObject.put("id", SharedPreferenceController.getCurrentUserId(this)!!.toString())
         jsonObject.put("folder_name", folderName)
 
         val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject

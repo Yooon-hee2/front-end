@@ -9,11 +9,13 @@ import com.google.gson.reflect.TypeToken
 
 object SharedPreferenceController{
     private val NICKNAME = "nickname"
+    private val USERCURRENTID = "usercurrentid"
     private val USERID = "userid"
     private val NOTIFICATION = "notification"
     private val FOLDER = "folder"
     private val LATITUDE = "latitude"
     private val LONGITUDE = "longitude"
+    private val EMAIL = "email"
 
     //닉네임 저장, 받아오기
     fun setUserNickname(context:Context, nickname: String){
@@ -26,6 +28,46 @@ object SharedPreferenceController{
     fun getUserNickname(context:Context): String? {
         val pref = context.getSharedPreferences(NICKNAME, Context.MODE_PRIVATE)
         return pref.getString(NICKNAME, "")
+    }
+
+    //유저 현재 주인 아이디 저장, 받아오기
+    fun setCurrentUserId(context:Context, userId: Int){
+        val pref = context.getSharedPreferences(USERCURRENTID, Context.MODE_PRIVATE)
+        val editor = pref.edit()
+        editor.putInt(USERCURRENTID, userId)
+        editor.commit()
+    }
+
+    fun getCurrentUserId(context:Context): Int? {
+        val pref = context.getSharedPreferences(USERCURRENTID, Context.MODE_PRIVATE)
+        return pref.getInt(USERCURRENTID, 1)
+    }
+
+    //유저 현재 주인 아이디 저장, 받아오기
+    fun setUserId(context:Context, userId: Int){
+        val pref = context.getSharedPreferences(USERID, Context.MODE_PRIVATE)
+        val editor = pref.edit()
+        editor.putInt(USERID, userId)
+        editor.commit()
+    }
+
+    fun getUserId(context:Context): Int? {
+        val pref = context.getSharedPreferences(USERID, Context.MODE_PRIVATE)
+        return pref.getInt(USERID, 1)
+    }
+
+
+    //유저 아이디 저장, 받아오기
+    fun setUserEmail(context:Context, userEmail: String){
+        val pref = context.getSharedPreferences(EMAIL, Context.MODE_PRIVATE)
+        val editor = pref.edit()
+        editor.putString(EMAIL, userEmail)
+        editor.commit()
+    }
+
+    fun getUserEmail(context:Context): String? {
+        val pref = context.getSharedPreferences(EMAIL, Context.MODE_PRIVATE)
+        return pref.getString(EMAIL, "")
     }
 
     //폴더 정보 저장/ 받아오기
@@ -49,18 +91,6 @@ object SharedPreferenceController{
             obj = gson.fromJson<Any>(json, typeToken.type) as HashMap<String, Int>
         }
         return obj
-    }
-    //유저 아이디 저장, 받아오기
-    fun setUserId(context:Context, userId: Int){
-        val pref = context.getSharedPreferences(NICKNAME, Context.MODE_PRIVATE)
-        val editor = pref.edit()
-        editor.putInt(USERID, userId)
-        editor.commit()
-    }
-
-    fun getUserId(context:Context): Int? {
-        val pref = context.getSharedPreferences(NICKNAME, Context.MODE_PRIVATE)
-        return pref.getInt(USERID, 1)
     }
 
     //유저 알람 on/off 받아오기

@@ -26,9 +26,6 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.net.HttpURLConnection
-import java.net.URL
-
 
 class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
 
@@ -36,7 +33,6 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
 
     private var filteredList: ArrayList<Feed>? = null
 
-    private var recrawlScrapId : ArrayList<Int>? = null
 
     init {
         this.filteredList = list

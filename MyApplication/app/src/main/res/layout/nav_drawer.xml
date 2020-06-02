@@ -62,7 +62,6 @@
                     android:textSize="14sp"
                     android:textColor="@color/grayB"
                     android:id="@+id/tv_drawer_email"
-                    android:text="yoooning@cau.ac.kr"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
@@ -233,17 +232,6 @@
                     android:layout_height="wrap_content"
                     android:paddingRight="16dp"
                     android:id="@+id/btn_logout"/>
-                <TextView
-                    android:includeFontPadding = "false"
-                    android:paddingVertical="20dp"
-                    android:text="탈퇴하기"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="10dp"
-                    android:textSize="15sp"
-                    android:textColor="@color/darkGrayC"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="16dp"/>
 
             </LinearLayout>
 

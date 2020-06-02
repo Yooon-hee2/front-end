@@ -12,7 +12,6 @@ import retrofit2.http.*
 
 
 interface NetworkService {
-
     //login & signup -----------------------------------------------
 
     //login
@@ -21,6 +20,7 @@ interface NetworkService {
         @Header("Content-Type") content_type: String,
         @Body() body: JsonObject
     ): Call<PostLoginResponse>
+
 
     //sign up
     @POST("/memmem_app/auth/register/")
@@ -86,13 +86,6 @@ interface NetworkService {
         @Body() body: JsonObject
     ): Call<PostScrapResponse>
 
-    //send url for recrawling
-    @PUT("/memmem_app/recrawling/")
-    fun putRecrawlResponse(
-        @Header("Content-Type") content_type: String,
-        @Body() body: JsonObject
-    ): Call<PutRecrawlResponse>
-
     //send modified scrap information
     @PUT("/memmem_app/updatescrap/{id}/")
     fun putScrapInfoResponse(
@@ -100,6 +93,9 @@ interface NetworkService {
         @Path("id") id : Int,
         @Body() body: JsonObject
     ): Call<PutScrapInfoResponse>
+
+
+    //notification---------------------------------------------------------------------
 
     //location alarm
     @POST("/memmem_app/location/user/{id}/")
@@ -109,6 +105,14 @@ interface NetworkService {
         @Body() body: JsonObject
     ): Call<PostLocationAlarmResponse>
 
+    //check location alarm list is empty
+    @POST("/memmem_app/findlocation/user/{id}/")
+    fun postLocationAlarmisNullResponse(
+        @Header("Content-Type") content_type: String,
+        @Path("id") id : Int,
+        @Body() body: JsonObject
+    ): Call<PostLocationAlarmisNullResponse>
+
     //time alarm
     @GET("/memmem_app/food/user/{id}/")
     fun getTimeAlarmResponse(
@@ -116,8 +120,27 @@ interface NetworkService {
         @Path("id") id : Int
     ): Call<GetTimeAlarmResponse>
 
+    //sharing storage-------------------------------------------
 
+    //check member is existed
+    @POST("/memmem_app/search/")
+    fun postMemberisExistedResponse(
+        @Header("Content-Type") content_type: String,
+        @Body() body: JsonObject
+    ): Call<PostLocationAlarmisNullResponse>
 
+    //create new sharing storage
+    @POST("/memmem_app/addsharing/")
+    fun postNewStorageResponse(
+        @Header("Content-Type") content_type: String,
+        @Body() body: JsonObject
+    ): Call<PostLocationAlarmisNullResponse>
 
+    //get sharing storage list
+    @GET("/memmem_app/users/{id}/sharinglist/")
+    fun getAllStorageListResponse(
+        @Header("Content-Type") content_type: String,
+        @Path("id") id : Int
+    ): Call<ArrayList<GetAllStorageListResponse>>
 }
 

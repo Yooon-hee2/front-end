@@ -4,6 +4,16 @@
     android:layout_height="match_parent"
     tools:context="com.example.Capstone.fragments.AlbumViewMainFragment">
 
+    <ImageView
+        android:visibility="gone"
+        android:paddingHorizontal="100dp"
+        android:id="@+id/img_for_empty"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/img_empty">
+    </ImageView>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_album_container"
         android:layout_width="match_parent"

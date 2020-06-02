@@ -28,6 +28,15 @@ class MemoRecyclerViewAdapter(val ctx: Context, var memoList: ArrayList<String>)
         }
     }
 
+    private fun removeItem(position: Int) {
+        memoList?.removeAt(position)
+        notifyDataSetChanged()
+    }
+
+    fun returnCurrMemo(): ArrayList<String>? {
+        return memoList
+    }
+
     inner class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var memo_text = itemView.findViewById(R.id.rv_item_memo) as TextView
         //var container = itemView.findViewById(R.id.rv_item_memo_container) as RelativeLayout
@@ -41,8 +50,7 @@ class MemoRecyclerViewAdapter(val ctx: Context, var memoList: ArrayList<String>)
         val delete = dialog.findViewById(R.id.btn_delete_memo) as TextView
         delete.setOnClickListener {
             dialog.dismiss()
-            memoList.removeAt(index)
-            notifyItemRemoved(index)
+            removeItem(index)
         }
         dialog.show()
     }

@@ -1,16 +1,12 @@
 package com.example.Capstone.activities
 
 import android.app.Dialog
-import android.net.Uri
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
 import android.view.Window
-import android.webkit.WebResourceRequest
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import android.widget.EditText
 import android.widget.PopupMenu
 import android.widget.TextView
@@ -28,7 +24,6 @@ import com.example.Capstone.network.put.PutScrapInfoResponse
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import kotlinx.android.synthetic.main.activity_information.*
-import kotlinx.android.synthetic.main.toolbar_with_trashbin.*
 import org.jetbrains.anko.lines
 import org.jetbrains.anko.toast
 import org.json.JSONArray
@@ -97,19 +92,24 @@ class InformationActivity : AppCompatActivity() {
 
         web_url.webViewClient = object: WebViewClient(){
             //blocking move to any other url
-            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-                val uri = Uri.parse(view?.url)
-                if (uri.toString() == (saved_url)) { //youtube일때는 이동 허용해주는 코드 필요
-                    // This is my web site, so do not override; let my WebView load the page
-                    return false
-                }
-                toast("cannot move to another page")
-                return true
+//            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+//                val uri = Uri.parse(view?.url)
+//                if (uri.toString() == (saved_url)) { //youtube일때는 이동 허용해주는 코드 필요
+//                    // This is my web site, so do not override; let my WebView load the page
+//                    return false
+//                }
+//                toast("cannot move to another page")
+//                return true
+//            }
+
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                toast("page loading...")
             }
 
-            override fun shouldOverrideKeyEvent(view: WebView?, event: KeyEvent?): Boolean {
-                return true
-            }
+        }
+
+        web_url.webChromeClient = object:WebChromeClient(){
+
         }
 
         btn_back_info.setOnClickListener {
@@ -157,7 +157,7 @@ class InformationActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        modifyScrapResponseData(scrapTitle)
+//        modifyScrapResponseData(scrapTitle)
     }
 
     override fun onPause() {
@@ -186,6 +186,7 @@ class InformationActivity : AppCompatActivity() {
                     if (data != null) {
                         info_title.text = data.title
                         saved_url = data.url
+                        Log.d("url", saved_url)
                         info_date.text = data.date.substring(0,10)
 
                         scrapTitle = data.title
@@ -321,18 +322,28 @@ class InformationActivity : AppCompatActivity() {
         jsonObject.put("title", modifyingTitle)
 
         var tagList = hashTagRecyclerViewAdapter.returnCurrHashTag()
+        var memoList = memoRecyclerViewAdapter.returnCurrMemo()
 
-        val jsonArray = JSONArray()
+        val jsonArrayTags = JSONArray()
+        val jsonArrayMemos = JSONArray()
 
         if (tagList != null) {
             for (tag in tagList){
                 var tagJsonObject = JSONObject()
                 tagJsonObject.put("tag_text", tag)
-                jsonArray.put(tagJsonObject)
+                jsonArrayTags.put(tagJsonObject)
             }
         }
 
-        jsonObject.put("tags", jsonArray)
+        if (memoList != null) {
+            for (memo in memoList){
+                var memoJsonObject = JSONObject()
+                memoJsonObject.put("memo", memo)
+                jsonArrayMemos.put(memoJsonObject)
+            }
+        }
+        jsonObject.put("memos", jsonArrayMemos)
+        jsonObject.put("tags", jsonArrayTags)
         val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
 
         Log.d("bodyformodify", gsonObject.toString())
