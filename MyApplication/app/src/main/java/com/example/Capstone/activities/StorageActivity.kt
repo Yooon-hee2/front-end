@@ -38,7 +38,7 @@ class StorageActivity : AppCompatActivity() {
         rv_storage_container.adapter = storageRecyclerViewAdapter
         rv_storage_container.layoutManager = LinearLayoutManager(this)
 
-        getAllStorageListResponse(SharedPreferenceController.getCurrentUserId(this)!!)
+        getAllStorageListResponse(SharedPreferenceController.getUserId(this)!!)
     }
 
     private fun getAllStorageListResponse(id: Int){

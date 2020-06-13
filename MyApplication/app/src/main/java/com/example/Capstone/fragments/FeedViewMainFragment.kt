@@ -48,9 +48,17 @@ class FeedViewMainFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        userId = SharedPreferenceController.getCurrentUserId(context!!)!!
         rv_feed_container.adapter = feedRecyclerViewAdapter
         rv_feed_container.layoutManager = LinearLayoutManager(context!!)
         getAllScrapListResponse(userId)
+
+        swipe_refresh_feed.setOnRefreshListener {
+//            dataList.clear()
+//            feedRecyclerViewAdapter.notifyDataSetChanged()
+            getAllScrapListResponse(userId)
+            swipe_refresh_feed.setRefreshing(false)
+        }
     }
 
     override fun onResume() {
@@ -67,7 +75,7 @@ class FeedViewMainFragment : Fragment() {
     fun changeFolder(folderId: Int){
         if (userId != -1) {
             when(folderId){
-                2 -> getAllScrapListResponse(userId)
+                SharedPreferenceController.getUserFolderInfo(context!!)["전체"]!! -> getAllScrapListResponse(userId)
                 else -> getAllFolderScrapListResponse(userId, folderId)
             }
         }
@@ -111,6 +119,7 @@ class FeedViewMainFragment : Fragment() {
     }
 
     private fun getAllFolderScrapListResponse(id: Int, folderId : Int){
+        Log.d("whynot", "ddddddddddd")
         val getAllFolderScrapListResponse = networkService.getFolderScrapListResponse(id, folderId)
 
         getAllFolderScrapListResponse.enqueue(object : Callback<ArrayList<GetFolderScrapListResponse>> {
@@ -127,18 +136,17 @@ class FeedViewMainFragment : Fragment() {
                     val data: ArrayList<GetFolderScrapListResponse>? = response.body() //temp가 없을 때 터짐
                     Log.d("good", response.body().toString())
                     val tempDataList : ArrayList<Feed> = ArrayList()
-
-                    if (!data.isNullOrEmpty()) {
-                        img_for_empty.visibility = View.GONE
-                        for(folder in data) {
+                    for(folder in data!!) {
+                        if (!folder.scraps.isNullOrEmpty()){
+                            img_for_empty.visibility = View.GONE
                             for (scrap in folder.scraps!!) {
                                 tempDataList.add(scrap.toFeedDetail())
-                                feedRecyclerViewAdapter.calcDiff(tempDataList)
                             }
+                            feedRecyclerViewAdapter.calcDiff(tempDataList)
                         }
-                    }
-                    else{
-                        img_for_empty.visibility = View.VISIBLE
+                        else{
+                            img_for_empty.visibility = View.VISIBLE
+                        }
                     }
                 }
 

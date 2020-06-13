@@ -1,6 +1,7 @@
 package com.example.Capstone.activities
 
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
@@ -260,6 +261,8 @@ class InformationActivity : AppCompatActivity() {
         delete.setOnClickListener {
             dialog.dismiss()
             scrapDeleteResponseData(scrapId)
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             finish()
         }
         dialog.show()

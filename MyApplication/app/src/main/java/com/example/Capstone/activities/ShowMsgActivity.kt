@@ -26,6 +26,7 @@ import com.example.Capstone.db.SharedPreferenceController
 import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
 import com.example.Capstone.network.data.TagData
+import com.example.Capstone.network.get.GetAllFolderListResponse
 import com.example.Capstone.network.post.PostFolderResponse
 import com.example.Capstone.network.post.PostScrapResponse
 import com.example.Capstone.network.put.PutScrapInfoResponse
@@ -50,9 +51,11 @@ class ShowMsgActivity : AppCompatActivity() {
     private var title : String = ""
     private var scrapId : Int = 0
     private var folderId : Int = 0
+    private var storageId : Int = 0
 
     var hashtagList : ArrayList<String> = ArrayList()
-    lateinit var folderList : HashMap<String, Int>
+    private var folderList : HashMap<String, Int> = HashMap()
+    lateinit var storageList : HashMap<String, Int>
 
     private val networkService: NetworkService by lazy {
         ApplicationController.instance.networkService
@@ -61,7 +64,8 @@ class ShowMsgActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        folderList = SharedPreferenceController.getUserFolderInfo(this)
+        storageList = SharedPreferenceController.getUserStorageInfo(this)
+        getAllFolderListResponse(SharedPreferenceController.getUserId(this)!!)
 
         var intent: Intent = intent
 
@@ -71,6 +75,9 @@ class ShowMsgActivity : AppCompatActivity() {
         var disp : DisplayMetrics = applicationContext.resources.displayMetrics
         displayWidth = disp.widthPixels
         displayHeight = disp.heightPixels
+
+        storageId = SharedPreferenceController.getUserId(this)!!
+        folderId = SharedPreferenceController.getUserFolderInfo(this)["전체"]!!
 
         if (Intent.ACTION_SEND == action && type != null) {
             if ("text/plain" == type) {
@@ -141,11 +148,13 @@ class ShowMsgActivity : AppCompatActivity() {
         val recyclerviewContainer : RecyclerView = dialog.findViewById(R.id.rv_hashtag_container_dialog)
         val editNSave : TextView = dialog.findViewById(R.id.btn_submit_edit)
         val btnAddHashTag : ImageView = dialog.findViewById(R.id.btn_add)
+        val storageName : TextView = dialog.findViewById(R.id.storage_name_modify)
         val folderName : TextView = dialog.findViewById(R.id.folder_name_modify)
         val createFolder : TextView = dialog.findViewById(R.id.btn_add_folder_dialog)
         val editHashTag : EditText = dialog.findViewById(R.id.edt_add_hashtag)
 
         folderName.text = "전체"
+        storageName.text = SharedPreferenceController.getUserNickname(this) + "의 저장소"
 
         dialog.show()
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -177,18 +186,39 @@ class ShowMsgActivity : AppCompatActivity() {
         }
         hashTagRecyclerViewAdapter.notifyDataSetChanged()
 
-        val button : ImageView = dialog.findViewById(R.id.folder_menu)
-        button.setOnClickListener {
-            val popupMenu = PopupMenu(this, button)
-            for (folder in folderList?.keys!!){
-                popupMenu.menu.add(folder)
+        val storageButton : ImageView = dialog.findViewById(R.id.storage_menu)
+        storageButton.setOnClickListener {
+            val storagePopupMenu = PopupMenu(this, storageButton)
+            Log.d("storagelist", storageList.toString())
+            for (storage in storageList?.keys!!){
+                storagePopupMenu.menu.add(storage)
             }
-            popupMenu.setOnMenuItemClickListener { item ->
+            storagePopupMenu.setOnMenuItemClickListener { item ->
+                storageName.text = item.title
+                storageId = storageList!![item.title]!!
+                getAllFolderListResponse(storageId)
+                true
+            }
+//            getAllFolderListResponse(storageId)
+//            if(!folderList.isNullOrEmpty()){
+//                storagePopupMenu.show()
+//            }
+            storagePopupMenu.show()
+//            getAllFolderListResponse(storageId)
+        }
+
+        val folderButton : ImageView = dialog.findViewById(R.id.folder_menu_popup)
+        folderButton.setOnClickListener {
+            val folderPopupMenu = PopupMenu(this, folderButton)
+            for (folder in folderList?.keys!!){
+                folderPopupMenu.menu.add(folder)
+            }
+            folderPopupMenu.setOnMenuItemClickListener { item ->
                 folderName.text = item.title
                 folderId = folderList!![item.title]!!
                 true
             }
-            popupMenu.show()
+            folderPopupMenu.show()
         }
 
         editNSave.setOnClickListener {
@@ -247,6 +277,7 @@ class ShowMsgActivity : AppCompatActivity() {
 
     private fun scrapResponseData(status : String) {
 
+        var myfolderList = SharedPreferenceController.getUserFolderInfo(this)!!
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(true)
@@ -260,8 +291,8 @@ class ShowMsgActivity : AppCompatActivity() {
         dialog.show()
 
         var jsonObject = JSONObject()
-        jsonObject.put("id", SharedPreferenceController.getCurrentUserId(this)!!.toString())
-        jsonObject.put("folder_id", folderList["전체"]!!.toInt().toString())
+        jsonObject.put("id", SharedPreferenceController.getUserId(this)!!.toString())
+        jsonObject.put("folder_id", myfolderList["전체"]!!.toInt().toString())
         jsonObject.put("url", copiedUrl)
 
         val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
@@ -304,12 +335,8 @@ class ShowMsgActivity : AppCompatActivity() {
 
         var jsonObject = JSONObject()
         jsonObject.put("scrap_id", scrapId)
-        if (folderId == 0){
-            jsonObject.put("folder", folderList["전체"].toString().substring(0,1))
-        }
-        else{
-            jsonObject.put("folder", folderId)
-        }
+
+        jsonObject.put("folder", folderId)
         jsonObject.put("title", modifyingTitle)
 
         var tagList = hashTagRecyclerViewAdapter.returnCurrHashTag()
@@ -346,11 +373,51 @@ class ShowMsgActivity : AppCompatActivity() {
         })
     }
 
+    private fun getAllFolderListResponse(id: Int){
+        folderList.clear()
+
+        val getAllFolderListResponse = networkService.getAllFolderListResponse(id)
+
+        getAllFolderListResponse.enqueue(object : Callback<ArrayList<GetAllFolderListResponse>> {
+
+            override fun onFailure(call: Call<ArrayList<GetAllFolderListResponse>>, t: Throwable) {
+                Log.e("get List failed", t.toString())
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<GetAllFolderListResponse>>,
+                response: Response<ArrayList<GetAllFolderListResponse>>
+            ) {
+                if(response.isSuccessful){
+                    Log.d("babo", response.body().toString())
+
+                    val data: ArrayList<GetAllFolderListResponse>? = response.body()
+                    if (!data.isNullOrEmpty()) {
+                        for(folders in data) {
+                            for(folder in folders.folders){
+                                if(folder.folder_key == 0){
+                                    folderList["전체"] = folder.folder_id
+                                }
+                                else{
+                                    folderList[folder.folder_name] = folder.folder_id
+                                }
+                            }
+                        }
+                    }
+                }
+                else{
+                    Log.e("error", "fail")
+                }
+            }
+        })
+    }
+
+
     //create new folder
     private fun folderResponseData(folderName : String) {
 
         var jsonObject = JSONObject()
-        jsonObject.put("id", SharedPreferenceController.getCurrentUserId(this)!!.toString())
+        jsonObject.put("id", storageId)
         jsonObject.put("folder_name", folderName)
 
         val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject

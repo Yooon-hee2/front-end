@@ -180,17 +180,17 @@
                 android:text="폴더관리"
                 />
                 <TextView
-                    android:id="@+id/btn_manage_storage"
-                    android:includeFontPadding = "false"
-                    android:paddingRight="12dp"
-                    android:paddingVertical="20dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="10dp"
-                    android:textSize="15sp"
-                    android:textColor="@color/darkGrayC"
-                    android:text="저장소 관리"
-                    />
+                android:id="@+id/btn_manage_storage"
+                android:includeFontPadding = "false"
+                android:paddingRight="12dp"
+                android:paddingVertical="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:textSize="15sp"
+                android:textColor="@color/darkGrayC"
+                android:text="저장소 관리"
+                />
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
@@ -220,6 +220,19 @@
 
 
                 </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/btn_temp_test"
+                    android:includeFontPadding = "false"
+                    android:paddingRight="12dp"
+                    android:paddingVertical="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:textSize="15sp"
+                    android:textColor="@color/darkGrayC"
+                    android:text="테스트용"
+                    />
                 <TextView
                     android:includeFontPadding = "false"
                     android:paddingVertical="20dp"

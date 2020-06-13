@@ -13,9 +13,12 @@ object SharedPreferenceController{
     private val USERID = "userid"
     private val NOTIFICATION = "notification"
     private val FOLDER = "folder"
+    private val STORAGE = "storage"
     private val LATITUDE = "latitude"
     private val LONGITUDE = "longitude"
     private val EMAIL = "email"
+    private val TOKEN = "token"
+
 
     //닉네임 저장, 받아오기
     fun setUserNickname(context:Context, nickname: String){
@@ -28,6 +31,19 @@ object SharedPreferenceController{
     fun getUserNickname(context:Context): String? {
         val pref = context.getSharedPreferences(NICKNAME, Context.MODE_PRIVATE)
         return pref.getString(NICKNAME, "")
+    }
+
+    //토큰 저장, 받아오기
+    fun setUserToken(context:Context, token: String){
+        val pref = context.getSharedPreferences(TOKEN, Context.MODE_PRIVATE)
+        val editor = pref.edit()
+        editor.putString(TOKEN, token)
+        editor.commit()
+    }
+
+    fun getUserToken(context:Context): String? {
+        val pref = context.getSharedPreferences(TOKEN, Context.MODE_PRIVATE)
+        return pref.getString(TOKEN, "")
     }
 
     //유저 현재 주인 아이디 저장, 받아오기
@@ -56,7 +72,6 @@ object SharedPreferenceController{
         return pref.getInt(USERID, 1)
     }
 
-
     //유저 아이디 저장, 받아오기
     fun setUserEmail(context:Context, userEmail: String){
         val pref = context.getSharedPreferences(EMAIL, Context.MODE_PRIVATE)
@@ -84,8 +99,29 @@ object SharedPreferenceController{
         val pref = context.getSharedPreferences(FOLDER, Context.MODE_PRIVATE)
         val gson = Gson()
         val json = pref.getString(FOLDER, "")
-        val defValue = Gson().toJson(HashMap<String, Int>())
-        val typeToken = object: TypeToken<HashMap<String, Any>>(){}
+        val typeToken = object: TypeToken<HashMap<String, Int>>(){}
+        var obj: HashMap<String, Int> = HashMap()
+        if (!TextUtils.isEmpty(json)) {
+            obj = gson.fromJson<Any>(json, typeToken.type) as HashMap<String, Int>
+        }
+        return obj
+    }
+
+    //저장소 정보 저장/ 받아오기
+    fun setUserStorageInfo(context:Context, storage: HashMap<String, Int>){
+        val gson = Gson()
+        val pref = context.getSharedPreferences(STORAGE, Context.MODE_PRIVATE)
+        val editor = pref.edit()
+        val json = gson.toJson(storage)
+        editor.putString(STORAGE, json)
+        editor.commit()
+    }
+
+    fun getUserStorageInfo(context:Context): HashMap<String, Int> {
+        val pref = context.getSharedPreferences(STORAGE, Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = pref.getString(STORAGE, "")
+        val typeToken = object: TypeToken<HashMap<String, Int>>(){}
         var obj: HashMap<String, Int> = HashMap()
         if (!TextUtils.isEmpty(json)) {
             obj = gson.fromJson<Any>(json, typeToken.type) as HashMap<String, Int>

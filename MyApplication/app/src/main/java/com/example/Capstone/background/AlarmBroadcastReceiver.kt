@@ -1,6 +1,7 @@
 package com.example.Capstone.background
 
 
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -9,6 +10,7 @@ import android.graphics.Bitmap
 import android.location.Location
 import android.os.Looper
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.bumptech.glide.Glide
@@ -22,6 +24,7 @@ import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
 import com.example.Capstone.network.get.GetTimeAlarmResponse
 import com.example.Capstone.network.post.PostLocationAlarmisNullResponse
+import com.example.Capstone.network.post.PostSignUpResponse
 import com.google.android.gms.location.*
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -72,13 +75,22 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
 //
 //            131-> //random 알람
 //                getSpecificScrapResponse(98, context)
+
             141-> {
                 requestLocationUpdate(context)
             }
+
+            151 -> {
+                ApplicationController.notificationManager.cancel(NOTICATION_ID)
+                val sharingName: String = intent.getStringExtra("sharing_name")!!
+                postInvitationAcceptanceResponse(SharedPreferenceController.getUserId(context)!!, sharingName)
+            }
+
+            444 -> {
+                ApplicationController.notificationManager.cancel(NOTICATION_ID)
+            }
         }
         Log.d("code", code.toString())
-
-        Log.d("AlarmBroadcastReceiver", "onReceive")
 
    }
 
@@ -101,8 +113,8 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
         if (getCurrentLocation(context) != null && locationCallback != null) {
             fusedLocationProviderClient = getCurrentLocation(context)!!
             fusedLocationProviderClient?.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
+            fusedLocationProviderClient?.removeLocationUpdates(locationCallback)
         }
-        fusedLocationProviderClient?.removeLocationUpdates(locationCallback)
     }
 
     private fun getCurrentLocation(context: Context) : FusedLocationProviderClient{
@@ -129,11 +141,14 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
 
                     val distance = preLocation.distanceTo(currLocation)
 
-                    if(distance > 1000){
-                        //alarm request
-                        postLocationAlarmisNullResponse(SharedPreferenceController.getCurrentUserId(context)!!,
-                            location.latitude.toFloat(), location.longitude.toFloat(), context)
-                    }
+//                    if(distance > 1000){
+//                        //alarm request
+//                        postLocationAlarmisNullResponse(SharedPreferenceController.getCurrentUserId(context)!!,
+//                            location.latitude.toFloat(), location.longitude.toFloat(), context)
+//                    }
+
+                    postLocationAlarmisNullResponse(SharedPreferenceController.getCurrentUserId(context)!!,
+                        location.latitude.toFloat(), location.longitude.toFloat(), context)
 
                     SharedPreferenceController.setUserLatitude(context, location.latitude) //distance가 100이상일 때만 업데이트할지 말지 결정하기
                     SharedPreferenceController.setUserLongitude(context, location.longitude)
@@ -257,6 +272,32 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
 
                 else {
                     Log.e("error", "fail")
+                }
+            }
+        })
+    }
+
+    private fun postInvitationAcceptanceResponse(id: Int, sharingName: String){
+
+        var jsonObject = JSONObject()
+        jsonObject.put("sharing_name", sharingName)
+
+        val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
+
+        val postInvitationAcceptanceResponse = networkService.postInvitationAcceptanceResponse("application/json", id, gsonObject)
+
+        postInvitationAcceptanceResponse.enqueue(object : Callback<PostSignUpResponse> {
+
+            override fun onFailure(call: Call<PostSignUpResponse>, t: Throwable) {
+                Log.e("post invitation fail", t.toString())
+            }
+
+            override fun onResponse(
+                call: Call<PostSignUpResponse>,
+                response: Response<PostSignUpResponse>
+            ) {
+                if(response.isSuccessful) {
+                    Log.d("babo", response.body().toString())
                 }
             }
         })

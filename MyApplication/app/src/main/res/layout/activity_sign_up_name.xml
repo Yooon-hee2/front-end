@@ -84,22 +84,22 @@
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"/>
 
-            <RelativeLayout
-                android:background="@drawable/shape_graybtn_8dp"
-                android:layout_width="65dp"
-                android:layout_height="26dp"
-                android:id="@+id/btn_duplicate_verification"
-                android:layout_marginLeft="238dp"
-                android:layout_marginTop="6dp">
-                <TextView
-                    android:includeFontPadding = "false"
-                    android:layout_centerInParent="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:textColor="@color/grayA"
-                    android:text="중복 확인"/>
-            </RelativeLayout>
+<!--            <RelativeLayout-->
+<!--                android:background="@drawable/shape_graybtn_8dp"-->
+<!--                android:layout_width="65dp"-->
+<!--                android:layout_height="26dp"-->
+<!--                android:id="@+id/btn_duplicate_verification"-->
+<!--                android:layout_marginLeft="238dp"-->
+<!--                android:layout_marginTop="6dp">-->
+<!--                <TextView-->
+<!--                    android:includeFontPadding = "false"-->
+<!--                    android:layout_centerInParent="true"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:textSize="12sp"-->
+<!--                    android:textColor="@color/grayA"-->
+<!--                    android:text="중복 확인"/>-->
+<!--            </RelativeLayout>-->
 
 
         </LinearLayout>

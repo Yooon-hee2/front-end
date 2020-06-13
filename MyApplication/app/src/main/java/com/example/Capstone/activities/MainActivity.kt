@@ -11,18 +11,26 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.ListView
+import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
+import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.example.Capstone.R
 import com.example.Capstone.adapter.MainFragmentAdapter
 import com.example.Capstone.adapter.SearchListViewAdapter
+import com.example.Capstone.background.AlarmBroadcastReceiver
 import com.example.Capstone.db.SharedPreferenceController
+import com.example.Capstone.fragments.AlbumViewMainFragment
+import com.example.Capstone.fragments.FeedViewMainFragment
 import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
 import com.example.Capstone.network.get.GetAllFolderListResponse
+import com.example.Capstone.network.get.GetAllStorageListResponse
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_activity_main.*
@@ -36,6 +44,9 @@ class MainActivity : AppCompatActivity(){
 
     lateinit var pager : ViewPager
 
+    lateinit var feedFragment : Fragment
+    lateinit var albumFragment : Fragment
+
     private val networkService: NetworkService by lazy {
         ApplicationController.instance.networkService
     }
@@ -46,12 +57,15 @@ class MainActivity : AppCompatActivity(){
         val recommendedHashtagList = arrayListOf("#강남", "#이태원", "#플레이리스트", "#맛집", "#동물의숲")
         lateinit var edt_search : EditText
         var folderList : HashMap<String, Int> = HashMap()
+        var storageList : HashMap<String, Int> = HashMap()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        getAllFolderListResponse(SharedPreferenceController.getCurrentUserId(this)!!)
+        getAllStorageListResponse(SharedPreferenceController.getUserId(this)!!)
         edt_search = findViewById(R.id.search_item)
 
         folder_name.text = "전체"
@@ -60,6 +74,9 @@ class MainActivity : AppCompatActivity(){
         pager = findViewById(R.id.vp_main)
         val pagerAdapter = MainFragmentAdapter(supportFragmentManager)
         pager.adapter = pagerAdapter
+
+        feedFragment = pagerAdapter.getItem(0)
+        albumFragment = pagerAdapter.getItem(1)
 
         val tabLayout : TabLayout = findViewById(R.id.tl_main)
         val listView = findViewById<ListView>(R.id.list_search_item)
@@ -109,19 +126,25 @@ class MainActivity : AppCompatActivity(){
         }
 
         btn_search.setOnClickListener {
-            pagerAdapter.getEditText(search_item.text)
+            (feedFragment as FeedViewMainFragment).changeRecyclerViewData(search_item.text)
+            (albumFragment as AlbumViewMainFragment).changeRecyclerViewData(search_item.text)
+//            pagerAdapter.getEditText(search_item.text)
             list_search_item.visibility = View.GONE
             tab_main.visibility = View.VISIBLE
         }
 
         btn_erase_all.setOnClickListener {
             search_item.text.clear()
-            pagerAdapter.getEditText(search_item.text)
+//            pagerAdapter.getEditText(search_item.text)
+            (feedFragment as FeedViewMainFragment).changeRecyclerViewData(search_item.text)
+            (albumFragment as AlbumViewMainFragment).changeRecyclerViewData(search_item.text)
         }
 
         search_item.addTextChangedListener(object : TextWatcher{
             override fun afterTextChanged(s: Editable?) {
-                pagerAdapter.getEditText(search_item.text)
+//                pagerAdapter.getEditText(search_item.text)
+                (feedFragment as FeedViewMainFragment).changeRecyclerViewData(search_item.text)
+                (albumFragment as AlbumViewMainFragment).changeRecyclerViewData(search_item.text)
                 if (search_item.text.toString().isNotEmpty()){
                     btn_erase_all.visibility = View.VISIBLE
                     if(search_item.text.toString().substring(0,1) == "#") {
@@ -145,7 +168,9 @@ class MainActivity : AppCompatActivity(){
 
             override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
                 if (charSequence!!.isNotBlank()) {
-                    pagerAdapter.getEditText(search_item.text)
+//                    pagerAdapter.getEditText(search_item.text)
+                    (feedFragment as FeedViewMainFragment).changeRecyclerViewData(search_item.text)
+                    (albumFragment as AlbumViewMainFragment).changeRecyclerViewData(search_item.text)
                     if(charSequence.toString().substring(0,1) == "#") {
                         searchListCustomAdapter.filter(charSequence.substring(1, charSequence.length))
                     }
@@ -167,6 +192,12 @@ class MainActivity : AppCompatActivity(){
             intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
             ly_drawer.closeDrawer(GravityCompat.END)
             startActivity(intent)
+        }
+
+        btn_temp_test.setOnClickListener {
+            val intent = Intent(applicationContext, AlarmBroadcastReceiver::class.java)
+            intent.putExtra("id", 141)
+            applicationContext.sendBroadcast(intent)
         }
 
         btn_manage_folder.setOnClickListener {
@@ -196,8 +227,7 @@ class MainActivity : AppCompatActivity(){
             startActivity(intent)
         }
 
-        getAllFolderListResponse(SharedPreferenceController.getCurrentUserId(this)!!)
-        val button = findViewById<ImageView>(R.id.folder_menu)
+        val button = findViewById<ImageView>(R.id.folder_menu_main)
         button.setOnClickListener {
             val popupMenu = PopupMenu(this, button)
             for (folder in folderList.keys){
@@ -205,7 +235,11 @@ class MainActivity : AppCompatActivity(){
             }
             popupMenu.setOnMenuItemClickListener { item ->
                 folder_name.text = item.title
-                folderList[item.title]?.let { it1 -> pagerAdapter.changeFolder(it1) }
+                folderList[item.title]?.let {
+                        it1 ->
+                    (feedFragment as FeedViewMainFragment).changeFolder(it1)
+                    (albumFragment as AlbumViewMainFragment).changeFolder(it1)
+                }
                 true
             }
             popupMenu.show()
@@ -215,6 +249,7 @@ class MainActivity : AppCompatActivity(){
     override fun onResume() {
         super.onResume()
         getAllFolderListResponse(SharedPreferenceController.getCurrentUserId(this)!!)
+        getAllStorageListResponse(SharedPreferenceController.getUserId(this)!!)
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
@@ -226,6 +261,8 @@ class MainActivity : AppCompatActivity(){
     }
 
     private fun getAllFolderListResponse(id: Int){
+        folderList.clear()
+
         val getAllFolderListResponse = networkService.getAllFolderListResponse(id)
 
         getAllFolderListResponse.enqueue(object : Callback<ArrayList<GetAllFolderListResponse>> {
@@ -241,8 +278,6 @@ class MainActivity : AppCompatActivity(){
                 if(response.isSuccessful){
                     Log.d("babo", response.body().toString())
 
-                    folderList.clear()
-
                     val data: ArrayList<GetAllFolderListResponse>? = response.body()
                     if (data != null) {
                         for(folders in data) {
@@ -257,6 +292,38 @@ class MainActivity : AppCompatActivity(){
                         }
                         SharedPreferenceController.setUserFolderInfo(this@MainActivity, folderList)
                     }
+                }
+                else{
+                    Log.e("error", "fail")
+                }
+            }
+        })
+    }
+
+    private fun getAllStorageListResponse(id: Int){
+        storageList.clear()
+        val getAllStorageListResponse = networkService.getAllStorageListResponse("application/json", id)
+
+        getAllStorageListResponse.enqueue(object : Callback<ArrayList<GetAllStorageListResponse>> {
+
+            override fun onFailure(call: Call<ArrayList<GetAllStorageListResponse>>, t: Throwable) {
+                Log.e("get List failed", t.toString())
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<GetAllStorageListResponse>>,
+                response: Response<ArrayList<GetAllStorageListResponse>>
+            ) {
+                if(response.isSuccessful){
+                    storageList[SharedPreferenceController.getUserNickname(this@MainActivity) + "의 저장소"] = SharedPreferenceController.getUserId(this@MainActivity)!!.toInt()
+                    Log.d("babo", response.body().toString())
+                    val data: ArrayList<GetAllStorageListResponse>? = response.body()
+                    if (data != null) {
+                        for(storage in data) {
+                            storageList[storage.sharing_name] = storage.id.toInt()
+                        }
+                    }
+                    SharedPreferenceController.setUserStorageInfo(this@MainActivity, storageList)
                 }
                 else{
                     Log.e("error", "fail")

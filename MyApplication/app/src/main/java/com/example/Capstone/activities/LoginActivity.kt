@@ -29,6 +29,7 @@ class LoginActivity : AppCompatActivity() {
     private var nickname : String = ""
     private var password : String = ""
     private var email : String = ""
+    private var TOKEN : String = ""
 
     val networkService: NetworkService by lazy {
         ApplicationController.instance.networkService
@@ -38,6 +39,8 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        getFirebaseToken()
 
         if(SharedPreferenceController.getUserNickname(this)!!.isNotEmpty()){
             val intent = Intent(this, MainActivity::class.java)
@@ -78,14 +81,13 @@ class LoginActivity : AppCompatActivity() {
             startActivity<SignUpEmailActivity>()
             finish()
         }
-
-        getFirebaseToken()
     }
 
     private fun loginResponseData() {
         var jsonObject = JSONObject()
         jsonObject.put("username", nickname)
         jsonObject.put("password", password)
+        jsonObject.put("token", TOKEN)
 
         val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
 
@@ -119,7 +121,7 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
-    fun getFirebaseToken(){
+    private fun getFirebaseToken(){
         FirebaseInstanceId.getInstance().instanceId
             .addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -131,8 +133,9 @@ class LoginActivity : AppCompatActivity() {
                 val token = task.result?.token
 
                 // Log and toast
-                val msg = token.toString()
-                Log.d("fcm", msg)
+                TOKEN = token.toString()
+                Log.d("fcm", TOKEN)
+                SharedPreferenceController.setUserToken(this@LoginActivity, TOKEN)
 //                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
             })
     }

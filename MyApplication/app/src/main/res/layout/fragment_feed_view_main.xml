@@ -14,8 +14,25 @@
         android:src="@drawable/img_empty">
     </ImageView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_feed_container"
+    <com.baoyz.widget.PullRefreshLayout
+        android:id="@+id/swipe_refresh_feed"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_feed_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </com.baoyz.widget.PullRefreshLayout>
+
+<!--    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout-->
+<!--        android:id="@+id/swipe_refresh"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent">-->
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:id="@+id/rv_feed_container"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent" />-->
+<!--    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
 </FrameLayout>

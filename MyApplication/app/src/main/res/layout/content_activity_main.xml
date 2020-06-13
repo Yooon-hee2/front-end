@@ -72,7 +72,7 @@
                     android:layout_marginLeft="5dp"
                     android:src="@drawable/ic_down"
                     android:layout_centerVertical="true"
-                    android:id="@+id/folder_menu"
+                    android:id="@+id/folder_menu_main"
                     android:layout_width="50dp"
                     android:layout_height="50dp">
                 </ImageView>

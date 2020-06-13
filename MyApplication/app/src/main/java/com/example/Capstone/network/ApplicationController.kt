@@ -17,11 +17,12 @@ import java.util.concurrent.TimeUnit
 
 
 class ApplicationController : Application(){
-    private val baseURL = "https://2ff4777a9ed7.ngrok.io" //ngrok켤때마다 바꿀것
+    private val baseURL = "" //ngrok켤 때마다 바꿀것
     lateinit var networkService: NetworkService
 
     companion object{
         lateinit var instance: ApplicationController
+        lateinit var notificationManager: NotificationManager
     }
 
     override fun onCreate() {
@@ -29,7 +30,7 @@ class ApplicationController : Application(){
         instance = this
         buildNetWork()
         makeNotificationChannel()
-        activateWorker()
+//        activateWorker()
     }
 
     var okHttpClient = OkHttpClient.Builder() //set timeout
@@ -58,7 +59,7 @@ class ApplicationController : Application(){
             mChannel.description = descriptionText
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
-            val notificationManager = getSystemService(AppCompatActivity.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager = getSystemService(AppCompatActivity.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(mChannel)
         }
     }

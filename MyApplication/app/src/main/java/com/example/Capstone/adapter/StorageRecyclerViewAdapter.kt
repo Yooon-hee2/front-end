@@ -2,6 +2,7 @@ package com.example.Capstone.adapter
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.Capstone.R
+import com.example.Capstone.activities.MainActivity
 import com.example.Capstone.db.SharedPreferenceController
 import com.example.Capstone.model.Storage
 
@@ -30,6 +32,9 @@ class StorageRecyclerViewAdapter(val ctx: Context, var storageList: ArrayList<St
         holder.storageContainer.setOnClickListener{
             (ctx as Activity).finish()
             SharedPreferenceController.setCurrentUserId(ctx, storageList[position].id)
+            val intent = Intent(ctx, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            holder.storageContainer.context.startActivity(intent)
         }
     }
 

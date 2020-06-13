@@ -2,6 +2,7 @@ package com.example.Capstone.activities
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -45,8 +46,8 @@ class AddStorageActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_storage)
 
         btn_add_member.setOnClickListener {
-            et_add_member.text.clear()
             var memberName = et_add_member.text.toString()
+            et_add_member.text.clear()
             postMemberisExistResponse(memberName)
         }
 
@@ -58,7 +59,7 @@ class AddStorageActivity : AppCompatActivity() {
             var storageName = et_storage_name.text.toString()
             var memberList = hashTagRecyclerViewAdapter.returnCurrHashTag()
             if(!TextUtils.isEmpty(storageName) && memberList != null){
-                postNewStorageResponse(storageName, memberList)
+                postNewStorageResponse(storageName, memberList, this)
             }
             else if (TextUtils.isEmpty(storageName)){
                 toast("저장소 이름을 입력해 주세요")
@@ -76,7 +77,7 @@ class AddStorageActivity : AppCompatActivity() {
                     //permission denied
                     val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE);
                     //show popup to request runtime permission
-                    requestPermissions(permissions, PERMISSION_CODE);
+                    requestPermissions(permissions, PERMISSION_CODE)
                 }
                 else{
                     //permission already granted
@@ -172,7 +173,7 @@ class AddStorageActivity : AppCompatActivity() {
     }
 
 
-    private fun postNewStorageResponse(storageName : String, memberList: ArrayList<String>) {
+    private fun postNewStorageResponse(storageName : String, memberList: ArrayList<String>, context : Context) {
 
         var jsonObject = JSONObject()
         jsonObject.put("sharing_name", storageName)
@@ -208,6 +209,9 @@ class AddStorageActivity : AppCompatActivity() {
                 if (response.isSuccessful){
                     if(response.body()!!.status == 200){
                         toast("새 공유저장소가 생성되었습니다 !")
+                        val intent = Intent(context, StorageManageActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        startActivity(intent)
                         finish()
                     }
                 }

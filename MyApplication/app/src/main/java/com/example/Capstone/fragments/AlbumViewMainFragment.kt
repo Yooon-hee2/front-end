@@ -44,7 +44,6 @@ class AlbumViewMainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        getAllScrapListResponse(userId)
         return inflater.inflate(R.layout.fragment_album_view_main, container, false)
     }
 
@@ -54,6 +53,13 @@ class AlbumViewMainFragment : Fragment() {
         getAllScrapListResponse(userId)
         rv_album_container.adapter = albumRecyclerViewAdapter
         rv_album_container.layoutManager = GridLayoutManager(context!!, 3)
+
+        swipe_refresh_album.setOnRefreshListener {
+//            dataList.clear()
+//            albumRecyclerViewAdapter.notifyDataSetChanged()
+            getAllScrapListResponse(userId)
+            swipe_refresh_album.setRefreshing(false)
+        }
     }
 
     override fun onResume() {
@@ -61,7 +67,6 @@ class AlbumViewMainFragment : Fragment() {
         userId = SharedPreferenceController.getCurrentUserId(context!!)!!
         getAllScrapListResponse(userId)
     }
-
 
     fun changeFolder(folderId: Int){
         if (userId != -1) {

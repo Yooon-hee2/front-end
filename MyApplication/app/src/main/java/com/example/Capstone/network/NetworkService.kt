@@ -142,5 +142,14 @@ interface NetworkService {
         @Header("Content-Type") content_type: String,
         @Path("id") id : Int
     ): Call<ArrayList<GetAllStorageListResponse>>
+
+    //accept storage invitation
+    @POST("/memmem_app/users/{id}/joinsharing/")
+    fun postInvitationAcceptanceResponse(
+        @Header("Content-Type") content_type: String,
+        @Path("id") id : Int,
+        @Body() body: JsonObject
+    ): Call<PostSignUpResponse>
+
 }
 
