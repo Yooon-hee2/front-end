@@ -35,8 +35,8 @@ class ApplicationController : Application(){
 
     var okHttpClient = OkHttpClient.Builder() //set timeout
         .connectTimeout(1, TimeUnit.MINUTES)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(15, TimeUnit.SECONDS)
+        .readTimeout(1, TimeUnit.MINUTES)
+        .writeTimeout(1, TimeUnit.MINUTES)
         .build()
 
     private fun buildNetWork(){

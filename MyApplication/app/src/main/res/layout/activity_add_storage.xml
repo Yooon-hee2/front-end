@@ -23,20 +23,13 @@
 
             <ImageView
                 android:id="@+id/img_profile"
-                android:layout_width="112dp"
-                android:layout_height="112dp"
+                android:layout_width="150dp"
+                android:layout_height="130dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="50dp"
-                android:src="@drawable/ic_account" />
+                android:src="@drawable/img_sharing_storage" />
 
-            <ImageView
-                android:id="@+id/btn_profile_img_change"
-                android:layout_width="50dp"
-                android:layout_height="70dp"
-                android:layout_marginLeft="180dp"
-                android:layout_marginTop="110dp"
-                android:src="@drawable/ic_edit_photo" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -94,7 +87,6 @@
                     android:background="@drawable/shape_bottom_line_signup"
                     android:hint="ex) 김윤희"
                     android:includeFontPadding="false"
-                    android:inputType="textEmailAddress"
                     android:lines="1"
                     android:maxLength="20"
                     android:maxLines="1"

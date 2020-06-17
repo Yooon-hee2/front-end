@@ -29,7 +29,9 @@ class AlbumViewMainFragment : Fragment() {
     private val networkService: NetworkService by lazy {
         ApplicationController.instance.networkService
     }
+
     private var userId : Int = -1
+    private var currFolderId  = 0
     private var dataList : ArrayList<Feed> = ArrayList()
     lateinit var albumRecyclerViewAdapter: AlbumRecyclerViewAdapter
 
@@ -53,11 +55,16 @@ class AlbumViewMainFragment : Fragment() {
         getAllScrapListResponse(userId)
         rv_album_container.adapter = albumRecyclerViewAdapter
         rv_album_container.layoutManager = GridLayoutManager(context!!, 3)
+        if (!SharedPreferenceController.getUserFolderInfo(context!!).isNullOrEmpty()){
+            currFolderId = SharedPreferenceController.getUserFolderInfo(context!!)["전체"]!!
+        }
 
         swipe_refresh_album.setOnRefreshListener {
-//            dataList.clear()
-//            albumRecyclerViewAdapter.notifyDataSetChanged()
-            getAllScrapListResponse(userId)
+            albumRecyclerViewAdapter.notifyDataSetChanged()
+            when(currFolderId){
+                SharedPreferenceController.getUserFolderInfo(context!!)["전체"]!! -> getAllScrapListResponse(userId)
+                else -> getAllFolderScrapListResponse(userId, currFolderId)
+            }
             swipe_refresh_album.setRefreshing(false)
         }
     }
@@ -65,13 +72,14 @@ class AlbumViewMainFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         userId = SharedPreferenceController.getCurrentUserId(context!!)!!
-        getAllScrapListResponse(userId)
+//        getAllScrapListResponse(userId)
     }
 
     fun changeFolder(folderId: Int){
+        currFolderId = folderId
         if (userId != -1) {
             when(folderId){
-                2 -> getAllScrapListResponse(userId)
+                SharedPreferenceController.getUserFolderInfo(context!!)["전체"]!! -> getAllScrapListResponse(userId)
                 else -> getAllFolderScrapListResponse(userId, folderId)
             }
         }
@@ -81,7 +89,6 @@ class AlbumViewMainFragment : Fragment() {
         albumRecyclerViewAdapter.filter.filter(charSequence)
         albumRecyclerViewAdapter.notifyDataSetChanged()
     }
-
 
     private fun updateDataList(list: ArrayList<Feed>){
         dataList.clear()
@@ -108,14 +115,10 @@ class AlbumViewMainFragment : Fragment() {
                     val tempDataList : ArrayList<Feed> = ArrayList()
 
                     if (!data.isNullOrEmpty()) {
-                        img_for_empty.visibility = View.GONE
                         for(scrap in data) {
                             tempDataList.add(scrap.toFeedDetail())
                             updateDataList(tempDataList)
                         }
-                    }
-                    else{
-                        img_for_empty.visibility = View.VISIBLE
                     }
                 }
 
@@ -145,16 +148,12 @@ class AlbumViewMainFragment : Fragment() {
                     val tempDataList : ArrayList<Feed> = ArrayList()
 
                     if (!data.isNullOrEmpty()) {
-                        img_for_empty.visibility = View.GONE
                         for(folder in data) {
                             for (scrap in folder.scraps!!) {
                                 tempDataList.add(scrap.toFeedDetail())
                                 updateDataList(tempDataList)
                             }
                         }
-                    }
-                    else{
-                        img_for_empty.visibility = View.VISIBLE
                     }
                 }
 

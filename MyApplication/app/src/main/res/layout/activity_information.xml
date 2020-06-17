@@ -36,15 +36,15 @@
                 </TextView>
 
                 <ImageView
+                    android:visibility="invisible"
                     android:id="@+id/btn_change_menu"
                     android:layout_width="25dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_down" />
-
-
             </LinearLayout>
 
             <ImageView
+                android:visibility="invisible"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_alignParentRight="true"
@@ -53,7 +53,6 @@
                 android:id="@+id/btn_trashbin_info"
                 android:src="@drawable/ic_trashbin"/>
         </RelativeLayout>
-
     </androidx.appcompat.widget.Toolbar>
 
     <RelativeLayout

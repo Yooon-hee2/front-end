@@ -20,7 +20,7 @@
             android:layout_width="270dp"
             android:layout_height="match_parent"
             android:id="@+id/search_item"
-            android:hint="중앙대 맛집"/>
+            android:hint="검색어를 입력해주세요"/>
         <ImageView
             android:visibility="gone"
             android:layout_marginRight="85dp"

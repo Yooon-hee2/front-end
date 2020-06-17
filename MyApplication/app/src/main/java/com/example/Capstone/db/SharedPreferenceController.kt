@@ -18,6 +18,7 @@ object SharedPreferenceController{
     private val LONGITUDE = "longitude"
     private val EMAIL = "email"
     private val TOKEN = "token"
+    private val SCRAP = "scrap"
 
 
     //닉네임 저장, 받아오기
@@ -85,6 +86,28 @@ object SharedPreferenceController{
         return pref.getString(EMAIL, "")
     }
 
+    //유저가 저장한 스크랩 리스트 저장/ 받아오기
+    fun setUserScrapListInfo(context:Context, scrap: HashMap<Int, Int>){
+        val gson = Gson()
+        val pref = context.getSharedPreferences(SCRAP, Context.MODE_PRIVATE)
+        val editor = pref.edit()
+        val json = gson.toJson(scrap)
+        editor.putString(SCRAP, json)
+        editor.commit()
+    }
+
+    fun getUserScrapListInfo(context:Context): HashMap<Int, Int> {
+        val pref = context.getSharedPreferences(SCRAP, Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = pref.getString(SCRAP, "")
+        val typeToken = object: TypeToken<HashMap<Int, Int>>(){}
+        var obj: HashMap<Int, Int> = HashMap()
+        if (!TextUtils.isEmpty(json)) {
+            obj = gson.fromJson<Any>(json, typeToken.type) as HashMap<Int, Int>
+        }
+        return obj
+    }
+
     //폴더 정보 저장/ 받아오기
     fun setUserFolderInfo(context:Context, folder: HashMap<String, Int>){
         val gson = Gson()
@@ -141,6 +164,8 @@ object SharedPreferenceController{
         val pref = context.getSharedPreferences(NICKNAME, Context.MODE_PRIVATE)
         return pref.getBoolean(NOTIFICATION, false)
     }
+
+
 
     //유저 위치 받아오기
     fun setUserLatitude(context:Context, latitude: Double){

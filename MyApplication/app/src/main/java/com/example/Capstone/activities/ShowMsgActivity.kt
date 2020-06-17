@@ -20,6 +20,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.Capstone.CustomToast
 import com.example.Capstone.R
 import com.example.Capstone.adapter.HashtagRecyclerViewAdapter
 import com.example.Capstone.db.SharedPreferenceController
@@ -65,7 +66,7 @@ class ShowMsgActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         storageList = SharedPreferenceController.getUserStorageInfo(this)
-        getAllFolderListResponse(SharedPreferenceController.getUserId(this)!!)
+        getAllFolderListResponse(SharedPreferenceController.getCurrentUserId(this)!!)
 
         var intent: Intent = intent
 
@@ -76,7 +77,7 @@ class ShowMsgActivity : AppCompatActivity() {
         displayWidth = disp.widthPixels
         displayHeight = disp.heightPixels
 
-        storageId = SharedPreferenceController.getUserId(this)!!
+        storageId = SharedPreferenceController.getCurrentUserId(this)!!
         folderId = SharedPreferenceController.getUserFolderInfo(this)["전체"]!!
 
         if (Intent.ACTION_SEND == action && type != null) {
@@ -126,8 +127,6 @@ class ShowMsgActivity : AppCompatActivity() {
         saved.setOnClickListener{
             scrapResponseData("save")
             dialog.cancel()
-//            toast("저장됨!")
-//            finish()
         }
 
         val edit : TextView = dialog.findViewById(R.id.btn_edit)
@@ -154,7 +153,12 @@ class ShowMsgActivity : AppCompatActivity() {
         val editHashTag : EditText = dialog.findViewById(R.id.edt_add_hashtag)
 
         folderName.text = "전체"
-        storageName.text = SharedPreferenceController.getUserNickname(this) + "의 저장소"
+
+        storageList.forEach { (key, value) ->
+            if (value == SharedPreferenceController.getCurrentUserId(this)!!) {
+                storageName.text = key
+            }
+        }
 
         dialog.show()
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -216,6 +220,7 @@ class ShowMsgActivity : AppCompatActivity() {
             folderPopupMenu.setOnMenuItemClickListener { item ->
                 folderName.text = item.title
                 folderId = folderList!![item.title]!!
+                Log.d("folderid", folderId.toString())
                 true
             }
             folderPopupMenu.show()
@@ -295,6 +300,18 @@ class ShowMsgActivity : AppCompatActivity() {
         jsonObject.put("folder_id", myfolderList["전체"]!!.toInt().toString())
         jsonObject.put("url", copiedUrl)
 
+        if (status == "edit"){
+            jsonObject.put("fcm", false)
+        }
+        if(status == "save"){
+            if(SharedPreferenceController.getUserId(this)!! != SharedPreferenceController.getCurrentUserId(this)!!){
+                jsonObject.put("fcm", true)
+            }
+            else{
+                jsonObject.put("fcm", false)
+            }
+        }
+
         val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
 
         Log.d("bodyforscrap", gsonObject.toString())
@@ -321,10 +338,23 @@ class ShowMsgActivity : AppCompatActivity() {
                         }
                         scrapId = response.body()?.scrap!!.scrap_id!!
                         title = response.body()?.scrap!!.title!!
+
+                        var scrapList = HashMap<Int, Int>()
+                        if(!SharedPreferenceController.getUserScrapListInfo(this@ShowMsgActivity).isNullOrEmpty()){
+                            scrapList = SharedPreferenceController.getUserScrapListInfo(this@ShowMsgActivity)!!
+                            scrapList[response.body()?.scrap!!.scrap_id!!] =
+                                SharedPreferenceController.getUserId(this@ShowMsgActivity)!!
+                            SharedPreferenceController.setUserScrapListInfo(this@ShowMsgActivity, scrapList)
+                        }
+                        else{
+                            scrapList[response.body()?.scrap!!.scrap_id!!] =
+                                SharedPreferenceController.getUserId(this@ShowMsgActivity)!!
+                            SharedPreferenceController.setUserScrapListInfo(this@ShowMsgActivity, scrapList)
+                        }
                     }
                 }
                 else{
-                    toast("비공개 계정입니다")
+                    CustomToast(this@ShowMsgActivity, "스크랩을 실패했습니다.")
                     finish()
                 }
             }
@@ -334,6 +364,7 @@ class ShowMsgActivity : AppCompatActivity() {
     private fun modifyScrapResponseData(modifyingTitle: String) {
 
         var jsonObject = JSONObject()
+        jsonObject.put("id", SharedPreferenceController.getUserId(this!!))
         jsonObject.put("scrap_id", scrapId)
 
         jsonObject.put("folder", folderId)
@@ -351,8 +382,15 @@ class ShowMsgActivity : AppCompatActivity() {
                 jsonArray.put(tagJsonObject)
             }
         }
+
         jsonObject.put("memos", jsonArrayMemos)
         jsonObject.put("tags", jsonArray)
+        if (storageId != SharedPreferenceController.getUserId(this)!!){
+            jsonObject.put("fcm", true)
+        }
+        else{
+            jsonObject.put("fcm", false)
+        }
         val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
 
         Log.d("bodyformodify", gsonObject.toString())
@@ -397,6 +435,7 @@ class ShowMsgActivity : AppCompatActivity() {
                             for(folder in folders.folders){
                                 if(folder.folder_key == 0){
                                     folderList["전체"] = folder.folder_id
+                                    folderId = folder.folder_id
                                 }
                                 else{
                                     folderList[folder.folder_name] = folder.folder_id

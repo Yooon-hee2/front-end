@@ -1,6 +1,7 @@
 package com.example.Capstone.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,12 +14,14 @@ import com.example.Capstone.activities.MainActivity
 import java.util.*
 import kotlin.collections.ArrayList
 
-class SearchListViewAdapter (mContext: Context) : BaseAdapter() {
+class SearchListViewAdapter (mContext: Context, recommendedHashtagList : ArrayList<String>) : BaseAdapter() {
     private var inflater: LayoutInflater = LayoutInflater.from(mContext)
+    private val recommendedHashtagList : ArrayList<String> = recommendedHashtagList
     private val  filteredHashtagList: ArrayList<String> = ArrayList()
 
     init {
-        this.filteredHashtagList.addAll(MainActivity.recommendedHashtagList)
+        this.filteredHashtagList.addAll(recommendedHashtagList)
+        Log.d("hashtag", this.filteredHashtagList.toString())
     }
 
     inner class ViewHolder {
@@ -42,7 +45,7 @@ class SearchListViewAdapter (mContext: Context) : BaseAdapter() {
             holder = view.tag as ViewHolder
         }
         // Set the results into TextViews
-        holder.hashtag!!.text = MainActivity.recommendedHashtagList[position]
+        holder.hashtag!!.text = filteredHashtagList[position]
 
         // when user click listview item, set text on edittext
         holder.li_hashtag_container!!.setOnClickListener {
@@ -52,7 +55,7 @@ class SearchListViewAdapter (mContext: Context) : BaseAdapter() {
     }
 
     override fun getItem(position: Int): Any {
-        return MainActivity.recommendedHashtagList[position]
+        return filteredHashtagList[position]
     }
 
     override fun getItemId(position: Int): Long {
@@ -60,20 +63,21 @@ class SearchListViewAdapter (mContext: Context) : BaseAdapter() {
     }
 
     override fun getCount(): Int {
-        return MainActivity.recommendedHashtagList.size
+        return filteredHashtagList.size
     }
 
     // Filter Class
     fun filter(charText: String) {
         var charText = charText
         charText = charText.toLowerCase(Locale.getDefault())
-        MainActivity.recommendedHashtagList.clear()
+        filteredHashtagList.clear()
         if (charText.isEmpty()) {
-            MainActivity.recommendedHashtagList.addAll(filteredHashtagList)
-        } else {
+            filteredHashtagList.addAll(recommendedHashtagList)
+        }
+        else {
             for (ht in filteredHashtagList) {
                 if (ht.substring(1, ht.length).toLowerCase().contains(charText)) {
-                    MainActivity.recommendedHashtagList.add(ht)
+                    filteredHashtagList.add(ht)
                 }
             }
         }

@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.Window
 import android.webkit.*
 import android.widget.EditText
@@ -13,10 +14,12 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.Capstone.CustomToast
 import com.example.Capstone.R
 import com.example.Capstone.activities.MainActivity.Companion.folderList
 import com.example.Capstone.adapter.HashtagRecyclerViewAdapter
 import com.example.Capstone.adapter.MemoRecyclerViewAdapter
+import com.example.Capstone.db.SharedPreferenceController
 import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
 import com.example.Capstone.network.delete.DeleteSpecificScrapResponse
@@ -26,7 +29,6 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import kotlinx.android.synthetic.main.activity_information.*
 import org.jetbrains.anko.lines
-import org.jetbrains.anko.toast
 import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.Call
@@ -43,6 +45,8 @@ class InformationActivity : AppCompatActivity() {
     //problem : instagram만 click이 막아지지 않음
     private var saved_url = ""
 
+    val NOTICATION_ID = 227
+
     lateinit var memoRecyclerViewAdapter: MemoRecyclerViewAdapter
     lateinit var hashTagRecyclerViewAdapter: HashtagRecyclerViewAdapter
 
@@ -58,6 +62,24 @@ class InformationActivity : AppCompatActivity() {
         setContentView(R.layout.activity_information)
 
         scrapId = intent.getIntExtra("id", 0)
+
+        if (intent.getBooleanExtra("noti", false)){
+            ApplicationController.notificationManager.cancel(NOTICATION_ID)
+        }
+
+        var scrapList = SharedPreferenceController.getUserScrapListInfo(this)
+
+        Log.d("valueee", scrapList.toString())
+        scrapList.forEach { (key, value) ->
+            if(value == SharedPreferenceController.getUserId(this)!!){
+                if(key == scrapId){
+                    btn_trashbin_info.visibility = View.VISIBLE
+                    btn_change_menu.visibility = View.VISIBLE
+                }
+                Log.d("valueee", scrapId.toString())
+            }
+        }
+
         Log.d("scrapid", scrapId.toString())
         getSpecificScrapResponse(scrapId)
 
@@ -104,9 +126,8 @@ class InformationActivity : AppCompatActivity() {
 //            }
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-                toast("page loading...")
+                CustomToast(this@InformationActivity, "페이지 로딩중...")
             }
-
         }
 
         web_url.webChromeClient = object:WebChromeClient(){
@@ -258,12 +279,13 @@ class InformationActivity : AppCompatActivity() {
         dialog.setContentView(R.layout.dialog_delete)
 
         val delete = dialog.findViewById(R.id.btn_delete_memo) as TextView
+
         delete.setOnClickListener {
             dialog.dismiss()
             scrapDeleteResponseData(scrapId)
             val intent = Intent(this, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-            finish()
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(intent)
         }
         dialog.show()
     }
@@ -305,7 +327,12 @@ class InformationActivity : AppCompatActivity() {
         submit.setOnClickListener {
             dialog.dismiss()
             if (hashtag.text.toString().isNotEmpty()){
-                hashtagList.add(hashtag.text.toString())
+                if(hashtag.text.toString().substring(0,1) == "#"){
+                    hashtagList.add(hashtag.text.toString())
+                }
+                else{
+                    hashtagList.add("#" + hashtag.text.toString())
+                }
                 hashTagRecyclerViewAdapter.notifyDataSetChanged()
             }
         }
@@ -315,7 +342,7 @@ class InformationActivity : AppCompatActivity() {
     private fun modifyScrapResponseData(modifyingTitle: String) {
 
         var jsonObject = JSONObject()
-        jsonObject.put("scrap_id", scrapId)
+        jsonObject.put("id", SharedPreferenceController.getUserId(this)!!)
         if (folderId == 0){
             jsonObject.put("folder", folderList["전체"].toString().substring(0,1))
         }
@@ -347,6 +374,7 @@ class InformationActivity : AppCompatActivity() {
         }
         jsonObject.put("memos", jsonArrayMemos)
         jsonObject.put("tags", jsonArrayTags)
+        jsonObject.put("fcm", false)
         val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
 
         Log.d("bodyformodify", gsonObject.toString())

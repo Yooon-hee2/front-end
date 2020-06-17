@@ -86,37 +86,4 @@ class StorageManageActivity : AppCompatActivity() {
         })
     }
 
-//
-//    //create new folder
-//    private fun StorageResponseData(storageName : String) {
-//
-//        var jsonObject = JSONObject()
-//        jsonObject.put("id", SharedPreferenceController.getUserId(this)!!.toString())
-//        jsonObject.put("folder_name", storageName)
-//
-//        val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
-//
-//        Log.d("bodyforNewStorage", gsonObject.toString())
-//
-//        val folderScrapResponse: Call<PostStorageResponse> =
-//            networkService.postStorageResponse("application/json", gsonObject)
-//
-//        folderScrapResponse.enqueue(object : Callback<PostStorageResponse> {
-//            override fun onFailure(call: Call<PostStorageResponse>, t: Throwable) {
-//                Log.e("fail", t.toString())
-//            }
-//
-//            override fun onResponse(call: Call<PostStorageResponse>, response: Response<PostStorageResponse>) {
-//                if (response.isSuccessful) {
-//                    storageList.clear()
-//                    Log.e("addNewFolder", response.body().toString())
-//                    val data: PostStorageResponse? = response.body()
-//                    if (data != null) {
-//
-//                    }
-//                    storageRecyclerViewAdapter.notifyDataSetChanged()
-//                }
-//            }
-//        })
-//    }
 }

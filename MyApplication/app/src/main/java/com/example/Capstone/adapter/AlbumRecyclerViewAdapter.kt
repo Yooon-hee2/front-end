@@ -39,6 +39,7 @@ class AlbumRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)
         holder.container.setOnClickListener {
             val intent = Intent(ctx, InformationActivity::class.java)
             intent.putExtra("id", filteredList!![position].id)
+            intent.putExtra("noti", false)
             ctx.startActivity(intent)
         }
     }

@@ -6,10 +6,12 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import com.example.Capstone.CustomToast
 import com.example.Capstone.R
 import com.example.Capstone.db.SharedPreferenceController
 import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
+import com.example.Capstone.network.get.GetAllFolderListResponse
 import com.example.Capstone.network.post.PostLoginResponse
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
@@ -98,14 +100,14 @@ class LoginActivity : AppCompatActivity() {
 
         postSignUpResponse.enqueue(object : Callback<PostLoginResponse> {
             override fun onFailure(call: Call<PostLoginResponse>, t: Throwable) {
-                toast("fail")
+                CustomToast(this@LoginActivity, "로그인을 실패했습니다")
                 Log.e("fail", t.toString())
             }
 
             override fun onResponse(call: Call<PostLoginResponse>, response: Response<PostLoginResponse>) {
                 if (response.isSuccessful) {
                     if (response.body()!!.status == 200) {
-                        toast("login success")
+                        CustomToast(this@LoginActivity, "로그인을 성공했습니다")
                         val nickname = nickname
                         val email = email
                         Log.e("id", response.body()!!.id.toString())
@@ -113,6 +115,7 @@ class LoginActivity : AppCompatActivity() {
                         SharedPreferenceController.setCurrentUserId(this@LoginActivity, response.body()!!.id)
                         SharedPreferenceController.setUserId(this@LoginActivity, response.body()!!.id)
                         SharedPreferenceController.setUserEmail(this@LoginActivity, response.body()!!.email)
+                        getAllFolderListResponse(response.body()!!.id)
                         startActivity<MainActivity>()
                         finish()
                     }
@@ -136,7 +139,46 @@ class LoginActivity : AppCompatActivity() {
                 TOKEN = token.toString()
                 Log.d("fcm", TOKEN)
                 SharedPreferenceController.setUserToken(this@LoginActivity, TOKEN)
-//                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
             })
+    }
+
+    private fun getAllFolderListResponse(id: Int){
+        var folderList : HashMap<String, Int> = HashMap()
+
+        val getAllFolderListResponse = networkService.getAllFolderListResponse(id)
+
+        getAllFolderListResponse.enqueue(object : Callback<ArrayList<GetAllFolderListResponse>> {
+
+            override fun onFailure(call: Call<ArrayList<GetAllFolderListResponse>>, t: Throwable) {
+                Log.e("get List failed", t.toString())
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<GetAllFolderListResponse>>,
+                response: Response<ArrayList<GetAllFolderListResponse>>
+            ) {
+                if(response.isSuccessful){
+                    Log.d("babo", response.body().toString())
+
+                    val data: ArrayList<GetAllFolderListResponse>? = response.body()
+                    if (data != null) {
+                        for(folders in data) {
+                            for(folder in folders.folders){
+                                if(folder.folder_key == 0){
+                                    folderList["전체"] = folder.folder_id
+                                }
+                                else{
+                                    folderList[folder.folder_name] = folder.folder_id
+                                }
+                            }
+                        }
+                        SharedPreferenceController.setUserFolderInfo(this@LoginActivity, folderList)
+                    }
+                }
+                else{
+                    Log.e("error", "fail")
+                }
+            }
+        })
     }
 }

@@ -62,11 +62,13 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
         val date = current.format(DateTimeFormatter.ISO_DATE)
         val time = current.format(DateTimeFormatter.ISO_TIME)
 
-        when(code){
-            111 ->   //시간이 밥때일 때
-                if (time.toString().substring(0,2) in mealTime){
-                    postTimeAlarmResponse(SharedPreferenceController.getCurrentUserId(context)!!, context)
-                }
+        if(SharedPreferenceController.getUserNoti(context)!!){
+            when(code){
+                111 ->   //시간이 밥때일 때
+                    if (time.toString().substring(0,2) in mealTime){
+                        postTimeAlarmResponse(SharedPreferenceController.getCurrentUserId(context)!!, context)
+                    }
+
 //            121 ->
 //                //주말
 //                if(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ){
@@ -76,18 +78,27 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
 //            131-> //random 알람
 //                getSpecificScrapResponse(98, context)
 
-            141-> {
-                requestLocationUpdate(context)
-            }
+                //테스트용 버튼누를 때
+                141-> {
+                    requestLocationUpdate(context)
+                }
 
-            151 -> {
-                ApplicationController.notificationManager.cancel(NOTICATION_ID)
-                val sharingName: String = intent.getStringExtra("sharing_name")!!
-                postInvitationAcceptanceResponse(SharedPreferenceController.getUserId(context)!!, sharingName)
-            }
+                //공유저장소 초대 알림
+                151 -> {
+                    ApplicationController.notificationManager.cancel(NOTICATION_ID)
+                    val sharingName: String = intent.getStringExtra("sharing_name")!!
+                    Log.d("jsonobject", sharingName.toString())
+                    postInvitationAcceptanceResponse(SharedPreferenceController.getUserId(context)!!, sharingName)
+                }
 
-            444 -> {
-                ApplicationController.notificationManager.cancel(NOTICATION_ID)
+                161 -> {
+                    ApplicationController.notificationManager.cancel(NOTICATION_ID)
+
+                }
+
+                444 -> {
+                    ApplicationController.notificationManager.cancel(NOTICATION_ID)
+                }
             }
         }
         Log.d("code", code.toString())
@@ -282,9 +293,11 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
         var jsonObject = JSONObject()
         jsonObject.put("sharing_name", sharingName)
 
-        val gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
+        Log.d("jsonobject", jsonObject.toString())
 
-        val postInvitationAcceptanceResponse = networkService.postInvitationAcceptanceResponse("application/json", id, gsonObject)
+        var gsonObject = JsonParser().parse(jsonObject.toString()) as JsonObject
+
+        var postInvitationAcceptanceResponse = networkService.postInvitationAcceptanceResponse("application/json", id, gsonObject)
 
         postInvitationAcceptanceResponse.enqueue(object : Callback<PostSignUpResponse> {
 

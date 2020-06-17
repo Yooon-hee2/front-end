@@ -13,6 +13,7 @@ import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.Capstone.CustomToast
 import com.example.Capstone.R
 import com.example.Capstone.adapter.HashtagRecyclerViewAdapter
 import com.example.Capstone.db.SharedPreferenceController
@@ -62,31 +63,10 @@ class AddStorageActivity : AppCompatActivity() {
                 postNewStorageResponse(storageName, memberList, this)
             }
             else if (TextUtils.isEmpty(storageName)){
-                toast("저장소 이름을 입력해 주세요")
+                CustomToast(this@AddStorageActivity, "저장소 이름을 입력해 주세요")
             }
             else if (memberList == null){
-                toast("공유할 멤버를 입력해 주세요")
-            }
-        }
-
-        btn_profile_img_change.setOnClickListener {
-            //check runtime permission
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
-                    PackageManager.PERMISSION_DENIED){
-                    //permission denied
-                    val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE);
-                    //show popup to request runtime permission
-                    requestPermissions(permissions, PERMISSION_CODE)
-                }
-                else{
-                    //permission already granted
-                    pickImageFromGallery()
-                }
-            }
-            else{
-                //system OS is < Marshmallow
-                pickImageFromGallery()
+                CustomToast(this@AddStorageActivity, "공유 저장소 멤버를 입력해 주세요")
             }
         }
 
@@ -113,7 +93,7 @@ class AddStorageActivity : AppCompatActivity() {
                 }
                 else{
                     //permission from popup denied
-                    toast("Permission denied")
+                    Log.d("permission denied", "permission of location denied")
                 }
             }
         }
@@ -161,10 +141,9 @@ class AddStorageActivity : AppCompatActivity() {
                         hashTagRecyclerViewAdapter.notifyDataSetChanged()
                     }
                     else{
-                        toast("존재하지 않는 닉네임입니다.")
+                        CustomToast(this@AddStorageActivity, "존재하지 않는 닉네임입니다")
                     }
                 }
-
                 else {
                     Log.e("error", "fail")
                 }
@@ -208,14 +187,13 @@ class AddStorageActivity : AppCompatActivity() {
             ) {
                 if (response.isSuccessful){
                     if(response.body()!!.status == 200){
-                        toast("새 공유저장소가 생성되었습니다 !")
+                        CustomToast(this@AddStorageActivity, "새 공유저장소가 생성되었습니다 !")
                         val intent = Intent(context, StorageManageActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                         startActivity(intent)
                         finish()
                     }
                 }
-
                 else {
                     Log.e("error", "fail")
                 }

@@ -15,14 +15,8 @@
         android:paddingVertical="15dp"
         android:scaleType="centerCrop">
 
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/ic_search">
-        </ImageView>
-
         <TextView
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="5dp"
             android:id="@+id/hashtag_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

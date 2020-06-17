@@ -94,7 +94,6 @@ interface NetworkService {
         @Body() body: JsonObject
     ): Call<PutScrapInfoResponse>
 
-
     //notification---------------------------------------------------------------------
 
     //location alarm
@@ -151,5 +150,27 @@ interface NetworkService {
         @Body() body: JsonObject
     ): Call<PostSignUpResponse>
 
+    //delete scrap detail
+    @HTTP(method = "DELETE", path = "/memmem_app/users/{id}/joinsharing/", hasBody = true)
+//    @DELETE("/memmem_app/users/{id}/joinsharing/")
+    fun deleteStorageResponse(
+        @Header("Content-Type") content_type: String,
+        @Path("id") id : Int,
+        @Body() body: JsonObject
+    ): Call<ArrayList<GetAllStorageListResponse>>
+
+    //get hashtag list for search engine-------------------------------
+    @GET("/memmem_app/users/{id}/taglist/")
+    fun getRandomTagListResponse(
+        @Header("Content-Type") content_type: String,
+        @Path("id") id : Int
+    ): Call<ArrayList<GetRandomTagListResponse>>
+
+    //request recrawling
+    @GET("/memmem_app/users/{id}/recrawling/")
+    fun getRecrawlResponse(
+        @Header("Content-Type") content_type: String,
+        @Path("id") id : Int
+    ): Call<PostLocationAlarmisNullResponse>
 }
 

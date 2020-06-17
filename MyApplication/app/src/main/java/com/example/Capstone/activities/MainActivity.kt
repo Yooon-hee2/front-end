@@ -31,6 +31,8 @@ import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
 import com.example.Capstone.network.get.GetAllFolderListResponse
 import com.example.Capstone.network.get.GetAllStorageListResponse
+import com.example.Capstone.network.get.GetRandomTagListResponse
+import com.example.Capstone.network.post.PostLocationAlarmisNullResponse
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_activity_main.*
@@ -47,14 +49,17 @@ class MainActivity : AppCompatActivity(){
     lateinit var feedFragment : Fragment
     lateinit var albumFragment : Fragment
 
+    lateinit var searchListCustomAdapter : SearchListViewAdapter
+
     private val networkService: NetworkService by lazy {
         ApplicationController.instance.networkService
     }
 
     private val LOCATION_REQUEST_CODE = 1000
+    var recommendedHashtagList : ArrayList<String> = ArrayList()
+    var currFolderId = 0
 
     companion object{
-        val recommendedHashtagList = arrayListOf("#강남", "#이태원", "#플레이리스트", "#맛집", "#동물의숲")
         lateinit var edt_search : EditText
         var folderList : HashMap<String, Int> = HashMap()
         var storageList : HashMap<String, Int> = HashMap()
@@ -66,6 +71,7 @@ class MainActivity : AppCompatActivity(){
 
         getAllFolderListResponse(SharedPreferenceController.getCurrentUserId(this)!!)
         getAllStorageListResponse(SharedPreferenceController.getUserId(this)!!)
+        getRandomTagListResponse(SharedPreferenceController.getCurrentUserId(this)!!)
         edt_search = findViewById(R.id.search_item)
 
         folder_name.text = "전체"
@@ -81,8 +87,7 @@ class MainActivity : AppCompatActivity(){
         val tabLayout : TabLayout = findViewById(R.id.tl_main)
         val listView = findViewById<ListView>(R.id.list_search_item)
 
-
-        val searchListCustomAdapter = SearchListViewAdapter(this)
+        searchListCustomAdapter = SearchListViewAdapter(this, recommendedHashtagList)
 
         listView.adapter = searchListCustomAdapter
 
@@ -91,6 +96,14 @@ class MainActivity : AppCompatActivity(){
 
         pager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
 
+        if (SharedPreferenceController.getUserNoti(this)!!){
+            switch_noti.setTrackResource(R.drawable.switch_track_on)
+            switch_noti.isChecked = true
+        }
+        else{
+            switch_noti.setTrackResource(R.drawable.switch_track_off)
+            switch_noti.isChecked = false
+        }
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
             && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -104,7 +117,6 @@ class MainActivity : AppCompatActivity(){
                 pager.currentItem = tab.position
             }
             override fun onTabUnselected(tab: TabLayout.Tab) {
-
             }
             override fun onTabReselected(tab: TabLayout.Tab) {
 
@@ -118,9 +130,11 @@ class MainActivity : AppCompatActivity(){
 
         switch_noti.setOnCheckedChangeListener { _, isChecked ->
             if(isChecked){
+                SharedPreferenceController.setUserNoti(this, true)
                 switch_noti.setTrackResource(R.drawable.switch_track_on)
             }
             else{
+                SharedPreferenceController.setUserNoti(this, false)
                 switch_noti.setTrackResource(R.drawable.switch_track_off)
             }
         }
@@ -178,9 +192,13 @@ class MainActivity : AppCompatActivity(){
             }
         })
 
+        iv_drawer_profileimg.setOnClickListener{
+            getRecrawlingResponse(SharedPreferenceController.getCurrentUserId(this)!!)
+        }
+
         btn_personal_storage.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             ly_drawer.closeDrawer(GravityCompat.END)
             val userPrivateId = SharedPreferenceController.getUserId(this)
             SharedPreferenceController.setCurrentUserId(this, userPrivateId!!)
@@ -195,9 +213,11 @@ class MainActivity : AppCompatActivity(){
         }
 
         btn_temp_test.setOnClickListener {
-            val intent = Intent(applicationContext, AlarmBroadcastReceiver::class.java)
-            intent.putExtra("id", 141)
-            applicationContext.sendBroadcast(intent)
+            if(SharedPreferenceController.getUserNoti(this)!!){
+                val intent = Intent(applicationContext, AlarmBroadcastReceiver::class.java)
+                intent.putExtra("id", 141)
+                applicationContext.sendBroadcast(intent)
+            }
         }
 
         btn_manage_folder.setOnClickListener {
@@ -239,6 +259,7 @@ class MainActivity : AppCompatActivity(){
                         it1 ->
                     (feedFragment as FeedViewMainFragment).changeFolder(it1)
                     (albumFragment as AlbumViewMainFragment).changeFolder(it1)
+                    currFolderId = it1
                 }
                 true
             }
@@ -248,8 +269,14 @@ class MainActivity : AppCompatActivity(){
 
     override fun onResume() {
         super.onResume()
+        search_item.text.clear()
         getAllFolderListResponse(SharedPreferenceController.getCurrentUserId(this)!!)
         getAllStorageListResponse(SharedPreferenceController.getUserId(this)!!)
+        var currFolderId = SharedPreferenceController.getUserFolderInfo(this!!)[folder_name.text]
+        if (currFolderId != null) {
+            (feedFragment as FeedViewMainFragment).changeFolder(currFolderId)
+            (albumFragment as AlbumViewMainFragment).changeFolder(currFolderId)
+        }
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
@@ -324,6 +351,61 @@ class MainActivity : AppCompatActivity(){
                         }
                     }
                     SharedPreferenceController.setUserStorageInfo(this@MainActivity, storageList)
+                }
+                else{
+                    Log.e("error", "fail")
+                }
+            }
+        })
+    }
+
+    private fun getRandomTagListResponse(id: Int){
+        recommendedHashtagList.clear()
+
+        val getRandomTagListResponse = networkService.getRandomTagListResponse("application/json", id)
+
+        getRandomTagListResponse.enqueue(object : Callback<ArrayList<GetRandomTagListResponse>> {
+
+            override fun onFailure(call: Call<ArrayList<GetRandomTagListResponse>>, t: Throwable) {
+                Log.e("get List failed", t.toString())
+            }
+
+            override fun onResponse(
+                call: Call<ArrayList<GetRandomTagListResponse>>,
+                response: Response<ArrayList<GetRandomTagListResponse>>
+            ) {
+                if(response.isSuccessful){
+                    val data: ArrayList<GetRandomTagListResponse>? = response.body()
+                    if (!data.isNullOrEmpty()) {
+                        for(tag in data) {
+                            Log.d("randomTagList", tag.tag_text)
+                            recommendedHashtagList.add(tag.tag_text)
+                        }
+                    }
+                    searchListCustomAdapter.notifyDataSetChanged()
+                }
+                else{
+                    Log.e("error", "fail")
+                }
+            }
+        })
+    }
+
+    private fun getRecrawlingResponse(id: Int){
+        val getRecrawlingResponse = networkService.getRecrawlResponse("application/json", id)
+
+        getRecrawlingResponse.enqueue(object : Callback<PostLocationAlarmisNullResponse> {
+
+            override fun onFailure(call: Call<PostLocationAlarmisNullResponse>, t: Throwable) {
+                Log.e("get List failed", t.toString())
+            }
+
+            override fun onResponse(
+                call: Call<PostLocationAlarmisNullResponse>,
+                response: Response<PostLocationAlarmisNullResponse>
+            ) {
+                if(response.isSuccessful){
+                    Log.d("success", "success")
                 }
                 else{
                     Log.e("error", "fail")

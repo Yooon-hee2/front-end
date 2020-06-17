@@ -11,9 +11,13 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.Capstone.ImageUtils.getCircularBitmap
 import com.example.Capstone.R
+import com.example.Capstone.activities.InformationActivity
 import com.example.Capstone.background.AlarmBroadcastReceiver
+import com.example.Capstone.db.SharedPreferenceController
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import org.json.JSONArray
+import org.json.JSONObject
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -33,7 +37,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // Check if message contains a data payload.
         remoteMessage.data.isNotEmpty().let {
             Log.d("fcmmessage", "Message data payload: " + remoteMessage.data)
-//
+
 //            if (/* Check if data needs to be processed by long running job */ true) {
 //                // For long-running tasks (10 seconds or more) use WorkManager.
 //                scheduleJob()
@@ -43,17 +47,16 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 //            }
         }
 
+        if (SharedPreferenceController.getUserNoti(this)!!){
             // Check if message contains a notification payload.
-        if (remoteMessage.data["type"] == "upload") {
-//            sendNotification(remoteMessage.notification!!.body!!, remoteMessage.notification!!.imageUrl.toString())
-            sendUploadNotification(remoteMessage.data["sharing"]!!, remoteMessage.data["image"]!!)
+            when (remoteMessage.data["type"])
+            {
+                "upload" -> sendUploadNotification(remoteMessage.data["sharing"]!!, remoteMessage.data["image"]!!, remoteMessage.data["scrap_id"]!!.toInt())
+                "invite" -> sendInviteNotification(remoteMessage.data["sharing"]!!)
+                "delete" -> sendDeleteNotification(JSONArray(remoteMessage.data["scraps"]))
+            }
         }
-        else if(remoteMessage.data["type"] == "invite") {
-//            sendNotification(remoteMessage.notification!!.body!!, remoteMessage.notification!!.imageUrl.toString())
-            sendInviteNotification(remoteMessage.data["sharing"]!!)
-        }
-
-        }
+    }
 
         // Check if message contains a notification payload.
 //        remoteMessage.notification?.let {
@@ -72,7 +75,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      * is initially generated so this is where you would retrieve the token.
      */
     override fun onNewToken(token: String) {
-        Log.d(TAG, "Refreshed token: $token")
+        Log.d(token, "Refreshed token: $token")
 
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the
@@ -91,7 +94,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      */
     private fun sendRegistrationToServer(token: String?) {
         // TODO: Implement this method to send token to your app server.
-        Log.d(TAG, "sendRegistrationTokenToServer($token)")
+        Log.d(token, "sendRegistrationTokenToServer($token)")
     }
 
     /**
@@ -99,12 +102,25 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      *
      * @param messageBody FCM message body received.
      */
-    private fun sendUploadNotification(messageBody: String, url: String) {
+    private fun sendUploadNotification(messageBody: String, url: String, scrap_id: Int) {
+
+        val intent = Intent(this, InformationActivity::class.java)
+        intent.putExtra("id", scrap_id)
+        intent.putExtra("noti", true)
+
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(
+            this,
+            0,  //default값 0
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
         var builder = NotificationCompat.Builder(this, "멤멤")
             .setSmallIcon(R.drawable.ic_noti)
             .setContentTitle("새 글 알림")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
 
         Glide.with(this)
                             .asBitmap()
@@ -123,6 +139,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private fun sendInviteNotification(messageBody: String) {
 
+        Log.d("jsonobject", messageBody)
         val permitIntent = Intent(this, AlarmBroadcastReceiver::class.java)
         permitIntent.putExtra("id", 151)
         permitIntent.putExtra("sharing_name", messageBody)
@@ -130,10 +147,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val rejectIntent = Intent(this, AlarmBroadcastReceiver::class.java)
         rejectIntent.putExtra("id", 444)
 
-        val acceptPendingIntent: PendingIntent = PendingIntent.getBroadcast(this, 0, permitIntent, 0)
-        val rejectPendingIntent: PendingIntent = PendingIntent.getBroadcast(this, 1110, rejectIntent, 0)
+        val acceptPendingIntent: PendingIntent = PendingIntent.getBroadcast(this, 0, permitIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val rejectPendingIntent: PendingIntent = PendingIntent.getBroadcast(this, 1110, rejectIntent, PendingIntent.FLAG_CANCEL_CURRENT)
 
-        var builder = NotificationCompat.Builder(this, "멤멤")
+        val builder = NotificationCompat.Builder(this, "멤멤")
             .setSmallIcon(R.drawable.ic_noti)
             .setContentTitle("초대 알림")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -142,11 +159,31 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .addAction(R.drawable.ic_launcher_foreground, "수락", acceptPendingIntent)
             .addAction(R.drawable.ic_launcher_foreground, "거절", rejectPendingIntent)
 
-        NotificationManagerCompat.from(applicationContext).notify(NOTICATION_ID, builder.build())
+        NotificationManagerCompat.from(this).notify(NOTICATION_ID, builder.build())
 
     }
 
-    companion object {
-        private const val TAG = "MyFirebaseMsgService"
+    private fun sendDeleteNotification(messageBody: JSONArray) {
+
+        var titleList = ""
+
+        Log.d("jsonarray", messageBody.toString())
+
+        for (i in 0 until messageBody.length()) {
+            val jsonTitle = messageBody.getJSONObject(i)
+            val title = jsonTitle.getString("title")
+            Log.d("jsonarraytitle", title)
+            titleList = "$title, $titleList"
+        }
+
+        val builder = NotificationCompat.Builder(this, "멤멤")
+            .setSmallIcon(R.drawable.ic_noti)
+            .setContentTitle("삭제 알림")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+            .setContentText("다음 글이 삭제되었습니다")
+            .setStyle(NotificationCompat.BigTextStyle().bigText(titleList))
+
+        NotificationManagerCompat.from(this).notify(NOTICATION_ID, builder.build())
     }
 }

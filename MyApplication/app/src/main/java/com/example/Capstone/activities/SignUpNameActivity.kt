@@ -6,6 +6,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.EditText
+import com.example.Capstone.CustomToast
 import com.example.Capstone.R
 import com.example.Capstone.network.ApplicationController
 import com.example.Capstone.network.NetworkService
@@ -75,14 +76,13 @@ class SignUpNameActivity : AppCompatActivity() {
 
         postSignUpResponse.enqueue(object : Callback<PostSignUpResponse> {
             override fun onFailure(call: Call<PostSignUpResponse>, t: Throwable) {
-                toast("fail")
                 Log.e("fail", t.toString())
             }
 
             override fun onResponse(call: Call<PostSignUpResponse>, response: Response<PostSignUpResponse>) {
                 if (response.isSuccessful) {
                     if (response.body()!!.status == 200) {
-                        toast("sign up success")
+                        CustomToast(this@SignUpNameActivity, "회원가입을 성공했습니다")
                         startActivity<LoginActivity>()
                         finish()
                     }

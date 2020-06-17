@@ -78,6 +78,7 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
         holder.container.setOnClickListener {
             val intent = Intent(ctx, InformationActivity::class.java)
             intent.putExtra("id", filteredList!![position].id)
+            intent.putExtra("noti", false)
             ctx.startActivity(intent)
         }
 
@@ -144,7 +145,8 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
                         for(item in list) {
                             if (item.tags!!.isNotEmpty()){
                                 for (ht in item.tags!!){
-                                    if (ht.tag_text.contains(charString.substring(1, charString.length).toLowerCase())) {
+                                    if (ht.tag_text.contains(charString.substring(1, charString.length).toLowerCase()) ||
+                                        ht.tag_text.toLowerCase().contains(charString.substring(1, charString.length))) {
                                         filteringList.add(item)
                                     }
                                 }
@@ -155,6 +157,7 @@ class FeedRecyclerViewAdapter(val ctx: Context, var list: ArrayList<Feed>)  :
                         filteringList.clear()
                         filteringList.addAll(hashSet)
                         filteredList = filteringList
+                        Log.d("filteredList", filteredList.toString())
                     }
                     else{
                         val filteringList = ArrayList<Feed>() //if user search title
